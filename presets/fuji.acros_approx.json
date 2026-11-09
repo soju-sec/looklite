@@ -1,0 +1,99 @@
+{
+  "preset_id": "fuji.acros_approx",
+  "camera_system": "fujifilm",
+  "look_name": "ACROS Approx",
+  "display_label": "ACROS",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "late",
+  "monochrome": true,
+  "parent_preset_id": null,
+  "tags": [
+    "fujifilm",
+    "punchy"
+  ],
+  "color_science": {
+    "color_shifts": "B&W with rich midtone separation; slight yellow filter bias for skin.",
+    "dynamic_range": "Deep blacks with retained highlight texture.",
+    "tone_curve": "Extended toe; strong mid contrast.",
+    "film_grain": "Structured: coarser in shadows, finer in highlights (ACROS-like).",
+    "skin_bias": "n/a",
+    "contrast_character": "punchy"
+  },
+  "default_sliders": {
+    "exposure": 0.0,
+    "contrast": 28,
+    "highlights": -20,
+    "shadows": -5,
+    "whites": 5,
+    "blacks": -30,
+    "temp": 0,
+    "tint": 0,
+    "vibrance": -100,
+    "saturation": -100,
+    "vignette": 12,
+    "grain_intensity": 35,
+    "grain_size": 40,
+    "hsl": {
+      "red": {
+        "h": 0,
+        "s": 0,
+        "l": 8
+      },
+      "orange": {
+        "h": 0,
+        "s": 0,
+        "l": 10
+      },
+      "yellow": {
+        "h": 0,
+        "s": 0,
+        "l": 12
+      },
+      "green": {
+        "h": 0,
+        "s": 0,
+        "l": -5
+      },
+      "aqua": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "blue": {
+        "h": 0,
+        "s": 0,
+        "l": -10
+      },
+      "purple": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "magenta": {
+        "h": 0,
+        "s": 0,
+        "l": 5
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "midtones": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "highlights": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      }
+    }
+  }
+}

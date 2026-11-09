@@ -1,0 +1,99 @@
+{
+  "preset_id": "kodak.ektar_100_approx",
+  "camera_system": "kodak",
+  "look_name": "Ektar 100 Approx",
+  "display_label": "Ektar 100",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "late",
+  "monochrome": false,
+  "parent_preset_id": null,
+  "tags": [
+    "kodak",
+    "micro_contrast"
+  ],
+  "color_science": {
+    "color_shifts": "Ultra-vivid reds and blues; clean greens; high chroma without mud.",
+    "dynamic_range": "Tight, snappy; micro-contrast emphasized.",
+    "tone_curve": "Punchy S; crisp midtones.",
+    "film_grain": "Ultra-fine; nearly invisible.",
+    "skin_bias": "cool",
+    "contrast_character": "micro_contrast"
+  },
+  "default_sliders": {
+    "exposure": 0.0,
+    "contrast": 30,
+    "highlights": -8,
+    "shadows": -12,
+    "whites": 12,
+    "blacks": -18,
+    "temp": 5,
+    "tint": -3,
+    "vibrance": 20,
+    "saturation": 22,
+    "vignette": 4,
+    "grain_intensity": 5,
+    "grain_size": 12,
+    "hsl": {
+      "red": {
+        "h": 5,
+        "s": 30,
+        "l": 0
+      },
+      "orange": {
+        "h": 0,
+        "s": 15,
+        "l": 0
+      },
+      "yellow": {
+        "h": -5,
+        "s": 10,
+        "l": 0
+      },
+      "green": {
+        "h": 0,
+        "s": 18,
+        "l": 0
+      },
+      "aqua": {
+        "h": 0,
+        "s": 10,
+        "l": 0
+      },
+      "blue": {
+        "h": -8,
+        "s": 28,
+        "l": -3
+      },
+      "purple": {
+        "h": 0,
+        "s": 12,
+        "l": 0
+      },
+      "magenta": {
+        "h": 0,
+        "s": 15,
+        "l": 0
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": 0,
+        "g": 0,
+        "b": 3
+      },
+      "midtones": {
+        "r": 2,
+        "g": 0,
+        "b": 0
+      },
+      "highlights": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "preset_id": "hasselblad.hncs_approx",
+  "camera_system": "hasselblad",
+  "look_name": "HNCS Approx",
+  "display_label": "HNCS",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "early",
+  "monochrome": false,
+  "parent_preset_id": null,
+  "tags": [
+    "hasselblad",
+    "soft"
+  ],
+  "color_science": {
+    "color_shifts": "Ultra-natural; absolute color accuracy goal; minimal cast on skin.",
+    "dynamic_range": "Very smooth highlight roll-off; medium-format feel.",
+    "tone_curve": "Gentle; tonal smoothness over punch.",
+    "film_grain": "None / negligible.",
+    "skin_bias": "neutral",
+    "contrast_character": "soft"
+  },
+  "default_sliders": {
+    "exposure": 0.0,
+    "contrast": 5,
+    "highlights": -22,
+    "shadows": 12,
+    "whites": -5,
+    "blacks": 0,
+    "temp": 0,
+    "tint": 0,
+    "vibrance": 0,
+    "saturation": -3,
+    "vignette": 0,
+    "grain_intensity": 0,
+    "grain_size": 0,
+    "hsl": {
+      "red": {
+        "h": 0,
+        "s": -2,
+        "l": 2
+      },
+      "orange": {
+        "h": 0,
+        "s": -3,
+        "l": 4
+      },
+      "yellow": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "green": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "aqua": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "blue": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "purple": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "magenta": {
+        "h": 0,
+        "s": -2,
+        "l": 0
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "midtones": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "highlights": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      }
+    }
+  }
+}

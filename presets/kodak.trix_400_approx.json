@@ -1,0 +1,99 @@
+{
+  "preset_id": "kodak.trix_400_approx",
+  "camera_system": "kodak",
+  "look_name": "Tri-X 400 Approx",
+  "display_label": "Tri-X 400",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "late",
+  "monochrome": true,
+  "parent_preset_id": null,
+  "tags": [
+    "kodak",
+    "punchy"
+  ],
+  "color_science": {
+    "color_shifts": "Classic silver halide B&W; deep blacks; midtone bite.",
+    "dynamic_range": "Pushable shadows; hard black point.",
+    "tone_curve": "Aggressive toe + strong mid slope.",
+    "film_grain": "Iconic coarse grain; stronger in shadows.",
+    "skin_bias": "n/a",
+    "contrast_character": "punchy"
+  },
+  "default_sliders": {
+    "exposure": 0.0,
+    "contrast": 40,
+    "highlights": -15,
+    "shadows": -20,
+    "whites": 8,
+    "blacks": -40,
+    "temp": 0,
+    "tint": 0,
+    "vibrance": -100,
+    "saturation": -100,
+    "vignette": 18,
+    "grain_intensity": 55,
+    "grain_size": 55,
+    "hsl": {
+      "red": {
+        "h": 0,
+        "s": 0,
+        "l": 5
+      },
+      "orange": {
+        "h": 0,
+        "s": 0,
+        "l": 8
+      },
+      "yellow": {
+        "h": 0,
+        "s": 0,
+        "l": 10
+      },
+      "green": {
+        "h": 0,
+        "s": 0,
+        "l": -8
+      },
+      "aqua": {
+        "h": 0,
+        "s": 0,
+        "l": -5
+      },
+      "blue": {
+        "h": 0,
+        "s": 0,
+        "l": -15
+      },
+      "purple": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "magenta": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "midtones": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "highlights": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      }
+    }
+  }
+}

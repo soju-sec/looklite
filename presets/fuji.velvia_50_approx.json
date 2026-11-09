@@ -1,0 +1,99 @@
+{
+  "preset_id": "fuji.velvia_50_approx",
+  "camera_system": "fujifilm",
+  "look_name": "Velvia 50 Approx",
+  "display_label": "Velvia 50",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "late",
+  "monochrome": false,
+  "parent_preset_id": null,
+  "tags": [
+    "fujifilm",
+    "punchy"
+  ],
+  "color_science": {
+    "color_shifts": "High saturation landscape palette; greens vivid; reds/oranges punchy; deep blue skies.",
+    "dynamic_range": "Narrower usable DR feel; clipped speculars OK for drama.",
+    "tone_curve": "Steep S-curve; sharp local contrast.",
+    "film_grain": "Very fine; mostly invisible at web sizes.",
+    "skin_bias": "cool",
+    "contrast_character": "punchy"
+  },
+  "default_sliders": {
+    "exposure": 0.0,
+    "contrast": 35,
+    "highlights": -5,
+    "shadows": -15,
+    "whites": 10,
+    "blacks": -25,
+    "temp": 5,
+    "tint": -5,
+    "vibrance": 25,
+    "saturation": 30,
+    "vignette": 5,
+    "grain_intensity": 6,
+    "grain_size": 15,
+    "hsl": {
+      "red": {
+        "h": 5,
+        "s": 25,
+        "l": 0
+      },
+      "orange": {
+        "h": 0,
+        "s": 15,
+        "l": 0
+      },
+      "yellow": {
+        "h": -5,
+        "s": 20,
+        "l": 5
+      },
+      "green": {
+        "h": 8,
+        "s": 30,
+        "l": 0
+      },
+      "aqua": {
+        "h": 0,
+        "s": 10,
+        "l": 0
+      },
+      "blue": {
+        "h": -10,
+        "s": 25,
+        "l": -5
+      },
+      "purple": {
+        "h": 0,
+        "s": 10,
+        "l": 0
+      },
+      "magenta": {
+        "h": 0,
+        "s": 15,
+        "l": 0
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": 0,
+        "g": 2,
+        "b": 4
+      },
+      "midtones": {
+        "r": 2,
+        "g": 0,
+        "b": -2
+      },
+      "highlights": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      }
+    }
+  }
+}

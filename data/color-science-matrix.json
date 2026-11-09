@@ -1,0 +1,797 @@
+{
+  "meta": {
+    "title": "LookLite Color Science Approximation Matrix",
+    "units": {
+      "exposure": "EV (-5..5)",
+      "most_sliders": "-100..100",
+      "grain_intensity": "0..100",
+      "grain_size": "0..100"
+    },
+    "disclaimer": "Approximated creative targets inspired by publicly described look characteristics. Not vendor LUTs. Values are starting points for artistic calibration against reference photos.",
+    "evidence_class": "reconstructed"
+  },
+  "presets": [
+    {
+      "preset_id": "fuji.classic_chrome_approx",
+      "camera_system": "fujifilm",
+      "look_name": "Classic Chrome Approx",
+      "lut_asset_path": "luts/fuji_classic_chrome_approx.cube",
+      "lut_stage": "late",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Muted overall chroma; blues pushed deep/cyan-leaning for skies; greens slightly desaturated toward olive; reds restrained.",
+        "dynamic_range": "Protect midtones; crush shadow toe slightly for documentary edge.",
+        "tone_curve": "Harder contrast in lower third; restrained highlight shoulder.",
+        "film_grain": "Fine, even grain; subtle in midtones.",
+        "skin_bias": "desaturated",
+        "contrast_character": "hard_shadows"
+      },
+      "default_sliders": {
+        "exposure": 0.0,
+        "contrast": 18,
+        "highlights": -15,
+        "shadows": -10,
+        "whites": -5,
+        "blacks": -20,
+        "temp": -5,
+        "tint": 0,
+        "vibrance": -10,
+        "saturation": -18,
+        "vignette": 8,
+        "grain_intensity": 12,
+        "grain_size": 25,
+        "hsl": {
+          "red": { "h": -5, "s": -12, "l": -2 },
+          "orange": { "h": 0, "s": -8, "l": 0 },
+          "yellow": { "h": 5, "s": -10, "l": 0 },
+          "green": { "h": -8, "s": -20, "l": -5 },
+          "aqua": { "h": 5, "s": -5, "l": 0 },
+          "blue": { "h": -12, "s": 15, "l": -8 },
+          "purple": { "h": 0, "s": -10, "l": 0 },
+          "magenta": { "h": 0, "s": -8, "l": 0 }
+        },
+        "color_balance": {
+          "shadows": { "r": -2, "g": 0, "b": 4 },
+          "midtones": { "r": 0, "g": 0, "b": 0 },
+          "highlights": { "r": 2, "g": 1, "b": -2 }
+        }
+      }
+    },
+    {
+      "preset_id": "fuji.velvia_50_approx",
+      "camera_system": "fujifilm",
+      "look_name": "Velvia 50 Approx",
+      "lut_asset_path": "luts/fuji_velvia_50_approx.cube",
+      "lut_stage": "late",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "High saturation landscape palette; greens vivid; reds/oranges punchy; deep blue skies.",
+        "dynamic_range": "Narrower usable DR feel; clipped speculars OK for drama.",
+        "tone_curve": "Steep S-curve; sharp local contrast.",
+        "film_grain": "Very fine; mostly invisible at web sizes.",
+        "skin_bias": "cool",
+        "contrast_character": "punchy"
+      },
+      "default_sliders": {
+        "exposure": 0.0,
+        "contrast": 35,
+        "highlights": -5,
+        "shadows": -15,
+        "whites": 10,
+        "blacks": -25,
+        "temp": 5,
+        "tint": -5,
+        "vibrance": 25,
+        "saturation": 30,
+        "vignette": 5,
+        "grain_intensity": 6,
+        "grain_size": 15,
+        "hsl": {
+          "red": { "h": 5, "s": 25, "l": 0 },
+          "orange": { "h": 0, "s": 15, "l": 0 },
+          "yellow": { "h": -5, "s": 20, "l": 5 },
+          "green": { "h": 8, "s": 30, "l": 0 },
+          "aqua": { "h": 0, "s": 10, "l": 0 },
+          "blue": { "h": -10, "s": 25, "l": -5 },
+          "purple": { "h": 0, "s": 10, "l": 0 },
+          "magenta": { "h": 0, "s": 15, "l": 0 }
+        },
+        "color_balance": {
+          "shadows": { "r": 0, "g": 2, "b": 4 },
+          "midtones": { "r": 2, "g": 0, "b": -2 },
+          "highlights": { "r": 0, "g": 0, "b": 0 }
+        }
+      }
+    },
+    {
+      "preset_id": "fuji.provia_approx",
+      "camera_system": "fujifilm",
+      "look_name": "Provia / Standard Approx",
+      "lut_asset_path": "luts/fuji_provia_approx.cube",
+      "lut_stage": "early",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Near-neutral, true-to-life; mild green accuracy; balanced skin.",
+        "dynamic_range": "Wide, photographic; gentle highlight roll-off.",
+        "tone_curve": "Mild S; midtone linearity prioritized.",
+        "film_grain": "Minimal.",
+        "skin_bias": "neutral",
+        "contrast_character": "balanced"
+      },
+      "default_sliders": {
+        "exposure": 0.0,
+        "contrast": 8,
+        "highlights": -8,
+        "shadows": 5,
+        "whites": 0,
+        "blacks": -5,
+        "temp": 0,
+        "tint": 0,
+        "vibrance": 5,
+        "saturation": 0,
+        "vignette": 0,
+        "grain_intensity": 4,
+        "grain_size": 20,
+        "hsl": {
+          "red": { "h": 0, "s": 0, "l": 0 },
+          "orange": { "h": 0, "s": 2, "l": 2 },
+          "yellow": { "h": 0, "s": 0, "l": 0 },
+          "green": { "h": 0, "s": 5, "l": 0 },
+          "aqua": { "h": 0, "s": 0, "l": 0 },
+          "blue": { "h": 0, "s": 5, "l": 0 },
+          "purple": { "h": 0, "s": 0, "l": 0 },
+          "magenta": { "h": 0, "s": 0, "l": 0 }
+        },
+        "color_balance": {
+          "shadows": { "r": 0, "g": 0, "b": 0 },
+          "midtones": { "r": 0, "g": 0, "b": 0 },
+          "highlights": { "r": 0, "g": 0, "b": 0 }
+        }
+      }
+    },
+    {
+      "preset_id": "fuji.astia_approx",
+      "camera_system": "fujifilm",
+      "look_name": "Astia / Soft Approx",
+      "lut_asset_path": "luts/fuji_astia_approx.cube",
+      "lut_stage": "late",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Soft pastels; gentle greens; flattering skin luminance.",
+        "dynamic_range": "Highlights compressed softly; lifted shadow floor.",
+        "tone_curve": "Low contrast S; smooth highlight shoulder.",
+        "film_grain": "Very fine, soft.",
+        "skin_bias": "warm_cream",
+        "contrast_character": "soft"
+      },
+      "default_sliders": {
+        "exposure": 0.15,
+        "contrast": -10,
+        "highlights": -25,
+        "shadows": 20,
+        "whites": -10,
+        "blacks": 10,
+        "temp": 8,
+        "tint": 3,
+        "vibrance": 8,
+        "saturation": -5,
+        "vignette": 4,
+        "grain_intensity": 8,
+        "grain_size": 22,
+        "hsl": {
+          "red": { "h": 5, "s": -5, "l": 5 },
+          "orange": { "h": 0, "s": -5, "l": 8 },
+          "yellow": { "h": 0, "s": -8, "l": 5 },
+          "green": { "h": 0, "s": -12, "l": 5 },
+          "aqua": { "h": 0, "s": -5, "l": 0 },
+          "blue": { "h": 0, "s": -8, "l": 5 },
+          "purple": { "h": 0, "s": -5, "l": 0 },
+          "magenta": { "h": 0, "s": -5, "l": 5 }
+        },
+        "color_balance": {
+          "shadows": { "r": 3, "g": 1, "b": 0 },
+          "midtones": { "r": 4, "g": 2, "b": 0 },
+          "highlights": { "r": 5, "g": 3, "b": 0 }
+        }
+      }
+    },
+    {
+      "preset_id": "fuji.acros_approx",
+      "camera_system": "fujifilm",
+      "look_name": "ACROS Approx",
+      "lut_asset_path": "luts/fuji_acros_approx.cube",
+      "lut_stage": "late",
+      "monochrome": true,
+      "color_science": {
+        "color_shifts": "B&W with rich midtone separation; slight yellow filter bias for skin.",
+        "dynamic_range": "Deep blacks with retained highlight texture.",
+        "tone_curve": "Extended toe; strong mid contrast.",
+        "film_grain": "Structured: coarser in shadows, finer in highlights (ACROS-like).",
+        "skin_bias": "n/a",
+        "contrast_character": "punchy"
+      },
+      "default_sliders": {
+        "exposure": 0.0,
+        "contrast": 28,
+        "highlights": -20,
+        "shadows": -5,
+        "whites": 5,
+        "blacks": -30,
+        "temp": 0,
+        "tint": 0,
+        "vibrance": -100,
+        "saturation": -100,
+        "vignette": 12,
+        "grain_intensity": 35,
+        "grain_size": 40,
+        "hsl": {
+          "red": { "h": 0, "s": 0, "l": 8 },
+          "orange": { "h": 0, "s": 0, "l": 10 },
+          "yellow": { "h": 0, "s": 0, "l": 12 },
+          "green": { "h": 0, "s": 0, "l": -5 },
+          "aqua": { "h": 0, "s": 0, "l": 0 },
+          "blue": { "h": 0, "s": 0, "l": -10 },
+          "purple": { "h": 0, "s": 0, "l": 0 },
+          "magenta": { "h": 0, "s": 0, "l": 5 }
+        },
+        "color_balance": {
+          "shadows": { "r": 0, "g": 0, "b": 0 },
+          "midtones": { "r": 0, "g": 0, "b": 0 },
+          "highlights": { "r": 0, "g": 0, "b": 0 }
+        }
+      }
+    },
+    {
+      "preset_id": "kodak.portra_160_approx",
+      "camera_system": "kodak",
+      "look_name": "Portra 160 Approx",
+      "lut_asset_path": "luts/kodak_portra_160_approx.cube",
+      "lut_stage": "late",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Warm pastel highlights; yellow-red bias; creamy skin; restrained greens.",
+        "dynamic_range": "Very wide latitude; soft highlight bloom.",
+        "tone_curve": "Gentle S; lifted blacks slightly.",
+        "film_grain": "Extremely fine.",
+        "skin_bias": "warm_cream",
+        "contrast_character": "soft"
+      },
+      "default_sliders": {
+        "exposure": 0.1,
+        "contrast": -5,
+        "highlights": -20,
+        "shadows": 15,
+        "whites": -5,
+        "blacks": 8,
+        "temp": 18,
+        "tint": 5,
+        "vibrance": -5,
+        "saturation": -8,
+        "vignette": 6,
+        "grain_intensity": 10,
+        "grain_size": 18,
+        "hsl": {
+          "red": { "h": 8, "s": -5, "l": 5 },
+          "orange": { "h": 5, "s": -8, "l": 10 },
+          "yellow": { "h": 5, "s": 5, "l": 8 },
+          "green": { "h": -5, "s": -15, "l": 0 },
+          "aqua": { "h": 0, "s": -10, "l": 0 },
+          "blue": { "h": 5, "s": -12, "l": 5 },
+          "purple": { "h": 0, "s": -5, "l": 0 },
+          "magenta": { "h": 5, "s": -5, "l": 5 }
+        },
+        "color_balance": {
+          "shadows": { "r": 4, "g": 2, "b": 0 },
+          "midtones": { "r": 8, "g": 3, "b": -2 },
+          "highlights": { "r": 12, "g": 6, "b": -4 }
+        }
+      }
+    },
+    {
+      "preset_id": "kodak.portra_400_approx",
+      "camera_system": "kodak",
+      "look_name": "Portra 400 Approx",
+      "lut_asset_path": "luts/kodak_portra_400_approx.cube",
+      "lut_stage": "late",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Same warm cream family as 160 with slightly more midtone density.",
+        "dynamic_range": "Wide; forgiving; soft speculars.",
+        "tone_curve": "Gentle S with a touch more mid contrast than 160.",
+        "film_grain": "Visible fine grain; organic.",
+        "skin_bias": "warm_cream",
+        "contrast_character": "balanced"
+      },
+      "default_sliders": {
+        "exposure": 0.05,
+        "contrast": 5,
+        "highlights": -18,
+        "shadows": 12,
+        "whites": -5,
+        "blacks": 5,
+        "temp": 16,
+        "tint": 4,
+        "vibrance": -3,
+        "saturation": -5,
+        "vignette": 8,
+        "grain_intensity": 22,
+        "grain_size": 28,
+        "hsl": {
+          "red": { "h": 6, "s": -3, "l": 3 },
+          "orange": { "h": 4, "s": -5, "l": 8 },
+          "yellow": { "h": 4, "s": 4, "l": 5 },
+          "green": { "h": -5, "s": -12, "l": -2 },
+          "aqua": { "h": 0, "s": -8, "l": 0 },
+          "blue": { "h": 4, "s": -10, "l": 2 },
+          "purple": { "h": 0, "s": -5, "l": 0 },
+          "magenta": { "h": 4, "s": -3, "l": 3 }
+        },
+        "color_balance": {
+          "shadows": { "r": 3, "g": 1, "b": 0 },
+          "midtones": { "r": 7, "g": 2, "b": -2 },
+          "highlights": { "r": 10, "g": 5, "b": -3 }
+        }
+      }
+    },
+    {
+      "preset_id": "kodak.gold_200_approx",
+      "camera_system": "kodak",
+      "look_name": "Gold 200 Approx",
+      "lut_asset_path": "luts/kodak_gold_200_approx.cube",
+      "lut_stage": "late",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Golden warmth; amber/yellow saturation; nostalgic consumer-print feel.",
+        "dynamic_range": "Mid DR; sunny-day bias.",
+        "tone_curve": "Moderate contrast; warm highlight bias.",
+        "film_grain": "Moderate consumer grain.",
+        "skin_bias": "warm_cream",
+        "contrast_character": "balanced"
+      },
+      "default_sliders": {
+        "exposure": 0.1,
+        "contrast": 15,
+        "highlights": -10,
+        "shadows": 5,
+        "whites": 5,
+        "blacks": -8,
+        "temp": 28,
+        "tint": 6,
+        "vibrance": 15,
+        "saturation": 12,
+        "vignette": 10,
+        "grain_intensity": 28,
+        "grain_size": 35,
+        "hsl": {
+          "red": { "h": 8, "s": 10, "l": 0 },
+          "orange": { "h": 5, "s": 15, "l": 5 },
+          "yellow": { "h": 0, "s": 25, "l": 8 },
+          "green": { "h": 10, "s": -5, "l": 0 },
+          "aqua": { "h": 0, "s": -15, "l": 0 },
+          "blue": { "h": 8, "s": -10, "l": 0 },
+          "purple": { "h": 0, "s": 0, "l": 0 },
+          "magenta": { "h": 5, "s": 5, "l": 0 }
+        },
+        "color_balance": {
+          "shadows": { "r": 6, "g": 2, "b": -4 },
+          "midtones": { "r": 12, "g": 6, "b": -6 },
+          "highlights": { "r": 16, "g": 10, "b": -8 }
+        }
+      }
+    },
+    {
+      "preset_id": "kodak.ektar_100_approx",
+      "camera_system": "kodak",
+      "look_name": "Ektar 100 Approx",
+      "lut_asset_path": "luts/kodak_ektar_100_approx.cube",
+      "lut_stage": "late",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Ultra-vivid reds and blues; clean greens; high chroma without mud.",
+        "dynamic_range": "Tight, snappy; micro-contrast emphasized.",
+        "tone_curve": "Punchy S; crisp midtones.",
+        "film_grain": "Ultra-fine; nearly invisible.",
+        "skin_bias": "cool",
+        "contrast_character": "micro_contrast"
+      },
+      "default_sliders": {
+        "exposure": 0.0,
+        "contrast": 30,
+        "highlights": -8,
+        "shadows": -12,
+        "whites": 12,
+        "blacks": -18,
+        "temp": 5,
+        "tint": -3,
+        "vibrance": 20,
+        "saturation": 22,
+        "vignette": 4,
+        "grain_intensity": 5,
+        "grain_size": 12,
+        "hsl": {
+          "red": { "h": 5, "s": 30, "l": 0 },
+          "orange": { "h": 0, "s": 15, "l": 0 },
+          "yellow": { "h": -5, "s": 10, "l": 0 },
+          "green": { "h": 0, "s": 18, "l": 0 },
+          "aqua": { "h": 0, "s": 10, "l": 0 },
+          "blue": { "h": -8, "s": 28, "l": -3 },
+          "purple": { "h": 0, "s": 12, "l": 0 },
+          "magenta": { "h": 0, "s": 15, "l": 0 }
+        },
+        "color_balance": {
+          "shadows": { "r": 0, "g": 0, "b": 3 },
+          "midtones": { "r": 2, "g": 0, "b": 0 },
+          "highlights": { "r": 0, "g": 0, "b": 0 }
+        }
+      }
+    },
+    {
+      "preset_id": "kodak.trix_400_approx",
+      "camera_system": "kodak",
+      "look_name": "Tri-X 400 Approx",
+      "lut_asset_path": "luts/kodak_trix_400_approx.cube",
+      "lut_stage": "late",
+      "monochrome": true,
+      "color_science": {
+        "color_shifts": "Classic silver halide B&W; deep blacks; midtone bite.",
+        "dynamic_range": "Pushable shadows; hard black point.",
+        "tone_curve": "Aggressive toe + strong mid slope.",
+        "film_grain": "Iconic coarse grain; stronger in shadows.",
+        "skin_bias": "n/a",
+        "contrast_character": "punchy"
+      },
+      "default_sliders": {
+        "exposure": 0.0,
+        "contrast": 40,
+        "highlights": -15,
+        "shadows": -20,
+        "whites": 8,
+        "blacks": -40,
+        "temp": 0,
+        "tint": 0,
+        "vibrance": -100,
+        "saturation": -100,
+        "vignette": 18,
+        "grain_intensity": 55,
+        "grain_size": 55,
+        "hsl": {
+          "red": { "h": 0, "s": 0, "l": 5 },
+          "orange": { "h": 0, "s": 0, "l": 8 },
+          "yellow": { "h": 0, "s": 0, "l": 10 },
+          "green": { "h": 0, "s": 0, "l": -8 },
+          "aqua": { "h": 0, "s": 0, "l": -5 },
+          "blue": { "h": 0, "s": 0, "l": -15 },
+          "purple": { "h": 0, "s": 0, "l": 0 },
+          "magenta": { "h": 0, "s": 0, "l": 0 }
+        },
+        "color_balance": {
+          "shadows": { "r": 0, "g": 0, "b": 0 },
+          "midtones": { "r": 0, "g": 0, "b": 0 },
+          "highlights": { "r": 0, "g": 0, "b": 0 }
+        }
+      }
+    },
+    {
+      "preset_id": "leica.m_system_approx",
+      "camera_system": "leica",
+      "look_name": "Leica M System Approx",
+      "lut_asset_path": "luts/leica_m_system_approx.cube",
+      "lut_stage": "early",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Rich but controlled; high micro-contrast; optical 'separation' feel.",
+        "dynamic_range": "High DR with crisp highlight edge.",
+        "tone_curve": "Strong local contrast; deep but open shadows.",
+        "film_grain": "Digital-clean; optional micro grain only.",
+        "skin_bias": "neutral",
+        "contrast_character": "micro_contrast"
+      },
+      "default_sliders": {
+        "exposure": 0.0,
+        "contrast": 22,
+        "highlights": -12,
+        "shadows": 8,
+        "whites": 8,
+        "blacks": -15,
+        "temp": 2,
+        "tint": 0,
+        "vibrance": 5,
+        "saturation": -5,
+        "vignette": 15,
+        "grain_intensity": 8,
+        "grain_size": 20,
+        "hsl": {
+          "red": { "h": 0, "s": 5, "l": 0 },
+          "orange": { "h": 0, "s": 0, "l": 2 },
+          "yellow": { "h": 0, "s": -5, "l": 0 },
+          "green": { "h": -5, "s": -10, "l": -3 },
+          "aqua": { "h": 0, "s": 0, "l": 0 },
+          "blue": { "h": -5, "s": 8, "l": -3 },
+          "purple": { "h": 0, "s": 0, "l": 0 },
+          "magenta": { "h": 0, "s": 0, "l": 0 }
+        },
+        "color_balance": {
+          "shadows": { "r": 0, "g": 0, "b": 2 },
+          "midtones": { "r": 0, "g": 0, "b": 0 },
+          "highlights": { "r": 2, "g": 1, "b": 0 }
+        }
+      }
+    },
+    {
+      "preset_id": "leica.cl_monochrom_approx",
+      "camera_system": "leica",
+      "look_name": "Leica CL / Vintage Monochrom Approx",
+      "lut_asset_path": "luts/leica_cl_monochrom_approx.cube",
+      "lut_stage": "late",
+      "monochrome": true,
+      "color_science": {
+        "color_shifts": "Deep tonal blacks; creamy midtone roll-off; soft highlight bloom.",
+        "dynamic_range": "Expanded midtones; gentle highlight shoulder.",
+        "tone_curve": "Creamy mid slope; deep black point without hard clip feel.",
+        "film_grain": "Fine vintage mono grain.",
+        "skin_bias": "n/a",
+        "contrast_character": "soft"
+      },
+      "default_sliders": {
+        "exposure": 0.05,
+        "contrast": 12,
+        "highlights": -28,
+        "shadows": 10,
+        "whites": -8,
+        "blacks": -25,
+        "temp": 0,
+        "tint": 0,
+        "vibrance": -100,
+        "saturation": -100,
+        "vignette": 20,
+        "grain_intensity": 25,
+        "grain_size": 32,
+        "hsl": {
+          "red": { "h": 0, "s": 0, "l": 5 },
+          "orange": { "h": 0, "s": 0, "l": 8 },
+          "yellow": { "h": 0, "s": 0, "l": 5 },
+          "green": { "h": 0, "s": 0, "l": 0 },
+          "aqua": { "h": 0, "s": 0, "l": 0 },
+          "blue": { "h": 0, "s": 0, "l": -8 },
+          "purple": { "h": 0, "s": 0, "l": 0 },
+          "magenta": { "h": 0, "s": 0, "l": 0 }
+        },
+        "color_balance": {
+          "shadows": { "r": 0, "g": 0, "b": 0 },
+          "midtones": { "r": 0, "g": 0, "b": 0 },
+          "highlights": { "r": 0, "g": 0, "b": 0 }
+        }
+      }
+    },
+    {
+      "preset_id": "leica.street_look_approx",
+      "camera_system": "leica",
+      "look_name": "Leica Street Look Approx",
+      "lut_asset_path": "luts/leica_street_look_approx.cube",
+      "lut_stage": "late",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Muted earthy greens; subtle warm highlights; desaturated urban palette.",
+        "dynamic_range": "Documentary DR; midtone priority.",
+        "tone_curve": "Moderate contrast; slight fade optional via lifted blacks.",
+        "film_grain": "Light street grain.",
+        "skin_bias": "warm_cream",
+        "contrast_character": "balanced"
+      },
+      "default_sliders": {
+        "exposure": 0.0,
+        "contrast": 12,
+        "highlights": -15,
+        "shadows": 5,
+        "whites": 0,
+        "blacks": 5,
+        "temp": 10,
+        "tint": 2,
+        "vibrance": -12,
+        "saturation": -15,
+        "vignette": 12,
+        "grain_intensity": 18,
+        "grain_size": 30,
+        "hsl": {
+          "red": { "h": 5, "s": -5, "l": 0 },
+          "orange": { "h": 3, "s": -5, "l": 3 },
+          "yellow": { "h": 5, "s": -8, "l": 0 },
+          "green": { "h": -10, "s": -25, "l": -5 },
+          "aqua": { "h": 0, "s": -15, "l": 0 },
+          "blue": { "h": 0, "s": -10, "l": 0 },
+          "purple": { "h": 0, "s": -8, "l": 0 },
+          "magenta": { "h": 0, "s": -5, "l": 0 }
+        },
+        "color_balance": {
+          "shadows": { "r": 0, "g": 0, "b": 3 },
+          "midtones": { "r": 4, "g": 1, "b": -2 },
+          "highlights": { "r": 8, "g": 4, "b": -2 }
+        }
+      }
+    },
+    {
+      "preset_id": "hasselblad.hncs_approx",
+      "camera_system": "hasselblad",
+      "look_name": "HNCS Approx",
+      "lut_asset_path": "luts/hasselblad_hncs_approx.cube",
+      "lut_stage": "early",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Ultra-natural; absolute color accuracy goal; minimal cast on skin.",
+        "dynamic_range": "Very smooth highlight roll-off; medium-format feel.",
+        "tone_curve": "Gentle; tonal smoothness over punch.",
+        "film_grain": "None / negligible.",
+        "skin_bias": "neutral",
+        "contrast_character": "soft"
+      },
+      "default_sliders": {
+        "exposure": 0.0,
+        "contrast": 5,
+        "highlights": -22,
+        "shadows": 12,
+        "whites": -5,
+        "blacks": 0,
+        "temp": 0,
+        "tint": 0,
+        "vibrance": 0,
+        "saturation": -3,
+        "vignette": 0,
+        "grain_intensity": 0,
+        "grain_size": 0,
+        "hsl": {
+          "red": { "h": 0, "s": -2, "l": 2 },
+          "orange": { "h": 0, "s": -3, "l": 4 },
+          "yellow": { "h": 0, "s": 0, "l": 0 },
+          "green": { "h": 0, "s": 0, "l": 0 },
+          "aqua": { "h": 0, "s": 0, "l": 0 },
+          "blue": { "h": 0, "s": 0, "l": 0 },
+          "purple": { "h": 0, "s": 0, "l": 0 },
+          "magenta": { "h": 0, "s": -2, "l": 0 }
+        },
+        "color_balance": {
+          "shadows": { "r": 0, "g": 0, "b": 0 },
+          "midtones": { "r": 0, "g": 0, "b": 0 },
+          "highlights": { "r": 0, "g": 0, "b": 0 }
+        }
+      }
+    },
+    {
+      "preset_id": "sony.fl_approx",
+      "camera_system": "sony",
+      "look_name": "Creative Look FL Approx",
+      "lut_asset_path": "luts/sony_fl_approx.cube",
+      "lut_stage": "late",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Film-like: desaturated greens; warm cyan highlights; matte blacks.",
+        "dynamic_range": "Compressed toe (matte); soft highlights.",
+        "tone_curve": "Lifted black point; gentle mid slope.",
+        "film_grain": "Light cinematic grain.",
+        "skin_bias": "warm_cream",
+        "contrast_character": "matte"
+      },
+      "default_sliders": {
+        "exposure": 0.0,
+        "contrast": -5,
+        "highlights": -18,
+        "shadows": 8,
+        "whites": -5,
+        "blacks": 18,
+        "temp": 8,
+        "tint": -4,
+        "vibrance": -8,
+        "saturation": -12,
+        "vignette": 8,
+        "grain_intensity": 20,
+        "grain_size": 28,
+        "hsl": {
+          "red": { "h": 5, "s": -5, "l": 0 },
+          "orange": { "h": 0, "s": -5, "l": 3 },
+          "yellow": { "h": 0, "s": -8, "l": 0 },
+          "green": { "h": -5, "s": -28, "l": -5 },
+          "aqua": { "h": 10, "s": 5, "l": 5 },
+          "blue": { "h": 5, "s": -5, "l": 5 },
+          "purple": { "h": 0, "s": -5, "l": 0 },
+          "magenta": { "h": 0, "s": -5, "l": 0 }
+        },
+        "color_balance": {
+          "shadows": { "r": 0, "g": 2, "b": 4 },
+          "midtones": { "r": 2, "g": 0, "b": 2 },
+          "highlights": { "r": 4, "g": 6, "b": 8 }
+        }
+      }
+    },
+    {
+      "preset_id": "sony.in_approx",
+      "camera_system": "sony",
+      "look_name": "Creative Look IN Approx",
+      "lut_asset_path": "luts/sony_in_approx.cube",
+      "lut_stage": "late",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Instant-film: low contrast, pastel, soft whites.",
+        "dynamic_range": "Heavily compressed; dreamy highlights.",
+        "tone_curve": "Flat; lifted blacks and crushed top end softly.",
+        "film_grain": "Instant-print texture.",
+        "skin_bias": "warm_cream",
+        "contrast_character": "soft"
+      },
+      "default_sliders": {
+        "exposure": 0.2,
+        "contrast": -25,
+        "highlights": -30,
+        "shadows": 25,
+        "whites": -15,
+        "blacks": 25,
+        "temp": 12,
+        "tint": 5,
+        "vibrance": 5,
+        "saturation": -10,
+        "vignette": 15,
+        "grain_intensity": 30,
+        "grain_size": 40,
+        "hsl": {
+          "red": { "h": 5, "s": -8, "l": 8 },
+          "orange": { "h": 0, "s": -10, "l": 10 },
+          "yellow": { "h": 0, "s": -5, "l": 8 },
+          "green": { "h": 0, "s": -15, "l": 5 },
+          "aqua": { "h": 0, "s": -8, "l": 5 },
+          "blue": { "h": 5, "s": -12, "l": 8 },
+          "purple": { "h": 0, "s": -5, "l": 5 },
+          "magenta": { "h": 0, "s": -5, "l": 8 }
+        },
+        "color_balance": {
+          "shadows": { "r": 4, "g": 2, "b": 2 },
+          "midtones": { "r": 6, "g": 3, "b": 0 },
+          "highlights": { "r": 8, "g": 6, "b": 2 }
+        }
+      }
+    },
+    {
+      "preset_id": "sony.scinetone_mobile_approx",
+      "camera_system": "sony",
+      "look_name": "S-Cinetone Mobile Approx",
+      "lut_asset_path": "luts/sony_scinetone_mobile_approx.cube",
+      "lut_stage": "late",
+      "monochrome": false,
+      "color_science": {
+        "color_shifts": "Cinematic midtone roll-off; pleasing portrait tones; controlled saturation.",
+        "dynamic_range": "Soft highlight shoulder; broadcast-safe feel.",
+        "tone_curve": "Cinema-inspired gentle S; midtone priority.",
+        "film_grain": "Optional light cinema grain.",
+        "skin_bias": "warm_cream",
+        "contrast_character": "balanced"
+      },
+      "default_sliders": {
+        "exposure": 0.0,
+        "contrast": 5,
+        "highlights": -25,
+        "shadows": 10,
+        "whites": -8,
+        "blacks": 5,
+        "temp": 6,
+        "tint": 2,
+        "vibrance": 5,
+        "saturation": -8,
+        "vignette": 5,
+        "grain_intensity": 12,
+        "grain_size": 22,
+        "hsl": {
+          "red": { "h": 3, "s": -5, "l": 3 },
+          "orange": { "h": 0, "s": -3, "l": 6 },
+          "yellow": { "h": 0, "s": -5, "l": 0 },
+          "green": { "h": -5, "s": -15, "l": -3 },
+          "aqua": { "h": 5, "s": -5, "l": 0 },
+          "blue": { "h": 0, "s": -5, "l": 0 },
+          "purple": { "h": 0, "s": -5, "l": 0 },
+          "magenta": { "h": 0, "s": -3, "l": 2 }
+        },
+        "color_balance": {
+          "shadows": { "r": 0, "g": 1, "b": 3 },
+          "midtones": { "r": 4, "g": 1, "b": 0 },
+          "highlights": { "r": 5, "g": 3, "b": 0 }
+        }
+      }
+    }
+  ]
+}

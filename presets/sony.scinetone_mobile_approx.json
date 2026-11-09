@@ -1,0 +1,99 @@
+{
+  "preset_id": "sony.scinetone_mobile_approx",
+  "camera_system": "sony",
+  "look_name": "S-Cinetone Mobile Approx",
+  "display_label": "S-Cinetone Mobile",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "late",
+  "monochrome": false,
+  "parent_preset_id": null,
+  "tags": [
+    "sony",
+    "balanced"
+  ],
+  "color_science": {
+    "color_shifts": "Cinematic midtone roll-off; pleasing portrait tones; controlled saturation.",
+    "dynamic_range": "Soft highlight shoulder; broadcast-safe feel.",
+    "tone_curve": "Cinema-inspired gentle S; midtone priority.",
+    "film_grain": "Optional light cinema grain.",
+    "skin_bias": "warm_cream",
+    "contrast_character": "balanced"
+  },
+  "default_sliders": {
+    "exposure": 0.0,
+    "contrast": 5,
+    "highlights": -25,
+    "shadows": 10,
+    "whites": -8,
+    "blacks": 5,
+    "temp": 6,
+    "tint": 2,
+    "vibrance": 5,
+    "saturation": -8,
+    "vignette": 5,
+    "grain_intensity": 12,
+    "grain_size": 22,
+    "hsl": {
+      "red": {
+        "h": 3,
+        "s": -5,
+        "l": 3
+      },
+      "orange": {
+        "h": 0,
+        "s": -3,
+        "l": 6
+      },
+      "yellow": {
+        "h": 0,
+        "s": -5,
+        "l": 0
+      },
+      "green": {
+        "h": -5,
+        "s": -15,
+        "l": -3
+      },
+      "aqua": {
+        "h": 5,
+        "s": -5,
+        "l": 0
+      },
+      "blue": {
+        "h": 0,
+        "s": -5,
+        "l": 0
+      },
+      "purple": {
+        "h": 0,
+        "s": -5,
+        "l": 0
+      },
+      "magenta": {
+        "h": 0,
+        "s": -3,
+        "l": 2
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": 0,
+        "g": 1,
+        "b": 3
+      },
+      "midtones": {
+        "r": 4,
+        "g": 1,
+        "b": 0
+      },
+      "highlights": {
+        "r": 5,
+        "g": 3,
+        "b": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "preset_id": "leica.cl_monochrom_approx",
+  "camera_system": "leica",
+  "look_name": "Leica CL / Vintage Monochrom Approx",
+  "display_label": "Leica CL / Vintage Monochrom",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "late",
+  "monochrome": true,
+  "parent_preset_id": null,
+  "tags": [
+    "leica",
+    "soft"
+  ],
+  "color_science": {
+    "color_shifts": "Deep tonal blacks; creamy midtone roll-off; soft highlight bloom.",
+    "dynamic_range": "Expanded midtones; gentle highlight shoulder.",
+    "tone_curve": "Creamy mid slope; deep black point without hard clip feel.",
+    "film_grain": "Fine vintage mono grain.",
+    "skin_bias": "n/a",
+    "contrast_character": "soft"
+  },
+  "default_sliders": {
+    "exposure": 0.05,
+    "contrast": 12,
+    "highlights": -28,
+    "shadows": 10,
+    "whites": -8,
+    "blacks": -25,
+    "temp": 0,
+    "tint": 0,
+    "vibrance": -100,
+    "saturation": -100,
+    "vignette": 20,
+    "grain_intensity": 25,
+    "grain_size": 32,
+    "hsl": {
+      "red": {
+        "h": 0,
+        "s": 0,
+        "l": 5
+      },
+      "orange": {
+        "h": 0,
+        "s": 0,
+        "l": 8
+      },
+      "yellow": {
+        "h": 0,
+        "s": 0,
+        "l": 5
+      },
+      "green": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "aqua": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "blue": {
+        "h": 0,
+        "s": 0,
+        "l": -8
+      },
+      "purple": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "magenta": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "midtones": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "highlights": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://looklite.app/schemas/preset.schema.json",
+  "title": "LookLitePreset",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "preset_id",
+    "camera_system",
+    "look_name",
+    "lut_asset_path",
+    "lut_stage",
+    "default_sliders",
+    "color_science"
+  ],
+  "properties": {
+    "preset_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(\\.[a-z0-9_]+)+$",
+      "description": "Stable id, e.g. fuji.classic_chrome_approx"
+    },
+    "camera_system": {
+      "type": "string",
+      "enum": ["fujifilm", "kodak", "leica", "hasselblad", "sony", "user"]
+    },
+    "look_name": { "type": "string", "minLength": 1 },
+    "display_label": { "type": "string" },
+    "parent_preset_id": {
+      "type": ["string", "null"],
+      "description": "Set when saved as User Recipe"
+    },
+    "version": { "type": "integer", "minimum": 1, "default": 1 },
+    "lut_asset_path": {
+      "type": "string",
+      "description": "Relative path to .cube or HaldCLUT PNG"
+    },
+    "lut_format": {
+      "type": "string",
+      "enum": ["cube_3d", "hald_png"],
+      "default": "cube_3d"
+    },
+    "lut_size": {
+      "type": "integer",
+      "enum": [17, 33, 64],
+      "default": 33
+    },
+    "lut_stage": {
+      "type": "string",
+      "enum": ["early", "late"],
+      "description": "early=camera profile before user tone; late=film print after tone/HSL"
+    },
+    "monochrome": { "type": "boolean", "default": false },
+    "default_sliders": { "$ref": "#/$defs/SliderSet" },
+    "slider_ranges": { "$ref": "#/$defs/SliderRanges" },
+    "color_science": { "$ref": "#/$defs/ColorScience" },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "SliderSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exposure",
+        "contrast",
+        "highlights",
+        "shadows",
+        "whites",
+        "blacks",
+        "temp",
+        "tint",
+        "vibrance",
+        "saturation",
+        "vignette",
+        "grain_intensity",
+        "grain_size",
+        "hsl",
+        "color_balance"
+      ],
+      "properties": {
+        "exposure": { "type": "number", "minimum": -5, "maximum": 5 },
+        "contrast": { "type": "number", "minimum": -100, "maximum": 100 },
+        "highlights": { "type": "number", "minimum": -100, "maximum": 100 },
+        "shadows": { "type": "number", "minimum": -100, "maximum": 100 },
+        "whites": { "type": "number", "minimum": -100, "maximum": 100 },
+        "blacks": { "type": "number", "minimum": -100, "maximum": 100 },
+        "temp": { "type": "number", "minimum": -100, "maximum": 100 },
+        "tint": { "type": "number", "minimum": -100, "maximum": 100 },
+        "vibrance": { "type": "number", "minimum": -100, "maximum": 100 },
+        "saturation": { "type": "number", "minimum": -100, "maximum": 100 },
+        "vignette": { "type": "number", "minimum": -100, "maximum": 100 },
+        "grain_intensity": { "type": "number", "minimum": 0, "maximum": 100 },
+        "grain_size": { "type": "number", "minimum": 0, "maximum": 100 },
+        "hsl": { "$ref": "#/$defs/HslBank" },
+        "color_balance": { "$ref": "#/$defs/ColorBalance" }
+      }
+    },
+    "HslBank": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "red": { "$ref": "#/$defs/HslTriplet" },
+        "orange": { "$ref": "#/$defs/HslTriplet" },
+        "yellow": { "$ref": "#/$defs/HslTriplet" },
+        "green": { "$ref": "#/$defs/HslTriplet" },
+        "aqua": { "$ref": "#/$defs/HslTriplet" },
+        "blue": { "$ref": "#/$defs/HslTriplet" },
+        "purple": { "$ref": "#/$defs/HslTriplet" },
+        "magenta": { "$ref": "#/$defs/HslTriplet" }
+      }
+    },
+    "HslTriplet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["h", "s", "l"],
+      "properties": {
+        "h": { "type": "number", "minimum": -100, "maximum": 100 },
+        "s": { "type": "number", "minimum": -100, "maximum": 100 },
+        "l": { "type": "number", "minimum": -100, "maximum": 100 }
+      }
+    },
+    "ColorBalance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["shadows", "midtones", "highlights"],
+      "properties": {
+        "shadows": { "$ref": "#/$defs/RgbBias" },
+        "midtones": { "$ref": "#/$defs/RgbBias" },
+        "highlights": { "$ref": "#/$defs/RgbBias" }
+      }
+    },
+    "RgbBias": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["r", "g", "b"],
+      "properties": {
+        "r": { "type": "number", "minimum": -100, "maximum": 100 },
+        "g": { "type": "number", "minimum": -100, "maximum": 100 },
+        "b": { "type": "number", "minimum": -100, "maximum": 100 }
+      }
+    },
+    "SliderRanges": {
+      "type": "object",
+      "description": "Optional per-preset clamp so fine-tune cannot destroy Base Look",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["min", "max"],
+        "properties": {
+          "min": { "type": "number" },
+          "max": { "type": "number" }
+        }
+      }
+    },
+    "ColorScience": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "color_shifts",
+        "dynamic_range",
+        "tone_curve",
+        "film_grain"
+      ],
+      "properties": {
+        "color_shifts": { "type": "string" },
+        "dynamic_range": { "type": "string" },
+        "tone_curve": { "type": "string" },
+        "film_grain": { "type": "string" },
+        "skin_bias": {
+          "type": "string",
+          "enum": ["neutral", "warm_cream", "cool", "desaturated", "n/a"]
+        },
+        "contrast_character": {
+          "type": "string",
+          "enum": [
+            "soft",
+            "balanced",
+            "hard_shadows",
+            "punchy",
+            "matte",
+            "micro_contrast"
+          ]
+        }
+      }
+    }
+  }
+}

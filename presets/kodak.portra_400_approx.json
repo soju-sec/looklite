@@ -1,0 +1,99 @@
+{
+  "preset_id": "kodak.portra_400_approx",
+  "camera_system": "kodak",
+  "look_name": "Portra 400 Approx",
+  "display_label": "Portra 400",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "late",
+  "monochrome": false,
+  "parent_preset_id": null,
+  "tags": [
+    "kodak",
+    "balanced"
+  ],
+  "color_science": {
+    "color_shifts": "Same warm cream family as 160 with slightly more midtone density.",
+    "dynamic_range": "Wide; forgiving; soft speculars.",
+    "tone_curve": "Gentle S with a touch more mid contrast than 160.",
+    "film_grain": "Visible fine grain; organic.",
+    "skin_bias": "warm_cream",
+    "contrast_character": "balanced"
+  },
+  "default_sliders": {
+    "exposure": 0.05,
+    "contrast": 5,
+    "highlights": -18,
+    "shadows": 12,
+    "whites": -5,
+    "blacks": 5,
+    "temp": 16,
+    "tint": 4,
+    "vibrance": -3,
+    "saturation": -5,
+    "vignette": 8,
+    "grain_intensity": 22,
+    "grain_size": 28,
+    "hsl": {
+      "red": {
+        "h": 6,
+        "s": -3,
+        "l": 3
+      },
+      "orange": {
+        "h": 4,
+        "s": -5,
+        "l": 8
+      },
+      "yellow": {
+        "h": 4,
+        "s": 4,
+        "l": 5
+      },
+      "green": {
+        "h": -5,
+        "s": -12,
+        "l": -2
+      },
+      "aqua": {
+        "h": 0,
+        "s": -8,
+        "l": 0
+      },
+      "blue": {
+        "h": 4,
+        "s": -10,
+        "l": 2
+      },
+      "purple": {
+        "h": 0,
+        "s": -5,
+        "l": 0
+      },
+      "magenta": {
+        "h": 4,
+        "s": -3,
+        "l": 3
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": 3,
+        "g": 1,
+        "b": 0
+      },
+      "midtones": {
+        "r": 7,
+        "g": 2,
+        "b": -2
+      },
+      "highlights": {
+        "r": 10,
+        "g": 5,
+        "b": -3
+      }
+    }
+  }
+}

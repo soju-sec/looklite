@@ -1,0 +1,99 @@
+{
+  "preset_id": "sony.in_approx",
+  "camera_system": "sony",
+  "look_name": "Creative Look IN Approx",
+  "display_label": "Creative Look IN",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "late",
+  "monochrome": false,
+  "parent_preset_id": null,
+  "tags": [
+    "sony",
+    "soft"
+  ],
+  "color_science": {
+    "color_shifts": "Instant-film: low contrast, pastel, soft whites.",
+    "dynamic_range": "Heavily compressed; dreamy highlights.",
+    "tone_curve": "Flat; lifted blacks and crushed top end softly.",
+    "film_grain": "Instant-print texture.",
+    "skin_bias": "warm_cream",
+    "contrast_character": "soft"
+  },
+  "default_sliders": {
+    "exposure": 0.2,
+    "contrast": -25,
+    "highlights": -30,
+    "shadows": 25,
+    "whites": -15,
+    "blacks": 25,
+    "temp": 12,
+    "tint": 5,
+    "vibrance": 5,
+    "saturation": -10,
+    "vignette": 15,
+    "grain_intensity": 30,
+    "grain_size": 40,
+    "hsl": {
+      "red": {
+        "h": 5,
+        "s": -8,
+        "l": 8
+      },
+      "orange": {
+        "h": 0,
+        "s": -10,
+        "l": 10
+      },
+      "yellow": {
+        "h": 0,
+        "s": -5,
+        "l": 8
+      },
+      "green": {
+        "h": 0,
+        "s": -15,
+        "l": 5
+      },
+      "aqua": {
+        "h": 0,
+        "s": -8,
+        "l": 5
+      },
+      "blue": {
+        "h": 5,
+        "s": -12,
+        "l": 8
+      },
+      "purple": {
+        "h": 0,
+        "s": -5,
+        "l": 5
+      },
+      "magenta": {
+        "h": 0,
+        "s": -5,
+        "l": 8
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": 4,
+        "g": 2,
+        "b": 2
+      },
+      "midtones": {
+        "r": 6,
+        "g": 3,
+        "b": 0
+      },
+      "highlights": {
+        "r": 8,
+        "g": 6,
+        "b": 2
+      }
+    }
+  }
+}

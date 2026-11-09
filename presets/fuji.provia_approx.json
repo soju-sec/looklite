@@ -1,0 +1,99 @@
+{
+  "preset_id": "fuji.provia_approx",
+  "camera_system": "fujifilm",
+  "look_name": "Provia / Standard Approx",
+  "display_label": "Provia / Standard",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "early",
+  "monochrome": false,
+  "parent_preset_id": null,
+  "tags": [
+    "fujifilm",
+    "balanced"
+  ],
+  "color_science": {
+    "color_shifts": "Near-neutral, true-to-life; mild green accuracy; balanced skin.",
+    "dynamic_range": "Wide, photographic; gentle highlight roll-off.",
+    "tone_curve": "Mild S; midtone linearity prioritized.",
+    "film_grain": "Minimal.",
+    "skin_bias": "neutral",
+    "contrast_character": "balanced"
+  },
+  "default_sliders": {
+    "exposure": 0.0,
+    "contrast": 8,
+    "highlights": -8,
+    "shadows": 5,
+    "whites": 0,
+    "blacks": -5,
+    "temp": 0,
+    "tint": 0,
+    "vibrance": 5,
+    "saturation": 0,
+    "vignette": 0,
+    "grain_intensity": 4,
+    "grain_size": 20,
+    "hsl": {
+      "red": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "orange": {
+        "h": 0,
+        "s": 2,
+        "l": 2
+      },
+      "yellow": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "green": {
+        "h": 0,
+        "s": 5,
+        "l": 0
+      },
+      "aqua": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "blue": {
+        "h": 0,
+        "s": 5,
+        "l": 0
+      },
+      "purple": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "magenta": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "midtones": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "highlights": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      }
+    }
+  }
+}

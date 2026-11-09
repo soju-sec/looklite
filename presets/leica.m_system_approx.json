@@ -1,0 +1,99 @@
+{
+  "preset_id": "leica.m_system_approx",
+  "camera_system": "leica",
+  "look_name": "Leica M System Approx",
+  "display_label": "Leica M System",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "early",
+  "monochrome": false,
+  "parent_preset_id": null,
+  "tags": [
+    "leica",
+    "micro_contrast"
+  ],
+  "color_science": {
+    "color_shifts": "Rich but controlled; high micro-contrast; optical 'separation' feel.",
+    "dynamic_range": "High DR with crisp highlight edge.",
+    "tone_curve": "Strong local contrast; deep but open shadows.",
+    "film_grain": "Digital-clean; optional micro grain only.",
+    "skin_bias": "neutral",
+    "contrast_character": "micro_contrast"
+  },
+  "default_sliders": {
+    "exposure": 0.0,
+    "contrast": 22,
+    "highlights": -12,
+    "shadows": 8,
+    "whites": 8,
+    "blacks": -15,
+    "temp": 2,
+    "tint": 0,
+    "vibrance": 5,
+    "saturation": -5,
+    "vignette": 15,
+    "grain_intensity": 8,
+    "grain_size": 20,
+    "hsl": {
+      "red": {
+        "h": 0,
+        "s": 5,
+        "l": 0
+      },
+      "orange": {
+        "h": 0,
+        "s": 0,
+        "l": 2
+      },
+      "yellow": {
+        "h": 0,
+        "s": -5,
+        "l": 0
+      },
+      "green": {
+        "h": -5,
+        "s": -10,
+        "l": -3
+      },
+      "aqua": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "blue": {
+        "h": -5,
+        "s": 8,
+        "l": -3
+      },
+      "purple": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      },
+      "magenta": {
+        "h": 0,
+        "s": 0,
+        "l": 0
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": 0,
+        "g": 0,
+        "b": 2
+      },
+      "midtones": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "highlights": {
+        "r": 2,
+        "g": 1,
+        "b": 0
+      }
+    }
+  }
+}

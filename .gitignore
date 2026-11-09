@@ -1,0 +1,12 @@
+tools/jadx/
+tools/jadx.zip
+tools/jre.tar.gz
+tools/jdk-*/
+tools/xdg-*/
+tools/jadx-home/
+targets/vsco489_extract/
+targets/vsco489_jadx/
+targets/VSCO_489.apk
+*.apk
+.DS_Store
+node_modules/

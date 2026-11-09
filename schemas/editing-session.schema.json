@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://looklite.app/schemas/editing-session.schema.json",
+  "title": "LookLiteEditingSession",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "session_id",
+    "original_image_uri",
+    "active_preset_id",
+    "base_sliders",
+    "user_deltas",
+    "composed_sliders",
+    "preview"
+  ],
+  "properties": {
+    "session_id": { "type": "string", "format": "uuid" },
+    "original_image_uri": { "type": "string" },
+    "working_color_space": {
+      "type": "string",
+      "enum": ["srgb", "display_p3"],
+      "default": "srgb"
+    },
+    "active_preset_id": { "type": ["string", "null"] },
+    "lut_asset_path": { "type": ["string", "null"] },
+    "lut_stage": {
+      "type": "string",
+      "enum": ["early", "late"],
+      "default": "late"
+    },
+    "base_sliders": {
+      "$ref": "preset.schema.json#/$defs/SliderSet",
+      "description": "Copy of preset.default_sliders at apply time"
+    },
+    "user_deltas": {
+      "$ref": "preset.schema.json#/$defs/SliderSet",
+      "description": "User offsets; zeroed on Reset Adjust / new preset"
+    },
+    "composed_sliders": {
+      "$ref": "preset.schema.json#/$defs/SliderSet",
+      "description": "base + deltas after clamp to slider_ranges"
+    },
+    "keep_adjustments_on_preset_switch": {
+      "type": "boolean",
+      "default": false
+    },
+    "preview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["showing_before", "zoom", "pan"],
+      "properties": {
+        "showing_before": { "type": "boolean" },
+        "zoom": { "type": "number", "minimum": 1, "maximum": 8 },
+        "pan": {
+          "type": "object",
+          "required": ["x", "y"],
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          }
+        },
+        "fbo_width": { "type": "integer", "minimum": 1 },
+        "fbo_height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "history": {
+      "type": "array",
+      "description": "Optional undo snapshots of user_deltas only",
+      "items": {
+        "type": "object",
+        "required": ["ts", "user_deltas"],
+        "properties": {
+          "ts": { "type": "string", "format": "date-time" },
+          "user_deltas": {
+            "$ref": "preset.schema.json#/$defs/SliderSet"
+          }
+        }
+      }
+    }
+  }
+}

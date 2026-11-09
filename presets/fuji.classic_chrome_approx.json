@@ -1,0 +1,99 @@
+{
+  "preset_id": "fuji.classic_chrome_approx",
+  "camera_system": "fujifilm",
+  "look_name": "Classic Chrome Approx",
+  "display_label": "Classic Chrome",
+  "version": 1,
+  "lut_asset_path": "luts/identity_33.cube",
+  "lut_format": "cube_3d",
+  "lut_size": 33,
+  "lut_stage": "late",
+  "monochrome": false,
+  "parent_preset_id": null,
+  "tags": [
+    "fujifilm",
+    "hard_shadows"
+  ],
+  "color_science": {
+    "color_shifts": "Muted overall chroma; blues pushed deep/cyan-leaning for skies; greens slightly desaturated toward olive; reds restrained.",
+    "dynamic_range": "Protect midtones; crush shadow toe slightly for documentary edge.",
+    "tone_curve": "Harder contrast in lower third; restrained highlight shoulder.",
+    "film_grain": "Fine, even grain; subtle in midtones.",
+    "skin_bias": "desaturated",
+    "contrast_character": "hard_shadows"
+  },
+  "default_sliders": {
+    "exposure": 0.0,
+    "contrast": 18,
+    "highlights": -15,
+    "shadows": -10,
+    "whites": -5,
+    "blacks": -20,
+    "temp": -5,
+    "tint": 0,
+    "vibrance": -10,
+    "saturation": -18,
+    "vignette": 8,
+    "grain_intensity": 12,
+    "grain_size": 25,
+    "hsl": {
+      "red": {
+        "h": -5,
+        "s": -12,
+        "l": -2
+      },
+      "orange": {
+        "h": 0,
+        "s": -8,
+        "l": 0
+      },
+      "yellow": {
+        "h": 5,
+        "s": -10,
+        "l": 0
+      },
+      "green": {
+        "h": -8,
+        "s": -20,
+        "l": -5
+      },
+      "aqua": {
+        "h": 5,
+        "s": -5,
+        "l": 0
+      },
+      "blue": {
+        "h": -12,
+        "s": 15,
+        "l": -8
+      },
+      "purple": {
+        "h": 0,
+        "s": -10,
+        "l": 0
+      },
+      "magenta": {
+        "h": 0,
+        "s": -8,
+        "l": 0
+      }
+    },
+    "color_balance": {
+      "shadows": {
+        "r": -2,
+        "g": 0,
+        "b": 4
+      },
+      "midtones": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+      },
+      "highlights": {
+        "r": 2,
+        "g": 1,
+        "b": -2
+      }
+    }
+  }
+}
