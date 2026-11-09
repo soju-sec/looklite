@@ -1,0 +1,71 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'app.looklite.android'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'app.looklite.android'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0'
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            def ksFile = file("${project.rootDir}/android/looklite.keystore")
+            if (ksFile.exists()) {
+                storeFile ksFile
+                storePassword "looklite"
+                keyAlias "looklite"
+                keyPassword "looklite"
+            } else {
+                // Fallback to debug signature if keystore is omitted
+                initWith(signingConfigs.debug)
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "LookLite-${variant.buildType.name}.apk"
+        }
+    }
+
+    sourceSets {
+        main {
+            assets.srcDirs = ['src/main/assets']
+        }
+    }
+}
+
+dependencies {
+    // Zero bloated third-party dependencies: Pure Android platform APIs
+}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0d0e12" />
+    <title>LookLite</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- Top Navigation Header -->
+      <header class="app-header">
+        <div class="header-brand">
+          <span class="logo-text">LookLite</span>
+          <span id="preset-badge" class="preset-badge">Fuji Classic Chrome</span>
+        </div>
+        <div class="header-actions">
+          <label class="btn-action file-btn" title="Open Image">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <span>Open</span>
+            <input id="file" type="file" accept="image/*" hidden />
+          </label>
+          <button type="button" id="reset" class="btn-action" title="Reset fine-tuning">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+            <span>Reset</span>
+          </button>
+          <button type="button" id="export" class="btn-action btn-accent" title="Save / Export">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Save</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Canvas Viewport -->
+      <main class="canvas-viewport" id="viewport">
+        <canvas id="gl"></canvas>
+        <div id="before-badge" class="before-badge">ORIGINAL (BEFORE)</div>
+        <div id="canvas-hint" class="canvas-hint">Hold on image to compare</div>
+        <p id="status" class="status-overlay">Ready</p>
+      </main>
+
+      <!-- Bottom Control Dock -->
+      <footer class="control-dock">
+        <!-- Preset Selector Mode -->
+        <section id="panel-presets" class="panel-section active">
+          <!-- Brand Carousel -->
+          <div class="carousel-brands" id="brands"></div>
+          <!-- Preset Looks Cards -->
+          <div class="carousel-presets" id="presets"></div>
+        </section>
+
+        <!-- Fine-Tune Sliders Mode -->
+        <section id="panel-adjust" class="panel-section">
+          <!-- Adjust Subtabs -->
+          <div class="adjust-subtabs" id="tabs">
+            <button type="button" data-tab="light" class="subtab-btn active">Light</button>
+            <button type="button" data-tab="color" class="subtab-btn">Color</button>
+            <button type="button" data-tab="effects" class="subtab-btn">Grain / FX</button>
+          </div>
+          <!-- Sliders Container -->
+          <div class="sliders-deck" id="sliders"></div>
+        </section>
+
+        <!-- Dock Mode Switcher Bar -->
+        <nav class="dock-bar">
+          <button type="button" id="mode-presets" class="dock-tab active">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="20" rx="3"/>
+              <path d="M7 2v20M17 2v20M2 12h20"/>
+            </svg>
+            <span>Presets</span>
+          </button>
+          <button type="button" id="mode-adjust" class="dock-tab">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="4" y1="21" x2="4" y2="14"/>
+              <line x1="4" y1="10" x2="4" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12" y2="3"/>
+              <line x1="20" y1="21" x2="20" y2="16"/>
+              <line x1="20" y1="12" x2="20" y2="3"/>
+              <line x1="1" y1="14" x2="7" y2="14"/>
+              <line x1="9" y1="8" x2="15" y2="8"/>
+              <line x1="17" y1="16" x2="23" y2="16"/>
+            </svg>
+            <span>Fine-Tune</span>
+          </button>
+          <button type="button" id="before" class="dock-tab hold-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 2a10 10 0 0 1 0 20Z" fill="currentColor"/>
+            </svg>
+            <span>Hold Before</span>
+          </button>
+        </nav>
+      </footer>
+    </div>
+
+    <!-- Standalone bundled script -->
+    <script src="./bundle.js"></script>
+  </body>
+</html>

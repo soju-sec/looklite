@@ -7,6 +7,9 @@ tools/jadx-home/
 targets/vsco489_extract/
 targets/vsco489_jadx/
 targets/VSCO_489.apk
+.gradle/
+build/
+app/build/
 *.apk
 *.idsig
 android/build/
