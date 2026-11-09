@@ -14,7 +14,6 @@ app/build/
 *.idsig
 android/build/
 android/gen/
-android/*.keystore
 web/bundle.js
 web/presets-bundle.js
 .DS_Store

@@ -18,16 +18,10 @@ android {
 
     signingConfigs {
         release {
-            def ksFile = file("${project.rootDir}/android/looklite.keystore")
-            if (ksFile.exists()) {
-                storeFile ksFile
-                storePassword "looklite"
-                keyAlias "looklite"
-                keyPassword "looklite"
-            } else {
-                // Fallback to debug signature if keystore is omitted
-                initWith(signingConfigs.debug)
-            }
+            storeFile file("${project.rootDir}/android/looklite.keystore")
+            storePassword "looklite"
+            keyAlias "looklite"
+            keyPassword "looklite"
         }
     }
 
