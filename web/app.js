@@ -2,6 +2,7 @@ import { composeSliders, zeroSlidersLike } from "../core/compose.js";
 import { parseCube, cubeToRgb8, identityCube } from "../core/cube.js";
 import { VERT, FRAG } from "./shaders.js";
 import { PRESETS } from "./presets-data.js";
+import { getLutUint8Array, LUT_SIZE } from "./luts-bundle.js";
 
 const BRANDS = ["fujifilm", "kodak", "leica", "hasselblad", "sony"];
 
@@ -158,8 +159,7 @@ function uploadImageFromCanvas(srcCanvas) {
   draw();
 }
 
-function uploadLut(cube) {
-  const { size, rgb8 } = cubeToRgb8(cube);
+function uploadLutFromUint8Array(rgb8, size = 17) {
   lutSize = size;
   if (!lutTex) lutTex = gl.createTexture();
   gl.activeTexture(gl.TEXTURE1);
@@ -174,6 +174,11 @@ function uploadLut(cube) {
     gl.TEXTURE_3D, 0, gl.RGB8, size, size, size, 0,
     gl.RGB, gl.UNSIGNED_BYTE, rgb8,
   );
+}
+
+function uploadLut(cube) {
+  const { size, rgb8 } = cubeToRgb8(cube);
+  uploadLutFromUint8Array(rgb8, size);
 }
 
 function fitCanvas() {
@@ -196,12 +201,16 @@ function fitCanvas() {
   gl.viewport(0, 0, el.canvas.width, el.canvas.height);
 }
 
-function hslVec(triplet) {
-  return triplet ? new Float32Array(triplet) : new Float32Array([0, 0, 0]);
+function hslVec(val) {
+  if (!val) return new Float32Array([0, 0, 0]);
+  if (Array.isArray(val)) return new Float32Array(val);
+  return new Float32Array([val.h || 0, val.s || 0, val.l || 0]);
 }
 
-function balVec(pair) {
-  return pair ? new Float32Array([pair[0], pair[1], 0]) : new Float32Array([0, 0, 0]);
+function balVec(val) {
+  if (!val) return new Float32Array([0, 0, 0]);
+  if (Array.isArray(val)) return new Float32Array(val);
+  return new Float32Array([val.r || 0, val.g || 0, val.b || 0]);
 }
 
 function draw() {
@@ -258,6 +267,15 @@ function applyPreset(preset) {
   state.active = preset;
   state.base = structuredClone(preset.default_sliders);
   state.deltas = zeroSlidersLike(state.base);
+
+  // Upload the specific 17^3 Color Cube 3D LUT for this camera look
+  const lutBytes = getLutUint8Array(preset.preset_id);
+  if (lutBytes) {
+    uploadLutFromUint8Array(lutBytes, LUT_SIZE);
+  } else {
+    uploadLut(identityCube(17));
+  }
+
   recompose();
   renderPresetChips();
   renderSliders();
