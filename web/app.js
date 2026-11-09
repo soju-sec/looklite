@@ -4,7 +4,7 @@ import { VERT, FRAG } from "./shaders.js";
 import { PRESETS } from "./presets-data.js";
 import { getLutUint8Array, LUT_SIZE } from "./luts-bundle.js";
 
-const BRANDS = ["fujifilm", "kodak", "leica", "hasselblad", "sony"];
+const BRANDS = ["all", "fujifilm", "kodak", "leica", "ilford", "vintage"];
 
 const LIGHT_KEYS = [
   ["exposure", "Exposure", -3, 3, 0.05],
@@ -28,30 +28,51 @@ const FX_KEYS = [
   ["grain_size", "Grain Size", 0, 100, 1],
 ];
 
-// Aesthetic swatch mappings for realistic camera look cards
 const PRESET_SWATCHES = {
-  "fuji.classic_chrome_approx": "linear-gradient(135deg, #2b394a, #9c8470)",
-  "fuji.velvia_50_approx": "linear-gradient(135deg, #1b5e20, #e91e63)",
-  "fuji.provia_approx": "linear-gradient(135deg, #455a64, #90a4ae)",
-  "fuji.astia_approx": "linear-gradient(135deg, #d48b72, #e0a996)",
-  "fuji.acros_approx": "linear-gradient(135deg, #111111, #888888)",
-  "kodak.portra_160_approx": "linear-gradient(135deg, #e4be9e, #c28864)",
-  "kodak.portra_400_approx": "linear-gradient(135deg, #dfa97b, #a66a46)",
-  "kodak.gold_200_approx": "linear-gradient(135deg, #e5a93b, #b3541e)",
-  "kodak.ektar_100_approx": "linear-gradient(135deg, #0d47a1, #b71c1c)",
-  "kodak.trix_400_approx": "linear-gradient(135deg, #050505, #555555)",
-  "leica.m_system_approx": "linear-gradient(135deg, #212121, #b0bec5)",
-  "leica.cl_monochrom_approx": "linear-gradient(135deg, #141414, #757575)",
-  "leica.street_look_approx": "linear-gradient(135deg, #37474f, #6d4c41)",
-  "hasselblad.hncs_approx": "linear-gradient(135deg, #37474f, #eceff1)",
-  "sony.fl_approx": "linear-gradient(135deg, #1f2d3d, #8d6e63)",
-  "sony.in_approx": "linear-gradient(135deg, #546e7a, #cfd8dc)",
-  "sony.scinetone_mobile_approx": "linear-gradient(135deg, #263238, #ff8a65)",
+  // Fujifilm
+  "fuji.classic_chrome": "linear-gradient(135deg, #2c3848, #9b8270)",
+  "fuji.classic_neg": "linear-gradient(135deg, #324338, #b86242)",
+  "fuji.velvia_50": "linear-gradient(135deg, #1b5e20, #d81b60)",
+  "fuji.provia_100f": "linear-gradient(135deg, #37474f, #78909c)",
+  "fuji.astia": "linear-gradient(135deg, #d38b72, #dfa996)",
+  "fuji.reala_ace": "linear-gradient(135deg, #2e7d32, #fbc02d)",
+  "fuji.eterna": "linear-gradient(135deg, #455a64, #a1887f)",
+  "fuji.nostalgic_neg": "linear-gradient(135deg, #795548, #d7ccc8)",
+  "fuji.acros": "linear-gradient(135deg, #111111, #888888)",
+  "fuji.bleach_bypass": "linear-gradient(135deg, #212121, #cfd8dc)",
+
+  // Kodak
+  "kodak.portra_400": "linear-gradient(135deg, #dfa97b, #a66a46)",
+  "kodak.portra_160": "linear-gradient(135deg, #e4be9e, #c28864)",
+  "kodak.portra_800": "linear-gradient(135deg, #e67e22, #995010)",
+  "kodak.gold_200": "linear-gradient(135deg, #f39c12, #d35400)",
+  "kodak.ektar_100": "linear-gradient(135deg, #0d47a1, #b71c1c)",
+  "kodak.kodachrome_64": "linear-gradient(135deg, #e65100, #ffb300)",
+  "kodak.cinestill_800t": "linear-gradient(135deg, #00838f, #e91e63)",
+  "kodak.vision3_500t": "linear-gradient(135deg, #1a237e, #ff6f00)",
+  "kodak.trix_400": "linear-gradient(135deg, #050505, #555555)",
+
+  // Leica
+  "leica.classic": "linear-gradient(135deg, #263238, #b0bec5)",
+  "leica.natural": "linear-gradient(135deg, #37474f, #eceff1)",
+  "leica.vivid": "linear-gradient(135deg, #c2185b, #0097a7)",
+  "leica.teal": "linear-gradient(135deg, #004d40, #ff8a65)",
+  "leica.monochrom": "linear-gradient(135deg, #141414, #757575)",
+  "leica.greg_williams": "linear-gradient(135deg, #0d0d0d, #bdbdbd)",
+
+  // Ilford
+  "ilford.hp5_plus": "linear-gradient(135deg, #1c1c1c, #9e9e9e)",
+
+  // Vintage & Specialty
+  "vintage.disposable_400": "linear-gradient(135deg, #5d4037, #ffcc80)",
+  "vintage.polaroid_color": "linear-gradient(135deg, #455a64, #b0bec5)",
+  "vintage.golden_light": "linear-gradient(135deg, #e65100, #ffe082)",
+  "vintage.street_car": "linear-gradient(135deg, #006064, #bf360c)",
 };
 
 const state = {
   presets: PRESETS,
-  brand: "fujifilm",
+  brand: "all",
   active: null,
   base: null,
   deltas: null,
@@ -268,7 +289,7 @@ function applyPreset(preset) {
   state.base = structuredClone(preset.default_sliders);
   state.deltas = zeroSlidersLike(state.base);
 
-  // Upload the specific 17^3 Color Cube 3D LUT for this camera look
+  // Upload the specific 17^3 Color Cube 3D LUT for this look
   const lutBytes = getLutUint8Array(preset.preset_id);
   if (lutBytes) {
     uploadLutFromUint8Array(lutBytes, LUT_SIZE);
@@ -286,14 +307,12 @@ function renderBrands() {
   for (const b of BRANDS) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.textContent = b;
+    btn.textContent = b.toUpperCase();
     btn.className = `brand-chip ${b === state.brand ? "active" : ""}`;
     btn.onclick = () => {
       state.brand = b;
       renderBrands();
       renderPresetChips();
-      const firstInBrand = state.presets.find((p) => p.camera_system === b);
-      if (firstInBrand) applyPreset(firstInBrand);
     };
     el.brands.appendChild(btn);
   }
@@ -301,14 +320,17 @@ function renderBrands() {
 
 function renderPresetChips() {
   el.presets.innerHTML = "";
-  const list = state.presets.filter((p) => p.camera_system === state.brand);
+  const list = state.brand === "all"
+    ? state.presets
+    : state.presets.filter((p) => p.camera_system === state.brand);
+
   for (const p of list) {
     const card = document.createElement("div");
     card.className = `preset-card ${state.active?.preset_id === p.preset_id ? "active" : ""}`;
     
     const swatch = document.createElement("div");
     swatch.className = "preset-swatch";
-    swatch.style.background = PRESET_SWATCHES[p.preset_id] || "linear-gradient(135deg, #444, #777)";
+    swatch.style.background = PRESET_SWATCHES[p.preset_id] || "linear-gradient(135deg, #37474f, #78909c)";
     
     const name = document.createElement("span");
     name.className = "preset-card-name";
@@ -316,7 +338,7 @@ function renderPresetChips() {
     
     const sub = document.createElement("span");
     sub.className = "preset-card-sub";
-    sub.textContent = `${p.lut_stage} LUT`;
+    sub.textContent = p.tag || p.camera_system.toUpperCase();
 
     card.appendChild(swatch);
     card.appendChild(name);
@@ -338,6 +360,11 @@ function renderSliders() {
     lbl.className = "slider-label";
     lbl.textContent = label;
 
+    const minusBtn = document.createElement("button");
+    minusBtn.type = "button";
+    minusBtn.className = "slider-step-btn";
+    minusBtn.textContent = "−";
+
     const wrap = document.createElement("div");
     wrap.className = "slider-control-wrap";
 
@@ -349,16 +376,26 @@ function renderSliders() {
     input.step = String(step);
     input.value = String(abs);
 
+    const plusBtn = document.createElement("button");
+    plusBtn.type = "button";
+    plusBtn.className = "slider-step-btn";
+    plusBtn.textContent = "+";
+
     const val = document.createElement("span");
     val.className = "slider-val";
     val.textContent = Number(abs).toFixed(step < 1 ? 2 : 0);
 
-    input.oninput = () => {
-      const absolute = Number(input.value);
-      state.deltas[key] = absolute - (state.base[key] ?? 0);
+    function updateValue(newVal) {
+      const clamped = Math.min(max, Math.max(min, newVal));
+      input.value = String(clamped);
+      state.deltas[key] = clamped - (state.base[key] ?? 0);
       recompose();
-      val.textContent = absolute.toFixed(step < 1 ? 2 : 0);
-    };
+      val.textContent = clamped.toFixed(step < 1 ? 2 : 0);
+    }
+
+    input.oninput = () => updateValue(Number(input.value));
+    minusBtn.onclick = () => updateValue(Number(input.value) - step);
+    plusBtn.onclick = () => updateValue(Number(input.value) + step);
 
     // Double tap to reset slider to default preset value
     input.ondblclick = () => {
@@ -370,7 +407,9 @@ function renderSliders() {
 
     wrap.appendChild(input);
     row.appendChild(lbl);
+    row.appendChild(minusBtn);
     row.appendChild(wrap);
+    row.appendChild(plusBtn);
     row.appendChild(val);
     el.sliders.appendChild(row);
   }
@@ -444,9 +483,8 @@ el.file.onchange = async () => {
 // Export / Save full resolution image
 el.export.onclick = () => {
   if (!originalSourceCanvas) return;
-  el.status.textContent = "Rendering full-resolution export…";
+  el.status.textContent = "Rendering export…";
   
-  // Set canvas to full source image resolution for 1:1 render
   const origW = el.canvas.width;
   const origH = el.canvas.height;
   el.canvas.width = originalSourceCanvas.width;
@@ -456,7 +494,6 @@ el.export.onclick = () => {
 
   const dataUrl = el.canvas.toDataURL("image/jpeg", 0.95);
 
-  // Restore preview resolution
   el.canvas.width = origW;
   el.canvas.height = origH;
   gl.viewport(0, 0, origW, origH);
@@ -464,14 +501,12 @@ el.export.onclick = () => {
 
   const filename = `looklite_${state.active?.look_name.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${Date.now()}.jpg`;
 
-  // Bridge to Android native host if present
   if (window.LookLiteNative && typeof window.LookLiteNative.saveImage === "function") {
     window.LookLiteNative.saveImage(dataUrl, filename);
     el.status.textContent = "Saved to Gallery!";
     return;
   }
 
-  // Web fallback: download anchor
   const a = document.createElement("a");
   a.href = dataUrl;
   a.download = filename;
@@ -486,14 +521,12 @@ window.addEventListener("resize", () => {
   draw();
 });
 
-// Demo initial photographic image: realistic golden hour landscape
 function makeDemoImage() {
   const c = document.createElement("canvas");
   c.width = 1200;
   c.height = 900;
   const ctx = c.getContext("2d");
   
-  // Sky golden hour gradient
   const sky = ctx.createLinearGradient(0, 0, 0, 500);
   sky.addColorStop(0, "#2b4c6f");
   sky.addColorStop(0.4, "#857265");
@@ -502,7 +535,6 @@ function makeDemoImage() {
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, 1200, 500);
 
-  // Distant mountain
   ctx.fillStyle = "#3a3845";
   ctx.beginPath();
   ctx.moveTo(0, 500);
@@ -513,7 +545,6 @@ function makeDemoImage() {
   ctx.closePath();
   ctx.fill();
 
-  // Lake reflection
   const lake = ctx.createLinearGradient(0, 500, 0, 750);
   lake.addColorStop(0, "#4a4237");
   lake.addColorStop(0.5, "#30383b");
@@ -521,7 +552,6 @@ function makeDemoImage() {
   ctx.fillStyle = lake;
   ctx.fillRect(0, 500, 1200, 250);
 
-  // Foreground foliage
   ctx.fillStyle = "#2d3827";
   ctx.fillRect(0, 750, 1200, 150);
   
@@ -529,11 +559,10 @@ function makeDemoImage() {
 }
 
 async function main() {
-  // Always initialize with 17^3 identity cube
   uploadLut(identityCube(17));
   uploadImageFromCanvas(makeDemoImage());
   renderBrands();
-  const first = state.presets.find((p) => p.camera_system === state.brand) || state.presets[0];
+  const first = state.presets[0];
   applyPreset(first);
   setMode("presets");
   el.status.textContent = "Ready · tap preset or open photo";

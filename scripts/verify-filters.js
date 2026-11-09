@@ -35,7 +35,7 @@ for (const p of PRESETS) {
   const skyG = bytes[skyIdx + 1];
   const skyB = bytes[skyIdx + 2];
 
-  console.log(`[PASS] ${p.preset_id.padEnd(30)} | Stage: ${p.lut_stage.padEnd(5)} | Mid Gray: (${r}, ${g}, ${b}) | Sky: (${skyR}, ${skyG}, ${skyB})`);
+  console.log(`[PASS] ${p.preset_id.padEnd(28)} | ${p.camera_system.toUpperCase().padEnd(9)} | Mid Gray: (${String(r).padStart(3)}, ${String(g).padStart(3)}, ${String(b).padStart(3)}) | Sky: (${String(skyR).padStart(3)}, ${String(skyG).padStart(3)}, ${String(skyB).padStart(3)})`);
   passed++;
 }
 

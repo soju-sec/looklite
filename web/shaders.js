@@ -165,17 +165,19 @@ vec3 vignette(vec3 c, float amount) {
   return c * v;
 }
 
-float hash(vec2 p) {
-  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+float filmGrainNoise(vec2 uv) {
+  vec2 p = uv * vec2(12.9898, 78.233);
+  return fract(sin(dot(p, vec2(1.0, 1.0))) * 43758.5453123) * 2.0 - 1.0;
 }
 
 vec3 filmGrain(vec3 c, float intensity, float size) {
-  float s = max(size, 1.0);
-  vec2 gUv = floor(vUv * uResolution / s);
-  float n = hash(gUv) - 0.5;
+  if (intensity <= 0.0) return c;
+  float scale = max(1.0, size * 0.08);
+  vec2 grainCoord = (vUv * uResolution) / scale;
+  float n = filmGrainNoise(grainCoord);
   float l = lum(c);
-  float shade = mix(1.4, 0.6, l);
-  return clamp(c + n * (intensity / 100.0) * 0.35 * shade, 0.0, 1.0);
+  float grainWeight = clamp(4.0 * l * (1.0 - l), 0.0, 1.0);
+  return clamp(c + n * (intensity / 100.0) * 0.12 * grainWeight, 0.0, 1.0);
 }
 
 vec3 toneBlock(vec3 c) {

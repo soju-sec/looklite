@@ -1,16 +1,17 @@
 :root {
-  --bg-dark: #0a0b0e;
-  --panel-bg: #13151b;
-  --surface-bg: #1c1f28;
-  --surface-active: #252a36;
-  --border-line: #272c3b;
-  --border-active: #c5a472;
-  --text-main: #f0f2f7;
-  --text-muted: #8c95a6;
-  --text-dim: #5c6475;
-  --accent-gold: #c5a472;
-  --accent-gold-glow: rgba(197, 164, 114, 0.25);
-  --danger: #e06c75;
+  --bg-deep: #090a0d;
+  --panel-bg: #111319;
+  --surface-card: #181b24;
+  --surface-hover: #222633;
+  --surface-active: #2a3040;
+  --border-subtle: #232735;
+  --border-focus: #cba873;
+  --text-primary: #f2f4f8;
+  --text-secondary: #9aa3b5;
+  --text-muted: #616a7d;
+  --accent-gold: #cba873;
+  --accent-glow: rgba(203, 168, 115, 0.22);
+  --accent-teal: #4db6ac;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
 }
@@ -28,10 +29,11 @@ body {
   width: 100%;
   height: 100%;
   height: 100dvh;
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 .app-shell {
@@ -42,15 +44,15 @@ body {
   height: 100dvh;
 }
 
-/* App Header */
+/* Snapseed Minimal Top Header */
 .app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: calc(8px + var(--safe-top)) 14px 8px 14px;
+  padding: calc(10px + var(--safe-top)) 16px 10px 16px;
   background: var(--panel-bg);
-  border-bottom: 1px solid var(--border-line);
-  z-index: 10;
+  border-bottom: 1px solid var(--border-subtle);
+  z-index: 20;
   flex-shrink: 0;
 }
 
@@ -61,17 +63,17 @@ body {
 }
 
 .logo-text {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .preset-badge {
   font-size: 11px;
   color: var(--accent-gold);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
   font-weight: 500;
 }
 
@@ -81,45 +83,48 @@ body {
   gap: 8px;
 }
 
+/* Structured touch-target buttons (Snapseed Minimal style) */
 .btn-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 44px;
+  min-height: 40px;
   min-width: 44px;
   padding: 8px 12px;
-  background: var(--surface-bg);
-  color: var(--text-main);
-  border: 1px solid var(--border-line);
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: all 0.15s ease;
 }
 
 .btn-action:active {
   background: var(--surface-active);
   border-color: var(--accent-gold);
+  transform: scale(0.97);
 }
 
 .btn-accent {
   background: var(--accent-gold);
-  color: #0b0c10;
+  color: #090a0d;
   border-color: var(--accent-gold);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .btn-accent:active {
-  filter: brightness(0.9);
+  filter: brightness(0.92);
 }
 
-/* Viewport Canvas */
+/* Immersive Viewport Canvas */
 .canvas-viewport {
   position: relative;
   flex: 1;
-  min-height: 200px;
+  min-height: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -140,46 +145,51 @@ body {
   top: 14px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(10, 11, 14, 0.85);
-  backdrop-filter: blur(8px);
+  background: rgba(14, 16, 22, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: var(--accent-gold);
   border: 1px solid var(--accent-gold);
-  padding: 5px 14px;
-  border-radius: 20px;
+  padding: 6px 16px;
+  border-radius: 24px;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.15s ease;
-  z-index: 5;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 10;
 }
 
 .before-badge.visible {
   opacity: 1;
+  transform: translateX(-50%) translateY(2px);
 }
 
 .canvas-hint {
   position: absolute;
-  bottom: 10px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
-  color: var(--text-dim);
+  color: var(--text-muted);
   font-size: 11px;
-  background: rgba(10, 11, 14, 0.6);
-  padding: 4px 10px;
-  border-radius: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  background: rgba(14, 16, 22, 0.7);
+  backdrop-filter: blur(8px);
+  padding: 5px 12px;
+  border-radius: 16px;
   pointer-events: none;
-  opacity: 0.8;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .status-overlay {
   position: absolute;
-  bottom: 8px;
-  left: 10px;
+  bottom: 10px;
+  left: 12px;
   margin: 0;
   font-size: 11px;
-  color: var(--text-dim);
+  color: var(--text-muted);
   pointer-events: none;
 }
 
@@ -188,27 +198,28 @@ body {
   display: flex;
   flex-direction: column;
   background: var(--panel-bg);
-  border-top: 1px solid var(--border-line);
+  border-top: 1px solid var(--border-subtle);
   flex-shrink: 0;
   padding-bottom: var(--safe-bottom);
+  z-index: 15;
 }
 
 .panel-section {
   display: none;
   flex-direction: column;
-  padding: 10px 0 6px 0;
+  padding: 12px 0 6px 0;
 }
 
 .panel-section.active {
   display: flex;
 }
 
-/* Brand Carousel */
+/* Category Filter Bar */
 .carousel-brands {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding: 0 14px 8px 14px;
+  padding: 0 16px 10px 16px;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -218,15 +229,15 @@ body {
 }
 
 .brand-chip {
-  min-height: 44px;
-  padding: 8px 16px;
-  background: var(--surface-bg);
-  border: 1px solid var(--border-line);
-  border-radius: 22px;
-  color: var(--text-muted);
-  font-size: 12px;
+  min-height: 38px;
+  padding: 6px 16px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 19px;
+  color: var(--text-secondary);
+  font-size: 11.5px;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
   cursor: pointer;
@@ -238,15 +249,15 @@ body {
   background: var(--surface-active);
   color: var(--accent-gold);
   border-color: var(--accent-gold);
-  box-shadow: 0 0 10px var(--accent-gold-glow);
+  box-shadow: 0 0 12px var(--accent-glow);
 }
 
 /* Preset Looks Carousel */
 .carousel-presets {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   overflow-x: auto;
-  padding: 2px 14px 10px 14px;
+  padding: 2px 16px 10px 16px;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -256,41 +267,47 @@ body {
 }
 
 .preset-card {
-  min-width: 90px;
-  min-height: 64px;
+  min-width: 96px;
+  min-height: 80px;
   padding: 8px 10px;
-  background: var(--surface-bg);
-  border: 1.5px solid var(--border-line);
-  border-radius: 10px;
+  background: var(--surface-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
   flex-shrink: 0;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.preset-card:active {
+  transform: scale(0.96);
 }
 
 .preset-card.active {
   border-color: var(--accent-gold);
   background: var(--surface-active);
-  box-shadow: 0 0 12px var(--accent-gold-glow);
+  box-shadow: 0 0 14px var(--accent-glow);
 }
 
 .preset-swatch {
   width: 100%;
-  height: 18px;
-  border-radius: 4px;
-  background: linear-gradient(135deg, #333, #555);
+  height: 24px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #333, #666);
   margin-bottom: 6px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .preset-card-name {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
-  color: var(--text-main);
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: 0.01em;
 }
 
 .preset-card.active .preset-card-name {
@@ -299,29 +316,32 @@ body {
 
 .preset-card-sub {
   font-size: 9px;
-  color: var(--text-dim);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
   text-transform: uppercase;
+  margin-top: 2px;
 }
 
-/* Adjust Subtabs */
+/* Snapseed Style Adjust Subtabs */
 .adjust-subtabs {
   display: flex;
   gap: 6px;
-  padding: 0 14px 8px 14px;
-  border-bottom: 1px solid var(--border-line);
+  padding: 0 16px 8px 16px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .subtab-btn {
   flex: 1;
-  min-height: 44px;
+  min-height: 40px;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: all 0.15s ease;
 }
 
 .subtab-btn.active {
@@ -329,29 +349,54 @@ body {
   border-bottom-color: var(--accent-gold);
 }
 
-/* Sliders Deck */
+/* Snapseed Minimal Precision Sliders */
 .sliders-deck {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   padding: 10px 16px;
-  max-height: 200px;
+  max-height: 210px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .slider-row {
   display: grid;
-  grid-template-columns: 85px 1fr 45px;
+  grid-template-columns: 80px 32px 1fr 32px 48px;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   min-height: 44px;
 }
 
 .slider-label {
   font-size: 12px;
-  font-weight: 500;
-  color: var(--text-muted);
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slider-step-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.12s ease;
+}
+
+.slider-step-btn:active {
+  background: var(--surface-active);
+  color: var(--accent-gold);
 }
 
 .slider-control-wrap {
@@ -371,18 +416,18 @@ body {
 .slider-val {
   font-size: 12px;
   font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  color: var(--text-main);
+  font-weight: 700;
+  color: var(--text-primary);
   text-align: right;
 }
 
-/* Dock Mode Switcher Bar */
+/* Bottom Segment Bar */
 .dock-bar {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: 6px 10px;
-  background: var(--bg-dark);
-  border-top: 1px solid var(--border-line);
+  padding: 6px 12px;
+  background: var(--bg-deep);
+  border-top: 1px solid var(--border-subtle);
 }
 
 .dock-tab {
@@ -394,9 +439,10 @@ body {
   min-height: 52px;
   background: transparent;
   border: none;
-  color: var(--text-dim);
+  color: var(--text-muted);
   font-size: 11px;
   font-weight: 600;
+  letter-spacing: 0.03em;
   cursor: pointer;
   transition: color 0.15s ease;
 }
@@ -405,22 +451,18 @@ body {
   color: var(--accent-gold);
 }
 
-.dock-tab:active {
-  filter: brightness(1.2);
-}
-
 .hold-btn {
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .hold-btn:active,
 .hold-btn.holding {
   color: #ffffff;
-  background: rgba(197, 164, 114, 0.15);
-  border-radius: 8px;
+  background: var(--accent-glow);
+  border-radius: 12px;
 }
 
-/* Landscape / Tablet Responsive Reflow */
+/* Tablet & Desktop Reflow */
 @media (min-width: 768px) {
   .app-shell {
     flex-direction: row;
@@ -436,7 +478,7 @@ body {
     width: 380px;
     height: 100%;
     border-top: none;
-    border-left: 1px solid var(--border-line);
+    border-left: 1px solid var(--border-subtle);
   }
   .sliders-deck {
     max-height: calc(100vh - 200px);
