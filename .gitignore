@@ -8,5 +8,11 @@ targets/vsco489_extract/
 targets/vsco489_jadx/
 targets/VSCO_489.apk
 *.apk
+*.idsig
+android/build/
+android/gen/
+android/*.keystore
+web/bundle.js
+web/presets-bundle.js
 .DS_Store
 node_modules/

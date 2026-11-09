@@ -1,0 +1,444 @@
+:root {
+  --bg-dark: #0a0b0e;
+  --panel-bg: #13151b;
+  --surface-bg: #1c1f28;
+  --surface-active: #252a36;
+  --border-line: #272c3b;
+  --border-active: #c5a472;
+  --text-main: #f0f2f7;
+  --text-muted: #8c95a6;
+  --text-dim: #5c6475;
+  --accent-gold: #c5a472;
+  --accent-gold-glow: rgba(197, 164, 114, 0.25);
+  --danger: #e06c75;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+}
+
+/* App Header */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(8px + var(--safe-top)) 14px 8px 14px;
+  background: var(--panel-bg);
+  border-bottom: 1px solid var(--border-line);
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.header-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.logo-text {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-main);
+}
+
+.preset-badge {
+  font-size: 11px;
+  color: var(--accent-gold);
+  letter-spacing: 0.02em;
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 12px;
+  background: var(--surface-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border-line);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-action:active {
+  background: var(--surface-active);
+  border-color: var(--accent-gold);
+}
+
+.btn-accent {
+  background: var(--accent-gold);
+  color: #0b0c10;
+  border-color: var(--accent-gold);
+  font-weight: 600;
+}
+
+.btn-accent:active {
+  filter: brightness(0.9);
+}
+
+/* Viewport Canvas */
+.canvas-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  overflow: hidden;
+  touch-action: none;
+}
+
+#gl {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.before-badge {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 11, 14, 0.85);
+  backdrop-filter: blur(8px);
+  color: var(--accent-gold);
+  border: 1px solid var(--accent-gold);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 5;
+}
+
+.before-badge.visible {
+  opacity: 1;
+}
+
+.canvas-hint {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text-dim);
+  font-size: 11px;
+  background: rgba(10, 11, 14, 0.6);
+  padding: 4px 10px;
+  border-radius: 12px;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.status-overlay {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+/* Control Dock */
+.control-dock {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-bg);
+  border-top: 1px solid var(--border-line);
+  flex-shrink: 0;
+  padding-bottom: var(--safe-bottom);
+}
+
+.panel-section {
+  display: none;
+  flex-direction: column;
+  padding: 10px 0 6px 0;
+}
+
+.panel-section.active {
+  display: flex;
+}
+
+/* Brand Carousel */
+.carousel-brands {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 14px 8px 14px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.carousel-brands::-webkit-scrollbar {
+  display: none;
+}
+
+.brand-chip {
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--surface-bg);
+  border: 1px solid var(--border-line);
+  border-radius: 22px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.brand-chip.active {
+  background: var(--surface-active);
+  color: var(--accent-gold);
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 10px var(--accent-gold-glow);
+}
+
+/* Preset Looks Carousel */
+.carousel-presets {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 2px 14px 10px 14px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.carousel-presets::-webkit-scrollbar {
+  display: none;
+}
+
+.preset-card {
+  min-width: 90px;
+  min-height: 64px;
+  padding: 8px 10px;
+  background: var(--surface-bg);
+  border: 1.5px solid var(--border-line);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.preset-card.active {
+  border-color: var(--accent-gold);
+  background: var(--surface-active);
+  box-shadow: 0 0 12px var(--accent-gold-glow);
+}
+
+.preset-swatch {
+  width: 100%;
+  height: 18px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #333, #555);
+  margin-bottom: 6px;
+}
+
+.preset-card-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preset-card.active .preset-card-name {
+  color: var(--accent-gold);
+}
+
+.preset-card-sub {
+  font-size: 9px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+/* Adjust Subtabs */
+.adjust-subtabs {
+  display: flex;
+  gap: 6px;
+  padding: 0 14px 8px 14px;
+  border-bottom: 1px solid var(--border-line);
+}
+
+.subtab-btn {
+  flex: 1;
+  min-height: 44px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.subtab-btn.active {
+  color: var(--accent-gold);
+  border-bottom-color: var(--accent-gold);
+}
+
+/* Sliders Deck */
+.sliders-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 16px;
+  max-height: 200px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.slider-row {
+  display: grid;
+  grid-template-columns: 85px 1fr 45px;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+
+.slider-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.slider-control-wrap {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.slider-input {
+  width: 100%;
+  height: 28px;
+  accent-color: var(--accent-gold);
+  cursor: pointer;
+  background: transparent;
+}
+
+.slider-val {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: right;
+}
+
+/* Dock Mode Switcher Bar */
+.dock-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 6px 10px;
+  background: var(--bg-dark);
+  border-top: 1px solid var(--border-line);
+}
+
+.dock-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 52px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.dock-tab.active {
+  color: var(--accent-gold);
+}
+
+.dock-tab:active {
+  filter: brightness(1.2);
+}
+
+.hold-btn {
+  color: var(--text-muted);
+}
+
+.hold-btn:active,
+.hold-btn.holding {
+  color: #ffffff;
+  background: rgba(197, 164, 114, 0.15);
+  border-radius: 8px;
+}
+
+/* Landscape / Tablet Responsive Reflow */
+@media (min-width: 768px) {
+  .app-shell {
+    flex-direction: row;
+  }
+  .app-header {
+    display: none;
+  }
+  .canvas-viewport {
+    flex: 1;
+    height: 100%;
+  }
+  .control-dock {
+    width: 380px;
+    height: 100%;
+    border-top: none;
+    border-left: 1px solid var(--border-line);
+  }
+  .sliders-deck {
+    max-height: calc(100vh - 200px);
+  }
+}
