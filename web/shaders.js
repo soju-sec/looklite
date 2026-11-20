@@ -17,6 +17,7 @@ out vec4 fragColor;
 uniform sampler2D uImage;
 uniform sampler3D uLut;
 uniform float uLutSize;
+uniform float uLutIntensity;
 uniform int uLutStage;
 uniform int uShowBefore;
 
@@ -155,7 +156,8 @@ vec3 colorBalance(vec3 c, vec3 sh, vec3 mid, vec3 hi) {
 vec3 applyLut(vec3 c) {
   float scale = (uLutSize - 1.0) / uLutSize;
   float offset = 0.5 / uLutSize;
-  return texture(uLut, c * scale + offset).rgb;
+  vec3 lutColor = texture(uLut, c * scale + offset).rgb;
+  return mix(c, lutColor, clamp(uLutIntensity, 0.0, 1.0));
 }
 
 vec3 vignette(vec3 c, float amount) {

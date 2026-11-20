@@ -16,15 +16,16 @@ export function zeroSlidersLike(base) {
   return out;
 }
 
-export function composeSliders(base, deltas, ranges = null) {
+export function composeSliders(base, deltas, ranges = null, factor = 1.0) {
   const out = {};
+  const f = typeof factor === "number" ? Math.max(0, Math.min(1, factor)) : 1.0;
   for (const key of Object.keys(base)) {
     const b = base[key];
     const d = deltas?.[key];
     if (isPlainObject(b)) {
-      out[key] = composeSliders(b, d ?? {}, nestedRanges(ranges, key));
+      out[key] = composeSliders(b, d ?? {}, nestedRanges(ranges, key), f);
     } else {
-      const sum = Number(b) + Number(d ?? 0);
+      const sum = Number(b) * f + Number(d ?? 0);
       out[key] = clampKey(sum, ranges, key);
     }
   }

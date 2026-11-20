@@ -77,6 +77,7 @@ const state = {
   base: null,
   deltas: null,
   composed: null,
+  intensity: 100,
   tab: "light",
   mode: "presets", // 'presets' | 'adjust'
   showBefore: false,
@@ -91,6 +92,11 @@ const el = {
   canvasHint: document.getElementById("canvas-hint"),
   brands: document.getElementById("brands"),
   presets: document.getElementById("presets"),
+  presetIntensityBar: document.getElementById("preset-intensity-bar"),
+  intensityVal: document.getElementById("intensity-val"),
+  filterIntensity: document.getElementById("filter-intensity"),
+  btnIntensityMinus: document.getElementById("btn-intensity-minus"),
+  btnIntensityPlus: document.getElementById("btn-intensity-plus"),
   tabs: document.getElementById("tabs"),
   sliders: document.getElementById("sliders"),
   file: document.getElementById("file"),
@@ -152,7 +158,7 @@ function createQuad(glCtx, program) {
 
 function cacheUniforms(glCtx, program) {
   const names = [
-    "uImage", "uLut", "uLutSize", "uLutStage", "uShowBefore",
+    "uImage", "uLut", "uLutSize", "uLutIntensity", "uLutStage", "uShowBefore",
     "uExposure", "uContrast", "uHighlights", "uShadows", "uWhites", "uBlacks",
     "uTemp", "uTint", "uVibrance", "uSaturation", "uVignette",
     "uGrainIntensity", "uGrainSize", "uResolution",
@@ -241,6 +247,7 @@ function draw() {
   gl.uniform1i(locs.uImage, 0);
   gl.uniform1i(locs.uLut, 1);
   gl.uniform1f(locs.uLutSize, lutSize);
+  gl.uniform1f(locs.uLutIntensity, (state.intensity ?? 100) / 100.0);
   gl.uniform1i(locs.uLutStage, state.active?.lut_stage === "early" ? 0 : 1);
   gl.uniform1i(locs.uShowBefore, state.showBefore ? 1 : 0);
   gl.uniform1f(locs.uExposure, s.exposure);
@@ -276,15 +283,32 @@ function draw() {
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
+function updateIntensityUI() {
+  if (el.filterIntensity) {
+    el.filterIntensity.value = String(state.intensity);
+  }
+  if (el.intensityVal) {
+    el.intensityVal.textContent = `${state.intensity}%`;
+  }
+}
+
 function recompose() {
-  state.composed = composeSliders(state.base, state.deltas, state.active?.slider_ranges);
+  state.composed = composeSliders(
+    state.base,
+    state.deltas,
+    state.active?.slider_ranges,
+    (state.intensity ?? 100) / 100.0
+  );
   draw();
   const label = state.active?.display_label || state.active?.look_name;
   el.presetBadge.textContent = `${label} (${state.active?.camera_system.toUpperCase()})`;
-  el.status.textContent = `${label} · ${state.active?.lut_stage.toUpperCase()} LUT`;
+  el.status.textContent = `${label} · ${state.intensity}% · ${state.active?.lut_stage.toUpperCase()} LUT`;
 }
 
 function applyPreset(preset) {
+  if (state.active?.preset_id !== preset.preset_id) {
+    state.intensity = 100;
+  }
   state.active = preset;
   state.base = structuredClone(preset.default_sliders);
   state.deltas = zeroSlidersLike(state.base);
@@ -297,6 +321,7 @@ function applyPreset(preset) {
     uploadLut(identityCube(17));
   }
 
+  updateIntensityUI();
   recompose();
   renderPresetChips();
   renderSliders();
@@ -456,10 +481,45 @@ el.viewport.addEventListener("pointerdown", (e) => {
 el.viewport.addEventListener("pointerup", () => setBeforeActive(false));
 el.viewport.addEventListener("pointercancel", () => setBeforeActive(false));
 
-// Reset all deltas
+// Filter Intensity Direct Controls (0-100)
+if (el.filterIntensity) {
+  el.filterIntensity.addEventListener("input", (e) => {
+    state.intensity = Number(e.target.value);
+    if (el.intensityVal) el.intensityVal.textContent = `${state.intensity}%`;
+    recompose();
+  });
+}
+
+if (el.btnIntensityMinus) {
+  el.btnIntensityMinus.addEventListener("click", () => {
+    state.intensity = Math.max(0, state.intensity - 5);
+    updateIntensityUI();
+    recompose();
+  });
+}
+
+if (el.btnIntensityPlus) {
+  el.btnIntensityPlus.addEventListener("click", () => {
+    state.intensity = Math.min(100, state.intensity + 5);
+    updateIntensityUI();
+    recompose();
+  });
+}
+
+if (el.intensityVal) {
+  el.intensityVal.addEventListener("dblclick", () => {
+    state.intensity = 100;
+    updateIntensityUI();
+    recompose();
+  });
+}
+
+// Reset all deltas and reset filter intensity to 100
 el.reset.onclick = () => {
   if (!state.base) return;
+  state.intensity = 100;
   state.deltas = zeroSlidersLike(state.base);
+  updateIntensityUI();
   recompose();
   renderSliders();
 };

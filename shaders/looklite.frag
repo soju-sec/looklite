@@ -12,6 +12,7 @@ out vec4 fragColor;
 uniform sampler2D uImage;
 uniform sampler3D uLut;          // 17^3 or 33^3 RGB LUT
 uniform float uLutSize;          // e.g. 33.0
+uniform float uLutIntensity;     // 0.0..1.0 filter blend strength
 uniform int uLutStage;           // 0=early, 1=late
 uniform int uShowBefore;         // 1 = bypass grading
 
@@ -160,7 +161,8 @@ vec3 applyLut(vec3 c) {
   // Domain scale for texel centers
   float scale = (uLutSize - 1.0) / uLutSize;
   float offset = 0.5 / uLutSize;
-  return texture(uLut, c * scale + offset).rgb;
+  vec3 lutColor = texture(uLut, c * scale + offset).rgb;
+  return mix(c, lutColor, clamp(uLutIntensity, 0.0, 1.0));
 }
 
 vec3 vignette(vec3 c, float amount) {

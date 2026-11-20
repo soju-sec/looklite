@@ -60,6 +60,20 @@
         <section id="panel-presets" class="panel-section active">
           <!-- Brand Carousel -->
           <div class="carousel-brands" id="brands"></div>
+
+          <!-- Direct Preset Intensity Slider (0 - 100) -->
+          <div class="preset-intensity-bar" id="preset-intensity-bar">
+            <div class="intensity-label-row">
+              <span class="intensity-title">FILTER INTENSITY</span>
+              <span class="intensity-value" id="intensity-val" title="Double tap to reset to 100%">100%</span>
+            </div>
+            <div class="intensity-slider-wrap">
+              <button type="button" class="slider-step-btn" id="btn-intensity-minus" title="Decrease intensity">-</button>
+              <input type="range" id="filter-intensity" min="0" max="100" step="1" value="100" class="intensity-range" />
+              <button type="button" class="slider-step-btn" id="btn-intensity-plus" title="Increase intensity">+</button>
+            </div>
+          </div>
+
           <!-- Preset Looks Cards -->
           <div class="carousel-presets" id="presets"></div>
         </section>
