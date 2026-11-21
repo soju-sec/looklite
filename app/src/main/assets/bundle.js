@@ -2385,16 +2385,21 @@ function fitCanvas() {
   const vpRect = el.viewport.getBoundingClientRect();
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const aspect = originalSourceCanvas.width / originalSourceCanvas.height;
-  let w = vpRect.width;
+  const dockH = el.panelAdjust?.classList.contains("active") ? 310 : 275;
+  const topPad = 72;
+  const availH = Math.max(160, vpRect.height - topPad - dockH);
+  const availW = Math.max(180, vpRect.width - 24);
+  let w = availW;
   let h = w / aspect;
-  if (h > vpRect.height) {
-    h = vpRect.height;
+  if (h > availH) {
+    h = availH;
     w = h * aspect;
   }
   el.canvas.width = Math.round(w * dpr);
   el.canvas.height = Math.round(h * dpr);
-  el.canvas.style.width = `${w}px`;
-  el.canvas.style.height = `${h}px`;
+  el.canvas.style.width = `${Math.round(w)}px`;
+  el.canvas.style.height = `${Math.round(h)}px`;
+  el.canvas.style.marginTop = `${Math.round(topPad + (availH - h) / 2)}px`;
   gl.viewport(0, 0, el.canvas.width, el.canvas.height);
 }
 function hslVec(val) {
@@ -2582,6 +2587,8 @@ function setMode(mode) {
   el.modeAdjust.classList.toggle("active", mode === "adjust");
   el.panelPresets.classList.toggle("active", mode === "presets");
   el.panelAdjust.classList.toggle("active", mode === "adjust");
+  fitCanvas();
+  draw();
 }
 el.modePresets.onclick = () => setMode("presets");
 el.modeAdjust.onclick = () => setMode("adjust");
