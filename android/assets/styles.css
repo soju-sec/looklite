@@ -496,12 +496,13 @@ body {
 }
 
 /* ==========================================================================
-   3. BOTTOM FUNCTIONAL LAYER: Floating Liquid Glass Dock (Ngambang)
-   Detached from bottom edges with floating shadow and margins
+   3. SUB-MENU FUNCTIONAL LAYER: Floating Controls Card (Sub-menu)
+   Contains sub-menu: presets carousel, brand pills, intensity slider & inspector
+   Cleanly separated from the main bottom navigation pill
    ========================================================================== */
-.control-dock {
+.sub-dock-panel {
   position: absolute;
-  bottom: calc(12px + var(--safe-bottom));
+  bottom: calc(72px + var(--safe-bottom));
   left: 12px;
   right: 12px;
   display: flex;
@@ -510,11 +511,18 @@ body {
   backdrop-filter: blur(36px) saturate(190%);
   -webkit-backdrop-filter: blur(36px) saturate(190%);
   border: 0.5px solid var(--glass-border);
-  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.12), var(--glass-specular);
-  border-radius: 24px; /* Floating rounded card dock (ngambang) */
-  padding-bottom: 4px;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.10), var(--glass-specular);
+  border-radius: 20px;
+  padding: 6px 0 10px 0;
   z-index: 25;
-  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease, visibility 0.2s;
+}
+
+.sub-dock-panel.collapsed {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px) scale(0.97);
+  pointer-events: none;
 }
 
 .sheet-grabber {
@@ -522,14 +530,15 @@ body {
   height: 4.5px;
   background: rgba(60, 60, 67, 0.25);
   border-radius: 9999px;
-  margin: 9px auto 5px auto;
+  margin: 4px auto 6px auto;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .panel-section {
   display: none;
   flex-direction: column;
-  padding: 4px 0 8px 0;
+  padding: 2px 0 4px 0;
 }
 
 .panel-section.active {
@@ -902,15 +911,29 @@ body {
 }
 
 /* ==========================================================================
-   4. APPLE HIG BOTTOM TAB BAR NAVIGATION
-   Persistent, clear labels, SF Symbols icons, Apple Music coral active state
+   4. APPLE HIG FLOATING BOTTOM NAVIGATION PILL (Menu Utama Ngambang)
+   Pure floating pill capsule, detached and separated from sub-menus
    ========================================================================== */
-.dock-bar {
+.floating-dock-bar {
+  position: absolute;
+  bottom: calc(10px + var(--safe-bottom));
+  left: 16px;
+  right: 16px;
+  max-width: 440px;
+  margin: 0 auto;
+  height: 52px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  padding: 6px 8px 2px 8px;
-  background: transparent;
-  border-top: 0.5px solid var(--glass-border-subtle);
+  align-items: center;
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(36px) saturate(190%);
+  -webkit-backdrop-filter: blur(36px) saturate(190%);
+  border: 0.5px solid var(--glass-border);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.14), var(--glass-specular);
+  border-radius: 9999px; /* Pill kapsul bulat mengambang sempurna */
+  padding: 0 6px;
+  z-index: 30;
+  box-sizing: border-box;
 }
 
 .dock-tab {
@@ -919,12 +942,13 @@ body {
   align-items: center;
   justify-content: center;
   gap: 3px;
-  min-height: 48px;
+  min-height: 44px;
   background: transparent;
   border: none;
   color: var(--label-tertiary);
   cursor: pointer;
-  padding: 4px 0;
+  padding: 2px 0;
+  border-radius: 9999px;
   transition: all 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -949,7 +973,8 @@ body {
 }
 
 .dock-tab:active {
-  transform: scale(0.95);
+  transform: scale(0.94);
+  background: rgba(118, 118, 128, 0.08);
 }
 
 .dock-tab.hold-btn:active {
@@ -959,16 +984,6 @@ body {
 .dock-tab.hold-btn:active .tab-icon {
   stroke: var(--accent-apple);
   fill: var(--accent-apple);
-}
-
-/* Apple iOS Home Indicator Bar */
-.home-indicator {
-  width: 134px;
-  height: 5px;
-  border-radius: 9999px;
-  background: rgba(60, 60, 67, 0.35);
-  margin: 8px auto 6px auto;
-  flex-shrink: 0;
 }
 
 /* Apple Liquid Glass Bug Report Modal / Diagnostic Sheet */

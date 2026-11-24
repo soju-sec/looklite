@@ -167,6 +167,8 @@ const el = {
   before: document.getElementById("before"),
   modePresets: document.getElementById("mode-presets"),
   modeAdjust: document.getElementById("mode-adjust"),
+  subDockPanel: document.getElementById("sub-dock-panel"),
+  sheetGrabber: document.getElementById("sheet-grabber"),
   panelPresets: document.getElementById("panel-presets"),
   panelAdjust: document.getElementById("panel-adjust"),
 };
@@ -279,7 +281,8 @@ function fitCanvas() {
   const aspect = originalSourceCanvas.width / originalSourceCanvas.height;
   
   // Apple HIG framing: reserve space for floating header, ratio bar, and floating bottom dock
-  const dockH = el.panelAdjust?.classList.contains("active") ? 295 : 260;
+  const isCollapsed = el.subDockPanel?.classList.contains("collapsed");
+  const dockH = isCollapsed ? 76 : (el.panelAdjust?.classList.contains("active") ? 295 : 260);
   const topPad = 112;
   const availH = Math.max(160, vpRect.height - topPad - dockH);
   const availW = Math.max(180, vpRect.width - 24);
@@ -534,12 +537,39 @@ function setMode(mode) {
   el.modeAdjust.classList.toggle("active", mode === "adjust");
   el.panelPresets.classList.toggle("active", mode === "presets");
   el.panelAdjust.classList.toggle("active", mode === "adjust");
+  if (el.subDockPanel) {
+    el.subDockPanel.classList.remove("collapsed");
+  }
   fitCanvas();
   draw();
 }
 
-el.modePresets.onclick = () => setMode("presets");
-el.modeAdjust.onclick = () => setMode("adjust");
+el.modePresets.onclick = () => {
+  if (state.mode === "presets" && el.subDockPanel) {
+    el.subDockPanel.classList.toggle("collapsed");
+    fitCanvas();
+  } else {
+    setMode("presets");
+  }
+};
+
+el.modeAdjust.onclick = () => {
+  if (state.mode === "adjust" && el.subDockPanel) {
+    el.subDockPanel.classList.toggle("collapsed");
+    fitCanvas();
+  } else {
+    setMode("adjust");
+  }
+};
+
+if (el.sheetGrabber) {
+  el.sheetGrabber.onclick = () => {
+    if (el.subDockPanel) {
+      el.subDockPanel.classList.toggle("collapsed");
+      fitCanvas();
+    }
+  };
+}
 
 el.tabs.addEventListener("click", (e) => {
   const btn = e.target.closest("button[data-tab]");
@@ -565,6 +595,12 @@ function setSplitActive(active) {
   state.splitActive = active;
   el.btnSplit?.classList.toggle("active", active);
   el.splitOverlay?.classList.toggle("active", active);
+  if (active) {
+    if (el.subDockPanel) el.subDockPanel.classList.add("collapsed");
+  } else {
+    if (el.subDockPanel) el.subDockPanel.classList.remove("collapsed");
+  }
+  fitCanvas();
   updateSplitPositionUI();
   draw();
 }

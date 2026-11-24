@@ -142,9 +142,9 @@
         </div>
       </div>
 
-      <!-- Floating Liquid Glass Bottom Sheet / Control Dock -->
-      <footer class="control-dock">
-        <div class="sheet-grabber"></div>
+      <!-- Sub-Menu Controls Card (Presets / Fine-Tune Panels) -->
+      <aside class="sub-dock-panel" id="sub-dock-panel">
+        <div class="sheet-grabber" id="sheet-grabber" title="Ketuk untuk buka/tutup menu"></div>
 
         <!-- Preset Selector Mode -->
         <section id="panel-presets" class="panel-section active">
@@ -190,50 +190,47 @@
           <!-- Apple Inspector Sliders Deck -->
           <div class="sliders-deck" id="sliders"></div>
         </section>
+      </aside>
 
-        <!-- Apple HIG Bottom Tab Bar Navigation -->
-        <nav class="dock-bar">
-          <button type="button" id="mode-presets" class="dock-tab active">
-            <svg class="tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <circle cx="9" cy="9" r="6"/>
-              <circle cx="15" cy="9" r="6"/>
-              <circle cx="12" cy="15" r="6"/>
-            </svg>
-            <span class="tab-label">Presets</span>
-          </button>
-          <button type="button" id="mode-adjust" class="dock-tab">
-            <svg class="tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <line x1="4" y1="21" x2="4" y2="14"/>
-              <line x1="4" y1="10" x2="4" y2="3"/>
-              <line x1="12" y1="21" x2="12" y2="12"/>
-              <line x1="12" y1="8" x2="12" y2="3"/>
-              <line x1="20" y1="21" x2="20" y2="16"/>
-              <line x1="20" y1="12" x2="20" y2="3"/>
-              <circle cx="4" cy="12" r="2.5" fill="currentColor"/>
-              <circle cx="12" cy="10" r="2.5" fill="currentColor"/>
-              <circle cx="20" cy="14" r="2.5" fill="currentColor"/>
-            </svg>
-            <span class="tab-label">Fine-Tune</span>
-          </button>
-          <button type="button" id="btn-split" class="dock-tab" title="Bandingkan Sebelum / Sesudah">
-            <svg class="tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <rect x="3" y="3" width="18" height="18" rx="4"/>
-              <line x1="12" y1="3" x2="12" y2="21"/>
-            </svg>
-            <span class="tab-label">Split View</span>
-          </button>
-          <button type="button" id="before" class="dock-tab hold-btn" title="Tahan layar untuk melihat asli">
-            <svg class="tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <circle cx="12" cy="12" r="9"/>
-              <path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor"/>
-            </svg>
-            <span class="tab-label">Before</span>
-          </button>
-        </nav>
-
-        <!-- iOS Home Indicator Bar -->
-        <div class="home-indicator"></div>
-      </footer>
+      <!-- Floating Bottom Menu Pill (Pill Kapsul Ngambang - Menu Utama) -->
+      <nav class="floating-dock-bar" id="dock-bar">
+        <button type="button" id="mode-presets" class="dock-tab active">
+          <svg class="tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="9" cy="9" r="6"/>
+            <circle cx="15" cy="9" r="6"/>
+            <circle cx="12" cy="15" r="6"/>
+          </svg>
+          <span class="tab-label">Presets</span>
+        </button>
+        <button type="button" id="mode-adjust" class="dock-tab">
+          <svg class="tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <line x1="4" y1="21" x2="4" y2="14"/>
+            <line x1="4" y1="10" x2="4" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12" y2="3"/>
+            <line x1="20" y1="21" x2="20" y2="16"/>
+            <line x1="20" y1="12" x2="20" y2="3"/>
+            <circle cx="4" cy="12" r="2.5" fill="currentColor"/>
+            <circle cx="12" cy="10" r="2.5" fill="currentColor"/>
+            <circle cx="20" cy="14" r="2.5" fill="currentColor"/>
+          </svg>
+          <span class="tab-label">Fine-Tune</span>
+        </button>
+        <button type="button" id="btn-split" class="dock-tab" title="Bandingkan Sebelum / Sesudah">
+          <svg class="tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="3" width="18" height="18" rx="4"/>
+            <line x1="12" y1="3" x2="12" y2="21"/>
+          </svg>
+          <span class="tab-label">Split View</span>
+        </button>
+        <button type="button" id="before" class="dock-tab hold-btn" title="Tahan layar untuk melihat asli">
+          <svg class="tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor"/>
+          </svg>
+          <span class="tab-label">Before</span>
+        </button>
+      </nav>
 
       <!-- Apple Liquid Glass Bug Report / Diagnostic Sheet -->
       <div id="modal-bug" class="modal-backdrop">
