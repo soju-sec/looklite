@@ -25,15 +25,6 @@
           <span>ORIGINAL</span>
         </div>
 
-        <!-- Floating Split View Tool Pill on Canvas Viewport -->
-        <button type="button" id="btn-split" class="canvas-tool-pill" title="Toggle interactive Before/After split slider">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <rect x="3" y="3" width="18" height="18" rx="4"/>
-            <line x1="12" y1="3" x2="12" y2="21"/>
-          </svg>
-          <span>Split</span>
-        </button>
-
         <!-- Interactive Split Slider Overlay (Sebelum vs Sesudah) -->
         <div id="split-overlay" class="split-overlay">
           <div id="sebelum-badge" class="split-badge sebelum">SEBELUM</div>
@@ -56,10 +47,10 @@
       <header class="app-header">
         <div class="header-brand">
           <span class="logo-text">LookLite</span>
-          <span id="preset-badge" class="preset-badge">Fnatix Flash</span>
+          <span id="preset-badge" class="preset-badge">Korean Porcelain</span>
         </div>
         <div class="header-actions">
-          <label class="btn-action file-btn" title="Open Photo">
+          <label class="btn-action file-btn" id="file-label" title="Open Photo">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="18" height="18" rx="4" ry="4"/>
               <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
@@ -73,6 +64,18 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
               <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+
+          <button type="button" id="btn-bug" class="btn-action btn-icon-only" title="Laporkan Bug &amp; Diagnostik">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="m8 2 1.88 1.88"/>
+              <path d="M14.12 3.88 16 2"/>
+              <path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/>
+              <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/>
+              <path d="M12 20v-9"/>
+              <path d="M6 13H2"/>
+              <path d="M22 13h-4"/>
             </svg>
           </button>
 
@@ -160,18 +163,53 @@
             </svg>
             <span class="tab-label">Fine-Tune</span>
           </button>
-          <button type="button" id="before" class="dock-tab hold-btn">
+          <button type="button" id="btn-split" class="dock-tab" title="Bandingkan Sebelum / Sesudah">
+            <svg class="tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="18" height="18" rx="4"/>
+              <line x1="12" y1="3" x2="12" y2="21"/>
+            </svg>
+            <span class="tab-label">Split View</span>
+          </button>
+          <button type="button" id="before" class="dock-tab hold-btn" title="Tahan layar untuk melihat asli">
             <svg class="tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <circle cx="12" cy="12" r="9"/>
               <path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor"/>
             </svg>
-            <span class="tab-label">Before / After</span>
+            <span class="tab-label">Before</span>
           </button>
         </nav>
 
         <!-- iOS Home Indicator Bar -->
         <div class="home-indicator"></div>
       </footer>
+
+      <!-- Apple Liquid Glass Bug Report / Diagnostic Sheet -->
+      <div id="modal-bug" class="modal-backdrop">
+        <div class="modal-card">
+          <div class="modal-header">
+            <div class="modal-title-row">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m8 2 1.88 1.88"/>
+                <path d="M14.12 3.88 16 2"/>
+                <path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/>
+                <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/>
+                <path d="M12 20v-9"/>
+              </svg>
+              <h3>Diagnostik &amp; Lapor Bug</h3>
+            </div>
+            <button type="button" id="btn-close-bug" class="modal-close-btn">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p class="modal-desc">Salin log diagnostik di bawah untuk mempercepat debugging foto atau shader:</p>
+            <pre id="debug-text" class="debug-console"></pre>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="btn-copy-debug" class="btn-action btn-prominent full-width">
+              <span>Salin Diagnostik</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Standalone bundled script -->

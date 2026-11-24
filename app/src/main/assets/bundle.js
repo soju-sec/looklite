@@ -3676,6 +3676,12 @@ var el = {
   tabs: document.getElementById("tabs"),
   sliders: document.getElementById("sliders"),
   file: document.getElementById("file"),
+  fileLabel: document.getElementById("file-label"),
+  btnBug: document.getElementById("btn-bug"),
+  modalBug: document.getElementById("modal-bug"),
+  btnCloseBug: document.getElementById("btn-close-bug"),
+  btnCopyDebug: document.getElementById("btn-copy-debug"),
+  debugText: document.getElementById("debug-text"),
   reset: document.getElementById("reset"),
   export: document.getElementById("export"),
   before: document.getElementById("before"),
@@ -4143,21 +4149,179 @@ el.reset.onclick = () => {
   recompose();
   renderSliders();
 };
-el.file.onchange = async () => {
-  const file = el.file.files?.[0];
+var debugLogs = [];
+function logDebug(type, msg, detail = null) {
+  const time = new Date().toLocaleTimeString();
+  const entry = `[${time}] [${type}] ${msg}` + (detail ? ` -> ${typeof detail === "object" ? JSON.stringify(detail) : detail}` : "");
+  debugLogs.push(entry);
+  if (debugLogs.length > 80)
+    debugLogs.shift();
+  console[type === "ERROR" ? "error" : "log"](entry);
+  if (type === "ERROR" && el.status) {
+    el.status.textContent = `Error: ${msg}`;
+  }
+}
+window.addEventListener("error", (e) => {
+  logDebug("ERROR", e.message || "Uncaught script error", { filename: e.filename, lineno: e.lineno });
+});
+window.addEventListener("unhandledrejection", (e) => {
+  logDebug("ERROR", "Unhandled Promise Rejection", e.reason?.message || String(e.reason));
+});
+async function loadPhotoFile(file) {
   if (!file)
     return;
-  const img = new Image;
-  img.onload = () => {
+  el.status.textContent = "Membaca file foto…";
+  logDebug("INFO", `File selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB, type: ${file.type || "unknown"})`);
+  try {
+    let imgSource = null;
+    if (typeof createImageBitmap === "function") {
+      try {
+        imgSource = await createImageBitmap(file);
+        logDebug("INFO", `createImageBitmap success: ${imgSource.width}x${imgSource.height}`);
+      } catch (bmErr) {
+        logDebug("WARN", "createImageBitmap failed, falling back to FileReader", bmErr.message);
+      }
+    }
+    if (!imgSource) {
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader;
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("FileReader gagal membaca file gambar"));
+        reader.readAsDataURL(file);
+      });
+      const img = new Image;
+      await new Promise((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error("Gagal mendecode format gambar"));
+        img.src = dataUrl;
+      });
+      imgSource = img;
+      logDebug("INFO", `Image decoded via DataURL: ${img.width}x${img.height}`);
+    }
+    if (!imgSource || !imgSource.width || !imgSource.height) {
+      throw new Error("Dimensi gambar tidak valid");
+    }
+    const maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096;
+    const maxAllowed = Math.min(maxTex, 4096);
+    let targetW = imgSource.width;
+    let targetH = imgSource.height;
+    if (targetW > maxAllowed || targetH > maxAllowed) {
+      if (targetW > targetH) {
+        targetH = Math.round(targetH * maxAllowed / targetW);
+        targetW = maxAllowed;
+      } else {
+        targetW = Math.round(targetW * maxAllowed / targetH);
+        targetH = maxAllowed;
+      }
+      logDebug("INFO", `Scaled down to fit MAX_TEXTURE_SIZE: ${targetW}x${targetH} (max: ${maxAllowed})`);
+    }
     const c = document.createElement("canvas");
-    c.width = img.width;
-    c.height = img.height;
-    c.getContext("2d").drawImage(img, 0, 0);
+    c.width = targetW;
+    c.height = targetH;
+    const ctx = c.getContext("2d");
+    if (!ctx)
+      throw new Error("Gagal membuat Canvas 2D context");
+    ctx.drawImage(imgSource, 0, 0, targetW, targetH);
     uploadImageFromCanvas(c);
-    el.canvasHint.style.display = "none";
+    if (el.canvasHint)
+      el.canvasHint.style.display = "none";
+    el.status.textContent = `Foto aktif: ${targetW}x${targetH}`;
+    logDebug("INFO", `Photo successfully uploaded to WebGL canvas (${targetW}x${targetH})`);
+  } catch (err) {
+    logDebug("ERROR", "Gagal memuat foto", err.message || err);
+    el.status.textContent = `Gagal memuat: ${err.message || err}`;
+    alert(`Gagal memuat foto: ${err.message || err}
+
+Silakan klik tombol Bug di atas untuk melihat diagnostik.`);
+  } finally {
+    if (el.file)
+      el.file.value = "";
+  }
+}
+if (el.fileLabel) {
+  el.fileLabel.addEventListener("click", () => {
+    if (el.file)
+      el.file.value = "";
+  });
+}
+if (el.file) {
+  el.file.addEventListener("change", () => {
+    const file = el.file.files?.[0];
+    if (file)
+      loadPhotoFile(file);
+  });
+}
+function generateDiagnosticReport() {
+  const glVendor = gl ? gl.getParameter(gl.VENDOR) : "N/A";
+  const glRenderer = gl ? gl.getParameter(gl.RENDERER) : "N/A";
+  const maxTex = gl ? gl.getParameter(gl.MAX_TEXTURE_SIZE) : "N/A";
+  const origDim = originalSourceCanvas ? `${originalSourceCanvas.width}x${originalSourceCanvas.height}` : "Demo Canvas";
+  const lines = [
+    `=== LOOKLITE DIAGNOSTIC REPORT ===`,
+    `Waktu: ${new Date().toISOString()}`,
+    `Platform: ${navigator.userAgent}`,
+    `Layar: ${window.innerWidth}x${window.innerHeight} (DPR: ${window.devicePixelRatio || 1})`,
+    `WebGL2: ${Boolean(gl)}`,
+    `GPU Vendor: ${glVendor}`,
+    `GPU Renderer: ${glRenderer}`,
+    `Max Texture: ${maxTex}`,
+    `Dimensi Gambar: ${origDim}`,
+    `Preset Aktif: ${state.active?.preset_id || "None"} (${state.active?.camera_system || ""})`,
+    `Intensitas: ${state.intensity}%`,
+    `Split Mode: ${state.splitActive ? "ON (" + Math.round(state.splitPos * 100) + "%)" : "OFF"}`,
+    ``,
+    `=== LOG RIWAYAT TERAKHIR ===`,
+    ...debugLogs.length ? debugLogs.slice(-25) : ["[No errors recorded]"]
+  ];
+  return lines.join(`
+`);
+}
+function showBugModal() {
+  if (!el.modalBug || !el.debugText)
+    return;
+  el.debugText.textContent = generateDiagnosticReport();
+  el.modalBug.classList.add("active");
+}
+function hideBugModal() {
+  if (el.modalBug)
+    el.modalBug.classList.remove("active");
+}
+if (el.btnBug) {
+  el.btnBug.onclick = showBugModal;
+}
+if (el.btnCloseBug) {
+  el.btnCloseBug.onclick = hideBugModal;
+}
+if (el.modalBug) {
+  el.modalBug.onclick = (e) => {
+    if (e.target === el.modalBug)
+      hideBugModal();
   };
-  img.src = URL.createObjectURL(file);
-};
+}
+if (el.btnCopyDebug) {
+  el.btnCopyDebug.onclick = async () => {
+    const text = generateDiagnosticReport();
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      el.btnCopyDebug.textContent = "Berhasil Disalin! ✓";
+      setTimeout(() => {
+        if (el.btnCopyDebug)
+          el.btnCopyDebug.textContent = "Salin Diagnostik";
+      }, 2000);
+    } catch (e) {
+      alert("Silakan salin teks diagnostik secara manual.");
+    }
+  };
+}
 el.export.onclick = () => {
   if (!originalSourceCanvas)
     return;
