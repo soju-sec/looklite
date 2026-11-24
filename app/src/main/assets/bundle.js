@@ -3135,9 +3135,8 @@ function getLutUint8Array(presetId) {
 }
 
 // web/app.js
-var BRANDS = ["all", "poles", "fujifilm", "kodak", "leica", "ilford", "vintage"];
+var BRANDS = ["poles", "fujifilm", "kodak", "leica", "ilford", "vintage"];
 var BRAND_LABELS = {
-  all: "ALL",
   poles: "POLES",
   fujifilm: "FUJI",
   kodak: "KODAK",
@@ -3213,7 +3212,7 @@ var PRESET_SWATCHES = {
 };
 var state = {
   presets: PRESETS,
-  brand: "all",
+  brand: "poles",
   active: null,
   base: null,
   deltas: null,
@@ -3467,7 +3466,7 @@ function recompose() {
   state.composed = composeSliders(state.base, state.deltas, state.active?.slider_ranges, (state.intensity ?? 100) / 100);
   draw();
   const label = state.active?.display_label || state.active?.look_name;
-  el.presetBadge.textContent = `${label} (${state.active?.camera_system.toUpperCase()})`;
+  el.presetBadge.textContent = label;
   el.status.textContent = `${label} · ${state.intensity}% · ${state.active?.lut_stage.toUpperCase()} LUT`;
 }
 function applyPreset(preset) {
@@ -3496,19 +3495,24 @@ function renderBrands() {
     btn.textContent = BRAND_LABELS[b] || b.toUpperCase();
     btn.className = `brand-chip ${b === state.brand ? "active" : ""}`;
     btn.onclick = () => {
+      if (state.brand === b)
+        return;
       state.brand = b;
       renderBrands();
       renderPresetChips();
+      if (el.presets)
+        el.presets.scrollLeft = 0;
     };
     el.brands.appendChild(btn);
   }
 }
 function renderPresetChips() {
   el.presets.innerHTML = "";
-  const list = state.brand === "all" ? state.presets : state.presets.filter((p) => p.camera_system === state.brand);
+  const list = state.presets.filter((p) => p.camera_system === state.brand);
   for (const p of list) {
     const card = document.createElement("div");
-    card.className = `preset-card ${state.active?.preset_id === p.preset_id ? "active" : ""}`;
+    const isCurrentActive = state.active?.preset_id === p.preset_id;
+    card.className = `preset-card ${isCurrentActive ? "active" : ""}`;
     const swatch = document.createElement("div");
     swatch.className = "preset-swatch";
     swatch.style.background = PRESET_SWATCHES[p.preset_id] || "linear-gradient(135deg, #37474f, #78909c)";
@@ -3523,6 +3527,11 @@ function renderPresetChips() {
     card.appendChild(sub);
     card.onclick = () => applyPreset(p);
     el.presets.appendChild(card);
+    if (isCurrentActive) {
+      setTimeout(() => {
+        card.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }, 40);
+    }
   }
 }
 function renderSliders() {

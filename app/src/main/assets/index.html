@@ -6,8 +6,8 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
-    <meta name="theme-color" content="#0d0e12" />
-    <title>LookLite · Apple Design Edition</title>
+    <meta name="theme-color" content="#f6f7fb" />
+    <title>LookLite · Apple Music Edition</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -24,6 +24,15 @@
           </svg>
           <span>ORIGINAL</span>
         </div>
+
+        <!-- Floating Split View Tool Pill on Canvas Viewport -->
+        <button type="button" id="btn-split" class="canvas-tool-pill" title="Toggle interactive Before/After split slider">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="3" width="18" height="18" rx="4"/>
+            <line x1="12" y1="3" x2="12" y2="21"/>
+          </svg>
+          <span>Split</span>
+        </button>
 
         <!-- Interactive Split Slider Overlay (Sebelum vs Sesudah) -->
         <div id="split-overlay" class="split-overlay">
@@ -47,11 +56,11 @@
       <header class="app-header">
         <div class="header-brand">
           <span class="logo-text">LookLite</span>
-          <span id="preset-badge" class="preset-badge">Fuji Classic Chrome</span>
+          <span id="preset-badge" class="preset-badge">Fnatix Flash</span>
         </div>
         <div class="header-actions">
           <label class="btn-action file-btn" title="Open Photo">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="18" height="18" rx="4" ry="4"/>
               <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
               <polyline points="21 15 16 10 5 21"/>
@@ -60,16 +69,8 @@
             <input id="file" type="file" accept="image/*" hidden />
           </label>
 
-          <button type="button" id="btn-split" class="btn-action" title="Toggle interactive Before/After split slider">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <rect x="3" y="3" width="18" height="18" rx="4"/>
-              <line x1="12" y1="3" x2="12" y2="21"/>
-            </svg>
-            <span>Split</span>
-          </button>
-
           <button type="button" id="reset" class="btn-action btn-icon-only" title="Reset all adjustments">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
               <path d="M3 3v5h5"/>
             </svg>

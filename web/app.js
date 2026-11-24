@@ -4,10 +4,9 @@ import { VERT, FRAG } from "./shaders.js";
 import { PRESETS } from "./presets-data.js";
 import { getLutUint8Array, LUT_SIZE } from "./luts-bundle.js";
 
-const BRANDS = ["all", "poles", "fujifilm", "kodak", "leica", "ilford", "vintage"];
+const BRANDS = ["poles", "fujifilm", "kodak", "leica", "ilford", "vintage"];
 
 const BRAND_LABELS = {
-  all: "ALL",
   poles: "POLES",
   fujifilm: "FUJI",
   kodak: "KODAK",
@@ -100,7 +99,7 @@ const PRESET_SWATCHES = {
 
 const state = {
   presets: PRESETS,
-  brand: "all",
+  brand: "poles",
   active: null,
   base: null,
   deltas: null,
@@ -351,7 +350,7 @@ function recompose() {
   );
   draw();
   const label = state.active?.display_label || state.active?.look_name;
-  el.presetBadge.textContent = `${label} (${state.active?.camera_system.toUpperCase()})`;
+  el.presetBadge.textContent = label;
   el.status.textContent = `${label} · ${state.intensity}% · ${state.active?.lut_stage.toUpperCase()} LUT`;
 }
 
@@ -385,9 +384,11 @@ function renderBrands() {
     btn.textContent = BRAND_LABELS[b] || b.toUpperCase();
     btn.className = `brand-chip ${b === state.brand ? "active" : ""}`;
     btn.onclick = () => {
+      if (state.brand === b) return;
       state.brand = b;
       renderBrands();
       renderPresetChips();
+      if (el.presets) el.presets.scrollLeft = 0;
     };
     el.brands.appendChild(btn);
   }
@@ -395,13 +396,13 @@ function renderBrands() {
 
 function renderPresetChips() {
   el.presets.innerHTML = "";
-  const list = state.brand === "all"
-    ? state.presets
-    : state.presets.filter((p) => p.camera_system === state.brand);
+  // Strictly bounded to the active brand - prevents leaking into other film stocks
+  const list = state.presets.filter((p) => p.camera_system === state.brand);
 
   for (const p of list) {
     const card = document.createElement("div");
-    card.className = `preset-card ${state.active?.preset_id === p.preset_id ? "active" : ""}`;
+    const isCurrentActive = state.active?.preset_id === p.preset_id;
+    card.className = `preset-card ${isCurrentActive ? "active" : ""}`;
     
     const swatch = document.createElement("div");
     swatch.className = "preset-swatch";
@@ -420,6 +421,12 @@ function renderPresetChips() {
     card.appendChild(sub);
     card.onclick = () => applyPreset(p);
     el.presets.appendChild(card);
+
+    if (isCurrentActive) {
+      setTimeout(() => {
+        card.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }, 40);
+    }
   }
 }
 
