@@ -3651,7 +3651,10 @@ var state = {
   mode: "presets",
   showBefore: false,
   splitActive: false,
-  splitPos: 0.5
+  splitPos: 0.5,
+  ratio: "original",
+  cropNormX: 0.5,
+  cropNormY: 0.5
 };
 var el = {
   viewport: document.getElementById("viewport"),
@@ -3666,6 +3669,13 @@ var el = {
   sebelumBadge: document.getElementById("sebelum-badge"),
   sesudahBadge: document.getElementById("sesudah-badge"),
   btnSplit: document.getElementById("btn-split"),
+  ratioBarWrap: document.getElementById("ratio-bar-wrap"),
+  cropOverlay: document.getElementById("crop-overlay"),
+  cropBox: document.getElementById("crop-box"),
+  cropScrimTop: document.getElementById("crop-scrim-top"),
+  cropScrimBottom: document.getElementById("crop-scrim-bottom"),
+  cropScrimLeft: document.getElementById("crop-scrim-left"),
+  cropScrimRight: document.getElementById("crop-scrim-right"),
   brands: document.getElementById("brands"),
   presets: document.getElementById("presets"),
   presetIntensityBar: document.getElementById("preset-intensity-bar"),
@@ -3817,8 +3827,8 @@ function fitCanvas() {
   const vpRect = el.viewport.getBoundingClientRect();
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const aspect = originalSourceCanvas.width / originalSourceCanvas.height;
-  const dockH = el.panelAdjust?.classList.contains("active") ? 310 : 275;
-  const topPad = 72;
+  const dockH = el.panelAdjust?.classList.contains("active") ? 295 : 260;
+  const topPad = 112;
   const availH = Math.max(160, vpRect.height - topPad - dockH);
   const availW = Math.max(180, vpRect.width - 24);
   let w = availW;
@@ -3833,6 +3843,7 @@ function fitCanvas() {
   el.canvas.style.height = `${Math.round(h)}px`;
   el.canvas.style.marginTop = `${Math.round(topPad + (availH - h) / 2)}px`;
   gl.viewport(0, 0, el.canvas.width, el.canvas.height);
+  updateCropUI();
 }
 function hslVec(val) {
   if (!val)
@@ -4154,6 +4165,166 @@ el.reset.onclick = () => {
   recompose();
   renderSliders();
 };
+function getAspectRatioValue(ratioStr) {
+  switch (ratioStr) {
+    case "1:1":
+      return 1;
+    case "4:5":
+      return 4 / 5;
+    case "9:16":
+      return 9 / 16;
+    case "16:9":
+      return 16 / 9;
+    case "3:2":
+      return 3 / 2;
+    case "2:3":
+      return 2 / 3;
+    default:
+      return null;
+  }
+}
+var cropDragState = null;
+function updateCropUI() {
+  if (!el.cropOverlay || !el.canvas || !originalSourceCanvas)
+    return;
+  const ratioVal = getAspectRatioValue(state.ratio);
+  if (!ratioVal) {
+    el.cropOverlay.classList.remove("active");
+    return;
+  }
+  el.cropOverlay.classList.add("active");
+  const vpRect = el.viewport.getBoundingClientRect();
+  const cRect = el.canvas.getBoundingClientRect();
+  const cLeft = cRect.left - vpRect.left;
+  const cTop = cRect.top - vpRect.top;
+  const cW = cRect.width;
+  const cH = cRect.height;
+  if (cW <= 0 || cH <= 0)
+    return;
+  const imgAspect = cW / cH;
+  let boxW, boxH, maxShiftX, maxShiftY;
+  if (imgAspect > ratioVal) {
+    boxH = cH;
+    boxW = boxH * ratioVal;
+    maxShiftX = cW - boxW;
+    maxShiftY = 0;
+  } else {
+    boxW = cW;
+    boxH = boxW / ratioVal;
+    maxShiftX = 0;
+    maxShiftY = cH - boxH;
+  }
+  const shiftX = maxShiftX > 0 ? maxShiftX * state.cropNormX : 0;
+  const shiftY = maxShiftY > 0 ? maxShiftY * state.cropNormY : 0;
+  const boxX = cLeft + shiftX;
+  const boxY = cTop + shiftY;
+  el.cropBox.style.left = `${Math.round(boxX)}px`;
+  el.cropBox.style.top = `${Math.round(boxY)}px`;
+  el.cropBox.style.width = `${Math.round(boxW)}px`;
+  el.cropBox.style.height = `${Math.round(boxH)}px`;
+  if (el.cropScrimTop) {
+    el.cropScrimTop.style.left = "0px";
+    el.cropScrimTop.style.right = "0px";
+    el.cropScrimTop.style.top = "0px";
+    el.cropScrimTop.style.height = `${Math.max(0, Math.round(boxY))}px`;
+  }
+  if (el.cropScrimBottom) {
+    el.cropScrimBottom.style.left = "0px";
+    el.cropScrimBottom.style.right = "0px";
+    el.cropScrimBottom.style.top = `${Math.round(boxY + boxH)}px`;
+    el.cropScrimBottom.style.bottom = "0px";
+  }
+  if (el.cropScrimLeft) {
+    el.cropScrimLeft.style.left = "0px";
+    el.cropScrimLeft.style.top = `${Math.round(boxY)}px`;
+    el.cropScrimLeft.style.width = `${Math.max(0, Math.round(boxX))}px`;
+    el.cropScrimLeft.style.height = `${Math.round(boxH)}px`;
+  }
+  if (el.cropScrimRight) {
+    el.cropScrimRight.style.left = `${Math.round(boxX + boxW)}px`;
+    el.cropScrimRight.style.right = "0px";
+    el.cropScrimRight.style.top = `${Math.round(boxY)}px`;
+    el.cropScrimRight.style.height = `${Math.round(boxH)}px`;
+  }
+}
+function initCropGestures() {
+  if (!el.cropBox)
+    return;
+  el.cropBox.addEventListener("pointerdown", (e) => {
+    const ratioVal = getAspectRatioValue(state.ratio);
+    if (!ratioVal || !el.canvas)
+      return;
+    e.preventDefault();
+    try {
+      el.cropBox.setPointerCapture(e.pointerId);
+    } catch (_) {}
+    const cRect = el.canvas.getBoundingClientRect();
+    const cW = cRect.width;
+    const cH = cRect.height;
+    const imgAspect = cW / cH;
+    let maxShiftX = 0;
+    let maxShiftY = 0;
+    if (imgAspect > ratioVal) {
+      const boxH = cH;
+      const boxW = boxH * ratioVal;
+      maxShiftX = cW - boxW;
+    } else {
+      const boxW = cW;
+      const boxH = boxW / ratioVal;
+      maxShiftY = cH - boxH;
+    }
+    cropDragState = {
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startY: e.clientY,
+      startNormX: state.cropNormX,
+      startNormY: state.cropNormY,
+      maxShiftX,
+      maxShiftY
+    };
+  });
+  el.cropBox.addEventListener("pointermove", (e) => {
+    if (!cropDragState || cropDragState.pointerId !== e.pointerId)
+      return;
+    const dx = e.clientX - cropDragState.startX;
+    const dy = e.clientY - cropDragState.startY;
+    if (cropDragState.maxShiftX > 0) {
+      state.cropNormX = Math.max(0, Math.min(1, cropDragState.startNormX + dx / cropDragState.maxShiftX));
+    }
+    if (cropDragState.maxShiftY > 0) {
+      state.cropNormY = Math.max(0, Math.min(1, cropDragState.startNormY + dy / cropDragState.maxShiftY));
+    }
+    updateCropUI();
+  });
+  const endDrag = (e) => {
+    if (cropDragState && cropDragState.pointerId === e.pointerId) {
+      try {
+        el.cropBox.releasePointerCapture(e.pointerId);
+      } catch (_) {}
+      cropDragState = null;
+    }
+  };
+  el.cropBox.addEventListener("pointerup", endDrag);
+  el.cropBox.addEventListener("pointercancel", endDrag);
+}
+function initRatioBar() {
+  const chips = document.querySelectorAll(".ratio-chip");
+  chips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      chips.forEach((c) => c.classList.remove("active"));
+      chip.classList.add("active");
+      state.ratio = chip.dataset.ratio || "original";
+      state.cropNormX = 0.5;
+      state.cropNormY = 0.5;
+      updateCropUI();
+      if (state.ratio === "original") {
+        el.status.textContent = "Rasio: Asli";
+      } else {
+        el.status.textContent = `Rasio: ${state.ratio} · Geser bingkai untuk mengatur komposisi`;
+      }
+    });
+  });
+}
 var debugLogs = [];
 function logDebug(type, msg, detail = null) {
   const time = new Date().toLocaleTimeString();
@@ -4382,11 +4553,19 @@ function showExportModal() {
     return;
   if (el.modalExport) {
     const src = rawOriginalImage || originalSourceCanvas;
-    const w = src.naturalWidth || src.width;
-    const h = src.naturalHeight || src.height;
+    let w = src.naturalWidth || src.width;
+    let h = src.naturalHeight || src.height;
+    const ratioVal = getAspectRatioValue(state.ratio);
+    if (ratioVal) {
+      if (w / h > ratioVal) {
+        w = Math.round(h * ratioVal);
+      } else {
+        h = Math.round(w / ratioVal);
+      }
+    }
     const mp = (w * h / 1e6).toFixed(1);
     if (el.optDimOriginal) {
-      el.optDimOriginal.textContent = `${w} × ${h} (${mp} MP)`;
+      el.optDimOriginal.textContent = `${w} × ${h} (${mp} MP)${state.ratio !== "original" ? " · Rasio " + state.ratio : ""}`;
     }
     el.modalExport.classList.add("active");
   } else {
@@ -4424,34 +4603,55 @@ async function executeExport(resChoice) {
   const src = rawOriginalImage || originalSourceCanvas;
   const origW = src.naturalWidth || src.width;
   const origH = src.naturalHeight || src.height;
-  const aspect = origW / origH;
-  let targetW = origW;
-  let targetH = origH;
+  const ratioVal = getAspectRatioValue(state.ratio);
+  let srcCropX = 0;
+  let srcCropY = 0;
+  let srcCropW = origW;
+  let srcCropH = origH;
+  if (ratioVal) {
+    const imgAspect = origW / origH;
+    if (imgAspect > ratioVal) {
+      srcCropH = origH;
+      srcCropW = Math.round(srcCropH * ratioVal);
+      const maxOffX = origW - srcCropW;
+      srcCropX = Math.round(maxOffX * state.cropNormX);
+      srcCropY = 0;
+    } else {
+      srcCropW = origW;
+      srcCropH = Math.round(srcCropW / ratioVal);
+      const maxOffY = origH - srcCropH;
+      srcCropX = 0;
+      srcCropY = Math.round(maxOffY * state.cropNormY);
+    }
+  }
+  const aspect = srcCropW / srcCropH;
+  let targetW = srcCropW;
+  let targetH = srcCropH;
   if (resChoice === "4k") {
     const maxDim = 3840;
-    if (origW >= origH) {
-      targetW = Math.min(origW, maxDim);
+    if (srcCropW >= srcCropH) {
+      targetW = Math.min(srcCropW, maxDim);
       targetH = Math.round(targetW / aspect);
     } else {
-      targetH = Math.min(origH, maxDim);
+      targetH = Math.min(srcCropH, maxDim);
       targetW = Math.round(targetH * aspect);
     }
   } else if (resChoice === "social") {
     const maxDim = 2048;
-    if (origW >= origH) {
-      targetW = Math.min(origW, maxDim);
+    if (srcCropW >= srcCropH) {
+      targetW = Math.min(srcCropW, maxDim);
       targetH = Math.round(targetW / aspect);
     } else {
-      targetH = Math.min(origH, maxDim);
+      targetH = Math.min(srcCropH, maxDim);
       targetW = Math.round(targetH * aspect);
     }
   } else if (resChoice === "fhd") {
     const maxDim = 1080;
-    if (origW >= origH) {
-      targetW = Math.min(origW, maxDim);
+    if (srcCropW >= srcCropH) {
+      targetW = Math.min(srcCropW, maxDim);
       targetH = Math.round(targetW / aspect);
     } else {
-      targetH = Math.min(origH, maxDim);
+      targetH = Math.min(srcCropH, maxDim);
       targetW = Math.round(targetH * aspect);
     }
   }
@@ -4465,12 +4665,12 @@ async function executeExport(resChoice) {
       targetH = maxTex;
     }
   }
-  logDebug("INFO", `Exporting with [${resChoice}]: ${targetW}x${targetH} (Original: ${origW}x${origH})`);
+  logDebug("INFO", `Exporting with [${resChoice}, ratio ${state.ratio}]: ${targetW}x${targetH} (Source Crop: ${srcCropW}x${srcCropH})`);
   const expCanvas = document.createElement("canvas");
   expCanvas.width = targetW;
   expCanvas.height = targetH;
   const expCtx = expCanvas.getContext("2d");
-  expCtx.drawImage(src, 0, 0, targetW, targetH);
+  expCtx.drawImage(src, srcCropX, srcCropY, srcCropW, srcCropH, 0, 0, targetW, targetH);
   const wasSplit = state.splitActive;
   state.splitActive = false;
   uploadImageFromCanvas(expCanvas);
@@ -4483,7 +4683,8 @@ async function executeExport(resChoice) {
   uploadImageFromCanvas(originalSourceCanvas);
   fitCanvas();
   draw();
-  const filename = `looklite_${state.active?.look_name.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${resChoice}_${Date.now()}.jpg`;
+  updateCropUI();
+  const filename = `looklite_${state.active?.look_name.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${state.ratio !== "original" ? state.ratio.replace(":", "-") + "_" : ""}${resChoice}_${Date.now()}.jpg`;
   if (window.LookLiteNative && typeof window.LookLiteNative.saveImage === "function") {
     window.LookLiteNative.saveImage(dataUrl, filename);
     el.status.textContent = `Disimpan ke Galeri (${targetW}x${targetH})!`;
@@ -4536,6 +4737,8 @@ async function main() {
   uploadLut(identityCube(17));
   uploadImageFromCanvas(makeDemoImage());
   renderBrands();
+  initCropGestures();
+  initRatioBar();
   const first = state.presets[0];
   applyPreset(first);
   setMode("presets");

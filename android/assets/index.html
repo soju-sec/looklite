@@ -39,11 +39,30 @@
           </div>
         </div>
 
+        <!-- Interactive Crop Framing Overlay -->
+        <div id="crop-overlay" class="crop-overlay">
+          <div id="crop-scrim-top" class="crop-scrim"></div>
+          <div id="crop-scrim-bottom" class="crop-scrim"></div>
+          <div id="crop-scrim-left" class="crop-scrim"></div>
+          <div id="crop-scrim-right" class="crop-scrim"></div>
+          <div id="crop-box" class="crop-box">
+            <div class="crop-grid-line v1"></div>
+            <div class="crop-grid-line v2"></div>
+            <div class="crop-grid-line h1"></div>
+            <div class="crop-grid-line h2"></div>
+            <div class="crop-corner tl"></div>
+            <div class="crop-corner tr"></div>
+            <div class="crop-corner bl"></div>
+            <div class="crop-corner br"></div>
+            <div class="crop-hint-badge">Geser bingkai untuk potong</div>
+          </div>
+        </div>
+
         <div id="canvas-hint" class="canvas-hint">Touch &amp; hold image to compare</div>
         <p id="status" class="status-overlay">Ready</p>
       </main>
 
-      <!-- Floating Liquid Glass Navigation Capsule (Apple HIG Header) -->
+      <!-- Floating Modern Box Header (Kotak bukan bulat) -->
       <header class="app-header">
         <div class="header-brand">
           <span class="logo-text">LookLite</span>
@@ -89,6 +108,39 @@
           </button>
         </div>
       </header>
+
+      <!-- Aspect Ratio & Crop Bar (Di atas view gambar) -->
+      <div class="ratio-bar-wrap" id="ratio-bar-wrap">
+        <div class="ratio-bar" id="ratio-bar">
+          <button type="button" class="ratio-chip active" data-ratio="original">
+            <span>Asli</span>
+          </button>
+          <button type="button" class="ratio-chip" data-ratio="1:1">
+            <span class="ratio-badge">1:1</span>
+            <span>Persegi</span>
+          </button>
+          <button type="button" class="ratio-chip" data-ratio="4:5">
+            <span class="ratio-badge">4:5</span>
+            <span>Feed IG</span>
+          </button>
+          <button type="button" class="ratio-chip" data-ratio="9:16">
+            <span class="ratio-badge">9:16</span>
+            <span>Story</span>
+          </button>
+          <button type="button" class="ratio-chip" data-ratio="16:9">
+            <span class="ratio-badge">16:9</span>
+            <span>Cinema</span>
+          </button>
+          <button type="button" class="ratio-chip" data-ratio="3:2">
+            <span class="ratio-badge">3:2</span>
+            <span>35mm</span>
+          </button>
+          <button type="button" class="ratio-chip" data-ratio="2:3">
+            <span class="ratio-badge">2:3</span>
+            <span>Portrait</span>
+          </button>
+        </div>
+      </div>
 
       <!-- Floating Liquid Glass Bottom Sheet / Control Dock -->
       <footer class="control-dock">
