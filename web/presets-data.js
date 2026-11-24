@@ -2515,6 +2515,426 @@ export const PRESETS = [
     }
   },
   {
+    "preset_id": "hasselblad.hncs_standard",
+    "camera_system": "hasselblad",
+    "look_name": "Hasselblad HNCS Standard",
+    "display_label": "Hasselblad HNCS Standard",
+    "tag": "HNCS MASTER",
+    "lut_asset_path": "luts/hasselblad.hncs_standard.cube",
+    "lut_stage": "early",
+    "description": "Hallmark Hasselblad Natural Colour Solution. Pristine color fidelity, ultra-smooth highlight roll-off, and medium-format dynamic balance.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.05,
+      "contrast": 6,
+      "highlights": -10,
+      "shadows": 8,
+      "whites": -5,
+      "blacks": 4,
+      "temp": 0,
+      "tint": 0,
+      "vibrance": 6,
+      "saturation": -2,
+      "vignette": 4,
+      "grain_intensity": 0,
+      "grain_size": 1,
+      "skin_smooth": 0,
+      "skin_radiance": 5,
+      "clarity": 8,
+      "glow": 0,
+      "sharpness": 12,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "hasselblad.hncs_portrait",
+    "camera_system": "hasselblad",
+    "look_name": "Hasselblad X2D Portrait",
+    "display_label": "Hasselblad X2D Portrait",
+    "tag": "X2D PORTRAIT",
+    "lut_asset_path": "luts/hasselblad.hncs_portrait.cube",
+    "lut_stage": "early",
+    "description": "Flagship medium-format portraiture with delicate skin luminosity, smooth midtone transitions, and velvety shadow depth.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.1,
+      "contrast": 4,
+      "highlights": -14,
+      "shadows": 10,
+      "whites": -8,
+      "blacks": 6,
+      "temp": 2,
+      "tint": -2,
+      "vibrance": 8,
+      "saturation": -4,
+      "vignette": 6,
+      "grain_intensity": 0,
+      "grain_size": 1,
+      "skin_smooth": 22,
+      "skin_radiance": 16,
+      "clarity": 4,
+      "glow": 6,
+      "sharpness": 10,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "hasselblad.hncs_landscape",
+    "camera_system": "hasselblad",
+    "look_name": "Hasselblad Nordic Nature",
+    "display_label": "Hasselblad Nordic Nature",
+    "tag": "NORDIC NATURE",
+    "lut_asset_path": "luts/hasselblad.hncs_landscape.cube",
+    "lut_stage": "early",
+    "description": "Expansive medium-format dynamic range for nature, lush organic greens, and serene natural blue skies.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0,
+      "contrast": 10,
+      "highlights": -16,
+      "shadows": 12,
+      "whites": -6,
+      "blacks": 4,
+      "temp": -2,
+      "tint": 2,
+      "vibrance": 12,
+      "saturation": 2,
+      "vignette": 8,
+      "grain_intensity": 0,
+      "grain_size": 1,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": 15,
+      "glow": 0,
+      "sharpness": 18,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "hasselblad.hncs_monochrome",
+    "camera_system": "hasselblad",
+    "look_name": "Hasselblad MF Monochrom",
+    "display_label": "Hasselblad MF Monochrom",
+    "tag": "MF MONOCHROM",
+    "lut_asset_path": "luts/hasselblad.hncs_monochrome.cube",
+    "lut_stage": "early",
+    "description": "Architectural medium-format monochrome with rich micro-contrast, deep tonal blacks, and silky highlight gradation.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0,
+      "contrast": 14,
+      "highlights": -12,
+      "shadows": 8,
+      "whites": 4,
+      "blacks": -6,
+      "temp": 0,
+      "tint": 0,
+      "vibrance": -100,
+      "saturation": -100,
+      "vignette": 10,
+      "grain_intensity": 4,
+      "grain_size": 10,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": 18,
+      "glow": 0,
+      "sharpness": 20,
+      "hsl": {}
+    }
+  },
+  {
     "preset_id": "ilford.hp5_plus",
     "camera_system": "ilford",
     "look_name": "HP5 Plus 400",

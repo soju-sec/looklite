@@ -4,13 +4,14 @@ import { VERT, FRAG } from "./shaders.js";
 import { PRESETS } from "./presets-data.js";
 import { getLutUint8Array, LUT_SIZE } from "./luts-bundle.js";
 
-const BRANDS = ["poles", "fujifilm", "kodak", "leica", "ilford", "vintage"];
+const BRANDS = ["poles", "fujifilm", "kodak", "leica", "hasselblad", "ilford", "vintage"];
 
 const BRAND_LABELS = {
   poles: "POLES",
   fujifilm: "FUJI",
   kodak: "KODAK",
   leica: "LEICA",
+  hasselblad: "HASSELBLAD",
   ilford: "ILFORD",
   vintage: "VINTAGE",
 };
@@ -86,6 +87,12 @@ const PRESET_SWATCHES = {
   "leica.teal": "linear-gradient(135deg, #004d40, #ff8a65)",
   "leica.monochrom": "linear-gradient(135deg, #141414, #757575)",
   "leica.greg_williams": "linear-gradient(135deg, #0d0d0d, #bdbdbd)",
+
+  // Hasselblad Medium Format
+  "hasselblad.hncs_standard": "linear-gradient(135deg, #2b313a, #cfd8dc)",
+  "hasselblad.hncs_portrait": "linear-gradient(135deg, #37474f, #f0d5c0)",
+  "hasselblad.hncs_landscape": "linear-gradient(135deg, #1b382b, #81c784)",
+  "hasselblad.hncs_monochrome": "linear-gradient(135deg, #121212, #cfd8dc)",
 
   // Ilford
   "ilford.hp5_plus": "linear-gradient(135deg, #1c1c1c, #9e9e9e)",
