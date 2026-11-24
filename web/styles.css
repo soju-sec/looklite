@@ -127,6 +127,91 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
+/* ==========================================================================
+   Interactive Split Slider Overlay (Sebelum vs Sesudah)
+   Matches user reference image with circular < > draggable handle
+   ========================================================================== */
+.split-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: 12;
+}
+
+.split-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.split-badge {
+  position: absolute;
+  top: calc(74px + var(--safe-top));
+  padding: 5px 14px;
+  border-radius: 9999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  user-select: none;
+}
+
+.split-badge.sebelum {
+  left: 18px;
+  background: rgba(30, 36, 48, 0.85);
+  color: #ffffff;
+  border: 0.5px solid rgba(255, 255, 255, 0.2);
+}
+
+.split-badge.sesudah {
+  right: 18px;
+  background: rgba(10, 132, 255, 0.88);
+  color: #ffffff;
+  border: 0.5px solid rgba(255, 255, 255, 0.35);
+}
+
+.split-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: ew-resize;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.split-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a1a1a;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ew-resize;
+  transition: transform 0.1s ease;
+}
+
+.split-handle:active {
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
 .canvas-hint {
   position: absolute;
   top: calc(76px + var(--safe-top));
@@ -237,6 +322,13 @@ body {
 .btn-action:active {
   background: rgba(255, 255, 255, 0.16);
   transform: scale(0.96);
+}
+
+.btn-action.active {
+  background: rgba(10, 132, 255, 0.28);
+  color: #5ac8fa;
+  border-color: rgba(90, 200, 250, 0.6);
+  box-shadow: 0 0 12px rgba(10, 132, 255, 0.35);
 }
 
 .btn-icon-only {

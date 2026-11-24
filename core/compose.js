@@ -19,13 +19,14 @@ export function zeroSlidersLike(base) {
 export function composeSliders(base, deltas, ranges = null, factor = 1.0) {
   const out = {};
   const f = typeof factor === "number" ? Math.max(0, Math.min(1, factor)) : 1.0;
-  for (const key of Object.keys(base)) {
-    const b = base[key];
-    const d = deltas?.[key];
+  const allKeys = new Set([...Object.keys(base || {}), ...Object.keys(deltas || {})]);
+  for (const key of allKeys) {
+    const b = base?.[key] ?? 0;
+    const d = deltas?.[key] ?? 0;
     if (isPlainObject(b)) {
-      out[key] = composeSliders(b, d ?? {}, nestedRanges(ranges, key), f);
+      out[key] = composeSliders(b, d || {}, nestedRanges(ranges, key), f);
     } else {
-      const sum = Number(b) * f + Number(d ?? 0);
+      const sum = Number(b) * f + Number(d);
       out[key] = clampKey(sum, ranges, key);
     }
   }

@@ -15,6 +15,8 @@
       <!-- Full-Bleed Immersive Canvas Viewport -->
       <main class="canvas-viewport" id="viewport">
         <canvas id="gl"></canvas>
+        
+        <!-- Touch & Hold Before Badge -->
         <div id="before-badge" class="before-badge">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <circle cx="12" cy="12" r="10"/>
@@ -22,6 +24,21 @@
           </svg>
           <span>ORIGINAL</span>
         </div>
+
+        <!-- Interactive Split Slider Overlay (Sebelum vs Sesudah) -->
+        <div id="split-overlay" class="split-overlay">
+          <div id="sebelum-badge" class="split-badge sebelum">SEBELUM</div>
+          <div id="sesudah-badge" class="split-badge sesudah">SESUDAH</div>
+          <div id="split-line" class="split-line">
+            <div id="split-handle" class="split-handle" title="Drag to compare before & after">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="8 18 2 12 8 6"/>
+                <polyline points="16 6 22 12 16 18"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
         <div id="canvas-hint" class="canvas-hint">Touch &amp; hold image to compare</div>
         <p id="status" class="status-overlay">Ready</p>
       </main>
@@ -42,6 +59,14 @@
             <span>Open</span>
             <input id="file" type="file" accept="image/*" hidden />
           </label>
+
+          <button type="button" id="btn-split" class="btn-action" title="Toggle interactive Before/After split slider">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="3" y="3" width="18" height="18" rx="4"/>
+              <line x1="12" y1="3" x2="12" y2="21"/>
+            </svg>
+            <span>Split</span>
+          </button>
 
           <button type="button" id="reset" class="btn-action btn-icon-only" title="Reset all adjustments">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -103,6 +128,7 @@
           <div class="adjust-subtabs" id="tabs">
             <button type="button" data-tab="light" class="subtab-btn active">Light</button>
             <button type="button" data-tab="color" class="subtab-btn">Color</button>
+            <button type="button" data-tab="poles" class="subtab-btn">Poles</button>
             <button type="button" data-tab="effects" class="subtab-btn">Grain / FX</button>
           </div>
           <!-- Apple Inspector Sliders Deck -->

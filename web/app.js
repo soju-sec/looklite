@@ -4,7 +4,17 @@ import { VERT, FRAG } from "./shaders.js";
 import { PRESETS } from "./presets-data.js";
 import { getLutUint8Array, LUT_SIZE } from "./luts-bundle.js";
 
-const BRANDS = ["all", "fujifilm", "kodak", "leica", "ilford", "vintage"];
+const BRANDS = ["all", "poles", "fujifilm", "kodak", "leica", "ilford", "vintage"];
+
+const BRAND_LABELS = {
+  all: "ALL",
+  poles: "POLES",
+  fujifilm: "FUJI",
+  kodak: "KODAK",
+  leica: "LEICA",
+  ilford: "ILFORD",
+  vintage: "VINTAGE",
+};
 
 const LIGHT_KEYS = [
   ["exposure", "Exposure", -3, 3, 0.05],
@@ -22,6 +32,14 @@ const COLOR_KEYS = [
   ["saturation", "Saturation", -100, 100, 1],
 ];
 
+const POLES_KEYS = [
+  ["skin_smooth", "Skin Smooth", 0, 100, 1],
+  ["skin_radiance", "Skin Radiance", 0, 100, 1],
+  ["clarity", "Clarity / Pop", -100, 100, 1],
+  ["glow", "Soft Glow", 0, 100, 1],
+  ["sharpness", "Sharpening", 0, 100, 1],
+];
+
 const FX_KEYS = [
   ["vignette", "Vignette", 0, 100, 1],
   ["grain_intensity", "Grain", 0, 100, 1],
@@ -29,6 +47,16 @@ const FX_KEYS = [
 ];
 
 const PRESET_SWATCHES = {
+  // Poles & Trending
+  "poles.fnatix_flash": "linear-gradient(135deg, #1a2a3a, #e0b48a)",
+  "poles.korean_porcelain": "linear-gradient(135deg, #dbe2ef, #f7d6bf)",
+  "poles.emerald_moody": "linear-gradient(135deg, #0e2a22, #b8860b)",
+  "poles.night_ocean": "linear-gradient(135deg, #0f2027, #203a43)",
+  "poles.soft_glow_dream": "linear-gradient(135deg, #fbc2eb, #a6c1ee)",
+  "poles.studio_flash": "linear-gradient(135deg, #2c3e50, #bdc3c7)",
+  "poles.golden_radiance": "linear-gradient(135deg, #ff8c00, #ffd700)",
+  "poles.dark_aesthetic": "linear-gradient(135deg, #141414, #434343)",
+
   // Fujifilm
   "fuji.classic_chrome": "linear-gradient(135deg, #2c3848, #9b8270)",
   "fuji.classic_neg": "linear-gradient(135deg, #324338, #b86242)",
@@ -81,6 +109,8 @@ const state = {
   tab: "light",
   mode: "presets", // 'presets' | 'adjust'
   showBefore: false,
+  splitActive: false,
+  splitPos: 0.5,
 };
 
 const el = {
@@ -90,6 +120,12 @@ const el = {
   presetBadge: document.getElementById("preset-badge"),
   beforeBadge: document.getElementById("before-badge"),
   canvasHint: document.getElementById("canvas-hint"),
+  splitOverlay: document.getElementById("split-overlay"),
+  splitLine: document.getElementById("split-line"),
+  splitHandle: document.getElementById("split-handle"),
+  sebelumBadge: document.getElementById("sebelum-badge"),
+  sesudahBadge: document.getElementById("sesudah-badge"),
+  btnSplit: document.getElementById("btn-split"),
   brands: document.getElementById("brands"),
   presets: document.getElementById("presets"),
   presetIntensityBar: document.getElementById("preset-intensity-bar"),
@@ -158,10 +194,11 @@ function createQuad(glCtx, program) {
 
 function cacheUniforms(glCtx, program) {
   const names = [
-    "uImage", "uLut", "uLutSize", "uLutIntensity", "uLutStage", "uShowBefore",
+    "uImage", "uLut", "uLutSize", "uLutIntensity", "uLutStage", "uShowBefore", "uSplitPos",
     "uExposure", "uContrast", "uHighlights", "uShadows", "uWhites", "uBlacks",
     "uTemp", "uTint", "uVibrance", "uSaturation", "uVignette",
-    "uGrainIntensity", "uGrainSize", "uResolution",
+    "uGrainIntensity", "uGrainSize", "uSkinSmooth", "uSkinRadiance",
+    "uClarity", "uGlow", "uSharpness", "uResolution",
     "uHslRed", "uHslOrange", "uHslYellow", "uHslGreen",
     "uHslAqua", "uHslBlue", "uHslPurple", "uHslMagenta",
     "uBalShadows", "uBalMids", "uBalHighlights",
@@ -257,6 +294,7 @@ function draw() {
   gl.uniform1f(locs.uLutIntensity, (state.intensity ?? 100) / 100.0);
   gl.uniform1i(locs.uLutStage, state.active?.lut_stage === "early" ? 0 : 1);
   gl.uniform1i(locs.uShowBefore, state.showBefore ? 1 : 0);
+  gl.uniform1f(locs.uSplitPos, state.splitActive ? state.splitPos : -1.0);
   gl.uniform1f(locs.uExposure, s.exposure);
   gl.uniform1f(locs.uContrast, s.contrast);
   gl.uniform1f(locs.uHighlights, s.highlights);
@@ -270,6 +308,11 @@ function draw() {
   gl.uniform1f(locs.uVignette, s.vignette);
   gl.uniform1f(locs.uGrainIntensity, s.grain_intensity);
   gl.uniform1f(locs.uGrainSize, s.grain_size);
+  gl.uniform1f(locs.uSkinSmooth, s.skin_smooth ?? 0);
+  gl.uniform1f(locs.uSkinRadiance, s.skin_radiance ?? 0);
+  gl.uniform1f(locs.uClarity, s.clarity ?? 0);
+  gl.uniform1f(locs.uGlow, s.glow ?? 0);
+  gl.uniform1f(locs.uSharpness, s.sharpness ?? 0);
   gl.uniform2f(locs.uResolution, el.canvas.width, el.canvas.height);
 
   const h = s.hsl || {};
@@ -339,7 +382,7 @@ function renderBrands() {
   for (const b of BRANDS) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.textContent = b.toUpperCase();
+    btn.textContent = BRAND_LABELS[b] || b.toUpperCase();
     btn.className = `brand-chip ${b === state.brand ? "active" : ""}`;
     btn.onclick = () => {
       state.brand = b;
@@ -381,7 +424,7 @@ function renderPresetChips() {
 }
 
 function renderSliders() {
-  const keys = state.tab === "light" ? LIGHT_KEYS : state.tab === "color" ? COLOR_KEYS : FX_KEYS;
+  const keys = state.tab === "light" ? LIGHT_KEYS : state.tab === "color" ? COLOR_KEYS : state.tab === "poles" ? POLES_KEYS : FX_KEYS;
   el.sliders.innerHTML = "";
   for (const [key, label, min, max, step] of keys) {
     const row = document.createElement("div");
@@ -473,9 +516,43 @@ el.tabs.addEventListener("click", (e) => {
 
 // Hold to toggle before / after view
 function setBeforeActive(active) {
+  if (state.splitActive) return;
   state.showBefore = active;
   el.beforeBadge.classList.toggle("visible", active);
   el.before.classList.toggle("holding", active);
+  draw();
+}
+
+// Split-screen comparison mode (Sebelum vs Sesudah)
+function setSplitActive(active) {
+  state.splitActive = active;
+  el.btnSplit?.classList.toggle("active", active);
+  el.splitOverlay?.classList.toggle("active", active);
+  updateSplitPositionUI();
+  draw();
+}
+
+function updateSplitPositionUI() {
+  if (!el.splitLine) return;
+  const pct = Math.max(0.04, Math.min(0.96, state.splitPos)) * 100;
+  el.splitLine.style.left = `${pct}%`;
+}
+
+if (el.btnSplit) {
+  el.btnSplit.onclick = () => {
+    setSplitActive(!state.splitActive);
+  };
+}
+
+let isDraggingSplit = false;
+
+function handleSplitMove(clientX) {
+  if (!state.splitActive) return;
+  const rect = el.canvas.getBoundingClientRect();
+  if (rect.width <= 0) return;
+  const relX = (clientX - rect.left) / rect.width;
+  state.splitPos = Math.max(0.02, Math.min(0.98, relX));
+  updateSplitPositionUI();
   draw();
 }
 
@@ -483,12 +560,32 @@ el.before.addEventListener("pointerdown", () => setBeforeActive(true));
 el.before.addEventListener("pointerup", () => setBeforeActive(false));
 el.before.addEventListener("pointerleave", () => setBeforeActive(false));
 
-// Touch & Hold directly on canvas viewport for before/after comparison
+// Touch & Hold directly on canvas viewport or drag split handle
 el.viewport.addEventListener("pointerdown", (e) => {
-  if (e.target === el.canvas) setBeforeActive(true);
+  if (state.splitActive) {
+    isDraggingSplit = true;
+    handleSplitMove(e.clientX);
+    e.preventDefault();
+  } else if (e.target === el.canvas) {
+    setBeforeActive(true);
+  }
 });
-el.viewport.addEventListener("pointerup", () => setBeforeActive(false));
-el.viewport.addEventListener("pointercancel", () => setBeforeActive(false));
+
+window.addEventListener("pointermove", (e) => {
+  if (isDraggingSplit) {
+    handleSplitMove(e.clientX);
+  }
+});
+
+window.addEventListener("pointerup", () => {
+  if (isDraggingSplit) isDraggingSplit = false;
+  setBeforeActive(false);
+});
+
+window.addEventListener("pointercancel", () => {
+  if (isDraggingSplit) isDraggingSplit = false;
+  setBeforeActive(false);
+});
 
 // Filter Intensity Direct Controls (0-100)
 if (el.filterIntensity) {
@@ -528,6 +625,7 @@ el.reset.onclick = () => {
   if (!state.base) return;
   state.intensity = 100;
   state.deltas = zeroSlidersLike(state.base);
+  setSplitActive(false);
   updateIntensityUI();
   recompose();
   renderSliders();
@@ -556,6 +654,8 @@ el.export.onclick = () => {
   
   const origW = el.canvas.width;
   const origH = el.canvas.height;
+  const wasSplit = state.splitActive;
+  state.splitActive = false;
   el.canvas.width = originalSourceCanvas.width;
   el.canvas.height = originalSourceCanvas.height;
   gl.viewport(0, 0, el.canvas.width, el.canvas.height);
@@ -563,6 +663,7 @@ el.export.onclick = () => {
 
   const dataUrl = el.canvas.toDataURL("image/jpeg", 0.95);
 
+  state.splitActive = wasSplit;
   el.canvas.width = origW;
   el.canvas.height = origH;
   gl.viewport(0, 0, origW, origH);

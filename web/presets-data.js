@@ -1,5 +1,845 @@
 export const PRESETS = [
   {
+    "preset_id": "poles.fnatix_flash",
+    "camera_system": "poles",
+    "look_name": "Fnatix Moody Flash",
+    "display_label": "Fnatix Moody Flash",
+    "tag": "MOODY FLASH",
+    "lut_asset_path": "luts/poles.fnatix_flash.cube",
+    "lut_stage": "early",
+    "description": "Viral aesthetic moody flash with dark cyan ocean, cool skies, and bright porcelain skin pop.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.1,
+      "contrast": 15,
+      "highlights": -10,
+      "shadows": -15,
+      "whites": 10,
+      "blacks": -12,
+      "temp": -4,
+      "tint": 2,
+      "vibrance": 5,
+      "saturation": -5,
+      "vignette": 15,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 35,
+      "skin_radiance": 30,
+      "clarity": 20,
+      "glow": 15,
+      "sharpness": 20,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "poles.korean_porcelain",
+    "camera_system": "poles",
+    "look_name": "Korean Porcelain",
+    "display_label": "Korean Porcelain",
+    "tag": "PORCELAIN",
+    "lut_asset_path": "luts/poles.korean_porcelain.cube",
+    "lut_stage": "early",
+    "description": "Fair Korean idol skin with creamy bright highlights and muted pastel background.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.2,
+      "contrast": 8,
+      "highlights": -15,
+      "shadows": 10,
+      "whites": 15,
+      "blacks": -5,
+      "temp": -2,
+      "tint": 4,
+      "vibrance": 8,
+      "saturation": -2,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 40,
+      "skin_radiance": 35,
+      "clarity": 10,
+      "glow": 25,
+      "sharpness": 15,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "poles.emerald_moody",
+    "camera_system": "poles",
+    "look_name": "Emerald Moody",
+    "display_label": "Emerald Moody",
+    "tag": "EMERALD",
+    "lut_asset_path": "luts/poles.emerald_moody.cube",
+    "lut_stage": "early",
+    "description": "Deep rich emerald greens and moody dark tones with glowing subject illumination.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0,
+      "contrast": 18,
+      "highlights": -12,
+      "shadows": -18,
+      "whites": 8,
+      "blacks": -15,
+      "temp": -3,
+      "tint": 2,
+      "vibrance": 12,
+      "saturation": 4,
+      "vignette": 18,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 30,
+      "skin_radiance": 25,
+      "clarity": 25,
+      "glow": 10,
+      "sharpness": 25,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "poles.night_ocean",
+    "camera_system": "poles",
+    "look_name": "Night Ocean",
+    "display_label": "Night Ocean",
+    "tag": "CYBER MOOD",
+    "lut_asset_path": "luts/poles.night_ocean.cube",
+    "lut_stage": "early",
+    "description": "Cinematic night ambiance with deep oceanic teals and warm crisp portrait focus.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0,
+      "contrast": 22,
+      "highlights": -8,
+      "shadows": -22,
+      "whites": 12,
+      "blacks": -18,
+      "temp": -6,
+      "tint": 0,
+      "vibrance": 10,
+      "saturation": 0,
+      "vignette": 22,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 25,
+      "skin_radiance": 25,
+      "clarity": 28,
+      "glow": 12,
+      "sharpness": 28,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "poles.soft_glow_dream",
+    "camera_system": "poles",
+    "look_name": "Pro-Mist Dream",
+    "display_label": "Pro-Mist Dream",
+    "tag": "SOFT GLOW",
+    "lut_asset_path": "luts/poles.soft_glow_dream.cube",
+    "lut_stage": "early",
+    "description": "Dreamy diffusion filter halation with creamy skin texture and romantic highlights.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.15,
+      "contrast": -8,
+      "highlights": -20,
+      "shadows": 20,
+      "whites": -5,
+      "blacks": 8,
+      "temp": 2,
+      "tint": 3,
+      "vibrance": 10,
+      "saturation": -4,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 45,
+      "skin_radiance": 30,
+      "clarity": -10,
+      "glow": 40,
+      "sharpness": 10,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "poles.studio_flash",
+    "camera_system": "poles",
+    "look_name": "Studio Flash",
+    "display_label": "Studio Flash",
+    "tag": "COMMERCIAL",
+    "lut_asset_path": "luts/poles.studio_flash.cube",
+    "lut_stage": "early",
+    "description": "Clean studio flash portrait with neutral grey-white backdrop and sharp subject punch.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.1,
+      "contrast": 16,
+      "highlights": -10,
+      "shadows": -12,
+      "whites": 14,
+      "blacks": -10,
+      "temp": -2,
+      "tint": 1,
+      "vibrance": 6,
+      "saturation": -3,
+      "vignette": 10,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 30,
+      "skin_radiance": 30,
+      "clarity": 30,
+      "glow": 12,
+      "sharpness": 30,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "poles.golden_radiance",
+    "camera_system": "poles",
+    "look_name": "Golden Radiance",
+    "display_label": "Golden Radiance",
+    "tag": "SUNSET GLOW",
+    "lut_asset_path": "luts/poles.golden_radiance.cube",
+    "lut_stage": "early",
+    "description": "Warm sun-drenched golden hour with amber skin radiance and glowing highlights.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.1,
+      "contrast": 10,
+      "highlights": -8,
+      "shadows": 8,
+      "whites": 10,
+      "blacks": -4,
+      "temp": 14,
+      "tint": -3,
+      "vibrance": 16,
+      "saturation": 8,
+      "vignette": 12,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 35,
+      "skin_radiance": 35,
+      "clarity": 15,
+      "glow": 28,
+      "sharpness": 18,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "poles.dark_aesthetic",
+    "camera_system": "poles",
+    "look_name": "Dark Aesthetic",
+    "display_label": "Dark Aesthetic",
+    "tag": "LOW KEY",
+    "lut_asset_path": "luts/poles.dark_aesthetic.cube",
+    "lut_stage": "early",
+    "description": "Moody stormy low-key drama with dark desaturated surroundings and focused subject light.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": -0.15,
+      "contrast": 25,
+      "highlights": -15,
+      "shadows": -25,
+      "whites": 15,
+      "blacks": -28,
+      "temp": -4,
+      "tint": 1,
+      "vibrance": 8,
+      "saturation": -6,
+      "vignette": 28,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 30,
+      "skin_radiance": 25,
+      "clarity": 25,
+      "glow": 10,
+      "sharpness": 25,
+      "hsl": {}
+    }
+  },
+  {
     "preset_id": "fuji.classic_chrome",
     "camera_system": "fujifilm",
     "look_name": "Classic Chrome",
