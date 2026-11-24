@@ -210,6 +210,77 @@
           </div>
         </div>
       </div>
+
+      <!-- Apple Liquid Glass Export Resolution Sheet -->
+      <div id="modal-export" class="modal-backdrop">
+        <div class="modal-card">
+          <div class="modal-header">
+            <div class="modal-title-row">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              <h3>Pilihan Resolusi Ekspor</h3>
+            </div>
+            <button type="button" id="btn-close-export" class="modal-close-btn">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p class="modal-desc">Pilih resolusi hasil foto yang ingin disimpan ke galeri:</p>
+            
+            <div class="resolution-options">
+              <label class="resolution-option">
+                <input type="radio" name="export-res" value="original" checked />
+                <div class="option-content">
+                  <div class="option-title-row">
+                    <span class="option-title">Resolusi Asli (Original)</span>
+                    <span class="option-badge">Kualitas Penuh</span>
+                  </div>
+                  <span class="option-subtitle" id="opt-dim-original">100% ukuran sensor asli kamera</span>
+                </div>
+              </label>
+
+              <label class="resolution-option">
+                <input type="radio" name="export-res" value="4k" />
+                <div class="option-content">
+                  <div class="option-title-row">
+                    <span class="option-title">4K Ultra HD</span>
+                    <span class="option-badge">3840 px</span>
+                  </div>
+                  <span class="option-subtitle">Sangat tajam untuk layar monitor &amp; cetak</span>
+                </div>
+              </label>
+
+              <label class="resolution-option">
+                <input type="radio" name="export-res" value="social" />
+                <div class="option-content">
+                  <div class="option-title-row">
+                    <span class="option-title">Optimal Sosmed (Instagram/WA)</span>
+                    <span class="option-badge recommended">Rekomendasi</span>
+                  </div>
+                  <span class="option-subtitle">2048 px · Mencegah foto pecah saat diunggah</span>
+                </div>
+              </label>
+
+              <label class="resolution-option">
+                <input type="radio" name="export-res" value="fhd" />
+                <div class="option-content">
+                  <div class="option-title-row">
+                    <span class="option-title">Full HD (1080p)</span>
+                    <span class="option-badge">1080 px</span>
+                  </div>
+                  <span class="option-subtitle">Ukuran ringan, cepat dikirim via chat</span>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="btn-confirm-export" class="btn-action btn-prominent full-width">
+              <span>Simpan ke Galeri</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Standalone bundled script -->

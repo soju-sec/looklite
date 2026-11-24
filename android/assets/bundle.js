@@ -3682,6 +3682,10 @@ var el = {
   btnCloseBug: document.getElementById("btn-close-bug"),
   btnCopyDebug: document.getElementById("btn-copy-debug"),
   debugText: document.getElementById("debug-text"),
+  modalExport: document.getElementById("modal-export"),
+  btnCloseExport: document.getElementById("btn-close-export"),
+  btnConfirmExport: document.getElementById("btn-confirm-export"),
+  optDimOriginal: document.getElementById("opt-dim-original"),
   reset: document.getElementById("reset"),
   export: document.getElementById("export"),
   before: document.getElementById("before"),
@@ -3700,6 +3704,7 @@ var imageTex = null;
 var lutTex = null;
 var lutSize = 17;
 var originalSourceCanvas = null;
+var rawOriginalImage = null;
 function createShader(type, src) {
   const s = gl.createShader(type);
   gl.shaderSource(s, src);
@@ -4174,19 +4179,60 @@ async function loadPhotoFile(file) {
   logDebug("INFO", `File selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB, type: ${file.type || "unknown"})`);
   try {
     let imgSource = null;
-    if (typeof createImageBitmap === "function") {
+    if (typeof URL !== "undefined" && typeof URL.createObjectURL === "function") {
+      try {
+        imgSource = await new Promise((resolve, reject) => {
+          const url = URL.createObjectURL(file);
+          const img = new Image;
+          img.onload = () => {
+            logDebug("INFO", `Method 1 (URL.createObjectURL) success: ${img.naturalWidth || img.width}x${img.naturalHeight || img.height}`);
+            resolve(img);
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error("Gagal decode gambar via ObjectURL"));
+          };
+          img.src = url;
+        });
+      } catch (urlErr) {
+        logDebug("WARN", "Method 1 (URL.createObjectURL) failed, falling back to Bitmap", urlErr.message);
+      }
+    }
+    if (!imgSource && typeof createImageBitmap === "function") {
       try {
         imgSource = await createImageBitmap(file);
-        logDebug("INFO", `createImageBitmap success: ${imgSource.width}x${imgSource.height}`);
+        logDebug("INFO", `Method 2 (createImageBitmap) success: ${imgSource.width}x${imgSource.height}`);
       } catch (bmErr) {
-        logDebug("WARN", "createImageBitmap failed, falling back to FileReader", bmErr.message);
+        logDebug("WARN", "Method 2 (createImageBitmap) failed, trying FileReader ArrayBuffer", bmErr.message);
+      }
+    }
+    if (!imgSource) {
+      try {
+        const buffer = await new Promise((resolve, reject) => {
+          const reader = new FileReader;
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error("FileReader readAsArrayBuffer failed"));
+          reader.readAsArrayBuffer(file);
+        });
+        const blob = new Blob([buffer], { type: file.type || "image/jpeg" });
+        const blobUrl = URL.createObjectURL(blob);
+        const img = new Image;
+        await new Promise((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error("Blob decode failed"));
+          img.src = blobUrl;
+        });
+        imgSource = img;
+        logDebug("INFO", `Method 3 (ArrayBuffer -> Blob) success: ${img.width}x${img.height}`);
+      } catch (abErr) {
+        logDebug("WARN", "Method 3 failed, trying DataURL", abErr.message);
       }
     }
     if (!imgSource) {
       const dataUrl = await new Promise((resolve, reject) => {
         const reader = new FileReader;
         reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(new Error("FileReader gagal membaca file gambar"));
+        reader.onerror = () => reject(new Error("FileReader gagal membaca file"));
         reader.readAsDataURL(file);
       });
       const img = new Image;
@@ -4196,43 +4242,52 @@ async function loadPhotoFile(file) {
         img.src = dataUrl;
       });
       imgSource = img;
-      logDebug("INFO", `Image decoded via DataURL: ${img.width}x${img.height}`);
+      logDebug("INFO", `Method 4 (DataURL) success: ${img.width}x${img.height}`);
     }
-    if (!imgSource || !imgSource.width || !imgSource.height) {
+    const rawW = imgSource.naturalWidth || imgSource.width;
+    const rawH = imgSource.naturalHeight || imgSource.height;
+    if (!rawW || !rawH) {
       throw new Error("Dimensi gambar tidak valid");
+    }
+    rawOriginalImage = imgSource;
+    state.originalWidth = rawW;
+    state.originalHeight = rawH;
+    if (el.optDimOriginal) {
+      const mp = (rawW * rawH / 1e6).toFixed(1);
+      el.optDimOriginal.textContent = `${rawW} × ${rawH} (${mp} MP)`;
     }
     const maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096;
     const maxAllowed = Math.min(maxTex, 4096);
-    let targetW = imgSource.width;
-    let targetH = imgSource.height;
-    if (targetW > maxAllowed || targetH > maxAllowed) {
-      if (targetW > targetH) {
-        targetH = Math.round(targetH * maxAllowed / targetW);
-        targetW = maxAllowed;
+    let previewW = rawW;
+    let previewH = rawH;
+    if (previewW > maxAllowed || previewH > maxAllowed) {
+      if (previewW > previewH) {
+        previewH = Math.round(previewH * maxAllowed / previewW);
+        previewW = maxAllowed;
       } else {
-        targetW = Math.round(targetW * maxAllowed / targetH);
-        targetH = maxAllowed;
+        previewW = Math.round(previewW * maxAllowed / previewH);
+        previewH = maxAllowed;
       }
-      logDebug("INFO", `Scaled down to fit MAX_TEXTURE_SIZE: ${targetW}x${targetH} (max: ${maxAllowed})`);
+      logDebug("INFO", `Preview texture scaled to: ${previewW}x${previewH} (Original: ${rawW}x${rawH})`);
     }
     const c = document.createElement("canvas");
-    c.width = targetW;
-    c.height = targetH;
+    c.width = previewW;
+    c.height = previewH;
     const ctx = c.getContext("2d");
     if (!ctx)
       throw new Error("Gagal membuat Canvas 2D context");
-    ctx.drawImage(imgSource, 0, 0, targetW, targetH);
+    ctx.drawImage(imgSource, 0, 0, previewW, previewH);
     uploadImageFromCanvas(c);
     if (el.canvasHint)
       el.canvasHint.style.display = "none";
-    el.status.textContent = `Foto aktif: ${targetW}x${targetH}`;
-    logDebug("INFO", `Photo successfully uploaded to WebGL canvas (${targetW}x${targetH})`);
+    el.status.textContent = `Foto aktif: ${rawW}x${rawH}`;
+    logDebug("INFO", `Photo successfully uploaded to WebGL canvas (${rawW}x${rawH})`);
   } catch (err) {
     logDebug("ERROR", "Gagal memuat foto", err.message || err);
     el.status.textContent = `Gagal memuat: ${err.message || err}`;
     alert(`Gagal memuat foto: ${err.message || err}
 
-Silakan klik tombol Bug di atas untuk melihat diagnostik.`);
+Silakan periksa izin media aplikasi atau klik tombol Bug.`);
   } finally {
     if (el.file)
       el.file.value = "";
@@ -4255,7 +4310,7 @@ function generateDiagnosticReport() {
   const glVendor = gl ? gl.getParameter(gl.VENDOR) : "N/A";
   const glRenderer = gl ? gl.getParameter(gl.RENDERER) : "N/A";
   const maxTex = gl ? gl.getParameter(gl.MAX_TEXTURE_SIZE) : "N/A";
-  const origDim = originalSourceCanvas ? `${originalSourceCanvas.width}x${originalSourceCanvas.height}` : "Demo Canvas";
+  const origDim = rawOriginalImage ? `${rawOriginalImage.naturalWidth || rawOriginalImage.width}x${rawOriginalImage.naturalHeight || rawOriginalImage.height}` : originalSourceCanvas ? `${originalSourceCanvas.width}x${originalSourceCanvas.height}` : "Demo Canvas";
   const lines = [
     `=== LOOKLITE DIAGNOSTIC REPORT ===`,
     `Waktu: ${new Date().toISOString()}`,
@@ -4322,28 +4377,116 @@ if (el.btnCopyDebug) {
     }
   };
 }
-el.export.onclick = () => {
-  if (!originalSourceCanvas)
+function showExportModal() {
+  if (!originalSourceCanvas && !rawOriginalImage)
     return;
-  el.status.textContent = "Rendering export…";
-  const origW = el.canvas.width;
-  const origH = el.canvas.height;
+  if (el.modalExport) {
+    const src = rawOriginalImage || originalSourceCanvas;
+    const w = src.naturalWidth || src.width;
+    const h = src.naturalHeight || src.height;
+    const mp = (w * h / 1e6).toFixed(1);
+    if (el.optDimOriginal) {
+      el.optDimOriginal.textContent = `${w} × ${h} (${mp} MP)`;
+    }
+    el.modalExport.classList.add("active");
+  } else {
+    executeExport("original");
+  }
+}
+function hideExportModal() {
+  if (el.modalExport)
+    el.modalExport.classList.remove("active");
+}
+if (el.export) {
+  el.export.onclick = showExportModal;
+}
+if (el.btnCloseExport) {
+  el.btnCloseExport.onclick = hideExportModal;
+}
+if (el.modalExport) {
+  el.modalExport.onclick = (e) => {
+    if (e.target === el.modalExport)
+      hideExportModal();
+  };
+}
+if (el.btnConfirmExport) {
+  el.btnConfirmExport.onclick = async () => {
+    const checked = document.querySelector('input[name="export-res"]:checked');
+    const resChoice = checked ? checked.value : "original";
+    hideExportModal();
+    await executeExport(resChoice);
+  };
+}
+async function executeExport(resChoice) {
+  if (!originalSourceCanvas && !rawOriginalImage)
+    return;
+  el.status.textContent = "Memproses resolusi ekspor…";
+  const src = rawOriginalImage || originalSourceCanvas;
+  const origW = src.naturalWidth || src.width;
+  const origH = src.naturalHeight || src.height;
+  const aspect = origW / origH;
+  let targetW = origW;
+  let targetH = origH;
+  if (resChoice === "4k") {
+    const maxDim = 3840;
+    if (origW >= origH) {
+      targetW = Math.min(origW, maxDim);
+      targetH = Math.round(targetW / aspect);
+    } else {
+      targetH = Math.min(origH, maxDim);
+      targetW = Math.round(targetH * aspect);
+    }
+  } else if (resChoice === "social") {
+    const maxDim = 2048;
+    if (origW >= origH) {
+      targetW = Math.min(origW, maxDim);
+      targetH = Math.round(targetW / aspect);
+    } else {
+      targetH = Math.min(origH, maxDim);
+      targetW = Math.round(targetH * aspect);
+    }
+  } else if (resChoice === "fhd") {
+    const maxDim = 1080;
+    if (origW >= origH) {
+      targetW = Math.min(origW, maxDim);
+      targetH = Math.round(targetW / aspect);
+    } else {
+      targetH = Math.min(origH, maxDim);
+      targetW = Math.round(targetH * aspect);
+    }
+  }
+  const maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096;
+  if (targetW > maxTex || targetH > maxTex) {
+    if (targetW >= targetH) {
+      targetH = Math.round(targetH * maxTex / targetW);
+      targetW = maxTex;
+    } else {
+      targetW = Math.round(targetW * maxTex / targetH);
+      targetH = maxTex;
+    }
+  }
+  logDebug("INFO", `Exporting with [${resChoice}]: ${targetW}x${targetH} (Original: ${origW}x${origH})`);
+  const expCanvas = document.createElement("canvas");
+  expCanvas.width = targetW;
+  expCanvas.height = targetH;
+  const expCtx = expCanvas.getContext("2d");
+  expCtx.drawImage(src, 0, 0, targetW, targetH);
   const wasSplit = state.splitActive;
   state.splitActive = false;
-  el.canvas.width = originalSourceCanvas.width;
-  el.canvas.height = originalSourceCanvas.height;
-  gl.viewport(0, 0, el.canvas.width, el.canvas.height);
+  uploadImageFromCanvas(expCanvas);
+  el.canvas.width = targetW;
+  el.canvas.height = targetH;
+  gl.viewport(0, 0, targetW, targetH);
   draw();
   const dataUrl = el.canvas.toDataURL("image/jpeg", 0.95);
   state.splitActive = wasSplit;
-  el.canvas.width = origW;
-  el.canvas.height = origH;
-  gl.viewport(0, 0, origW, origH);
+  uploadImageFromCanvas(originalSourceCanvas);
+  fitCanvas();
   draw();
-  const filename = `looklite_${state.active?.look_name.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${Date.now()}.jpg`;
+  const filename = `looklite_${state.active?.look_name.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${resChoice}_${Date.now()}.jpg`;
   if (window.LookLiteNative && typeof window.LookLiteNative.saveImage === "function") {
     window.LookLiteNative.saveImage(dataUrl, filename);
-    el.status.textContent = "Saved to Gallery!";
+    el.status.textContent = `Disimpan ke Galeri (${targetW}x${targetH})!`;
     return;
   }
   const a = document.createElement("a");
@@ -4352,8 +4495,8 @@ el.export.onclick = () => {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  el.status.textContent = "Export downloaded";
-};
+  el.status.textContent = `Foto diunduh (${targetW}x${targetH})`;
+}
 window.addEventListener("resize", () => {
   fitCanvas();
   draw();

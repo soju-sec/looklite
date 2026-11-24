@@ -148,6 +148,10 @@ const el = {
   btnCloseBug: document.getElementById("btn-close-bug"),
   btnCopyDebug: document.getElementById("btn-copy-debug"),
   debugText: document.getElementById("debug-text"),
+  modalExport: document.getElementById("modal-export"),
+  btnCloseExport: document.getElementById("btn-close-export"),
+  btnConfirmExport: document.getElementById("btn-confirm-export"),
+  optDimOriginal: document.getElementById("opt-dim-original"),
   reset: document.getElementById("reset"),
   export: document.getElementById("export"),
   before: document.getElementById("before"),
@@ -168,6 +172,7 @@ let imageTex = null;
 let lutTex = null;
 let lutSize = 17;
 let originalSourceCanvas = null;
+let rawOriginalImage = null;
 
 function createShader(type, src) {
   const s = gl.createShader(type);
@@ -675,7 +680,7 @@ window.addEventListener("unhandledrejection", (e) => {
 });
 
 // ---------------------------------------------------------------------------
-// Bulletproof Photo Loader (Fixes silent failure on large photos / Android WebView)
+// Bulletproof Photo Loader (URL.createObjectURL -> Bitmap -> FileReader cascade)
 // ---------------------------------------------------------------------------
 async function loadPhotoFile(file) {
   if (!file) return;
@@ -685,22 +690,67 @@ async function loadPhotoFile(file) {
   try {
     let imgSource = null;
 
-    // Method 1: Try createImageBitmap (modern, GPU-friendly, handles EXIF orientation)
-    if (typeof createImageBitmap === "function") {
+    // Method 1 (Primary & Fastest for Android WebViews): URL.createObjectURL
+    if (typeof URL !== "undefined" && typeof URL.createObjectURL === "function") {
       try {
-        imgSource = await createImageBitmap(file);
-        logDebug("INFO", `createImageBitmap success: ${imgSource.width}x${imgSource.height}`);
-      } catch (bmErr) {
-        logDebug("WARN", "createImageBitmap failed, falling back to FileReader", bmErr.message);
+        imgSource = await new Promise((resolve, reject) => {
+          const url = URL.createObjectURL(file);
+          const img = new Image();
+          img.onload = () => {
+            logDebug("INFO", `Method 1 (URL.createObjectURL) success: ${img.naturalWidth || img.width}x${img.naturalHeight || img.height}`);
+            resolve(img);
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error("Gagal decode gambar via ObjectURL"));
+          };
+          img.src = url;
+        });
+      } catch (urlErr) {
+        logDebug("WARN", "Method 1 (URL.createObjectURL) failed, falling back to Bitmap", urlErr.message);
       }
     }
 
-    // Method 2: Fallback to FileReader DataURL (universally supported in Android WebViews)
+    // Method 2: Try createImageBitmap (GPU accelerated)
+    if (!imgSource && typeof createImageBitmap === "function") {
+      try {
+        imgSource = await createImageBitmap(file);
+        logDebug("INFO", `Method 2 (createImageBitmap) success: ${imgSource.width}x${imgSource.height}`);
+      } catch (bmErr) {
+        logDebug("WARN", "Method 2 (createImageBitmap) failed, trying FileReader ArrayBuffer", bmErr.message);
+      }
+    }
+
+    // Method 3: Fallback FileReader ArrayBuffer -> Blob -> Image
+    if (!imgSource) {
+      try {
+        const buffer = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error("FileReader readAsArrayBuffer failed"));
+          reader.readAsArrayBuffer(file);
+        });
+        const blob = new Blob([buffer], { type: file.type || "image/jpeg" });
+        const blobUrl = URL.createObjectURL(blob);
+        const img = new Image();
+        await new Promise((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error("Blob decode failed"));
+          img.src = blobUrl;
+        });
+        imgSource = img;
+        logDebug("INFO", `Method 3 (ArrayBuffer -> Blob) success: ${img.width}x${img.height}`);
+      } catch (abErr) {
+        logDebug("WARN", "Method 3 failed, trying DataURL", abErr.message);
+      }
+    }
+
+    // Method 4: Fallback to DataURL
     if (!imgSource) {
       const dataUrl = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(new Error("FileReader gagal membaca file gambar"));
+        reader.onerror = () => reject(new Error("FileReader gagal membaca file"));
         reader.readAsDataURL(file);
       });
 
@@ -711,47 +761,59 @@ async function loadPhotoFile(file) {
         img.src = dataUrl;
       });
       imgSource = img;
-      logDebug("INFO", `Image decoded via DataURL: ${img.width}x${img.height}`);
+      logDebug("INFO", `Method 4 (DataURL) success: ${img.width}x${img.height}`);
     }
 
-    if (!imgSource || !imgSource.width || !imgSource.height) {
+    const rawW = imgSource.naturalWidth || imgSource.width;
+    const rawH = imgSource.naturalHeight || imgSource.height;
+
+    if (!rawW || !rawH) {
       throw new Error("Dimensi gambar tidak valid");
     }
 
-    // Check WebGL max texture size limit (prevent INVALID_VALUE crash)
+    // Keep raw original image reference for pristine high-res export choices
+    rawOriginalImage = imgSource;
+    state.originalWidth = rawW;
+    state.originalHeight = rawH;
+
+    if (el.optDimOriginal) {
+      const mp = ((rawW * rawH) / 1000000).toFixed(1);
+      el.optDimOriginal.textContent = `${rawW} × ${rawH} (${mp} MP)`;
+    }
+
+    // Check WebGL max texture size limit for interactive preview
     const maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096;
     const maxAllowed = Math.min(maxTex, 4096);
-    let targetW = imgSource.width;
-    let targetH = imgSource.height;
+    let previewW = rawW;
+    let previewH = rawH;
 
-    if (targetW > maxAllowed || targetH > maxAllowed) {
-      if (targetW > targetH) {
-        targetH = Math.round((targetH * maxAllowed) / targetW);
-        targetW = maxAllowed;
+    if (previewW > maxAllowed || previewH > maxAllowed) {
+      if (previewW > previewH) {
+        previewH = Math.round((previewH * maxAllowed) / previewW);
+        previewW = maxAllowed;
       } else {
-        targetW = Math.round((targetW * maxAllowed) / targetH);
-        targetH = maxAllowed;
+        previewW = Math.round((previewW * maxAllowed) / previewH);
+        previewH = maxAllowed;
       }
-      logDebug("INFO", `Scaled down to fit MAX_TEXTURE_SIZE: ${targetW}x${targetH} (max: ${maxAllowed})`);
+      logDebug("INFO", `Preview texture scaled to: ${previewW}x${previewH} (Original: ${rawW}x${rawH})`);
     }
 
     const c = document.createElement("canvas");
-    c.width = targetW;
-    c.height = targetH;
+    c.width = previewW;
+    c.height = previewH;
     const ctx = c.getContext("2d");
     if (!ctx) throw new Error("Gagal membuat Canvas 2D context");
-    ctx.drawImage(imgSource, 0, 0, targetW, targetH);
+    ctx.drawImage(imgSource, 0, 0, previewW, previewH);
 
     uploadImageFromCanvas(c);
     if (el.canvasHint) el.canvasHint.style.display = "none";
-    el.status.textContent = `Foto aktif: ${targetW}x${targetH}`;
-    logDebug("INFO", `Photo successfully uploaded to WebGL canvas (${targetW}x${targetH})`);
+    el.status.textContent = `Foto aktif: ${rawW}x${rawH}`;
+    logDebug("INFO", `Photo successfully uploaded to WebGL canvas (${rawW}x${rawH})`);
   } catch (err) {
     logDebug("ERROR", "Gagal memuat foto", err.message || err);
     el.status.textContent = `Gagal memuat: ${err.message || err}`;
-    alert(`Gagal memuat foto: ${err.message || err}\n\nSilakan klik tombol Bug di atas untuk melihat diagnostik.`);
+    alert(`Gagal memuat foto: ${err.message || err}\n\nSilakan periksa izin media aplikasi atau klik tombol Bug.`);
   } finally {
-    // Reset file input value so re-picking the same photo always triggers change
     if (el.file) el.file.value = "";
   }
 }
@@ -777,7 +839,9 @@ function generateDiagnosticReport() {
   const glVendor = gl ? gl.getParameter(gl.VENDOR) : "N/A";
   const glRenderer = gl ? gl.getParameter(gl.RENDERER) : "N/A";
   const maxTex = gl ? gl.getParameter(gl.MAX_TEXTURE_SIZE) : "N/A";
-  const origDim = originalSourceCanvas ? `${originalSourceCanvas.width}x${originalSourceCanvas.height}` : "Demo Canvas";
+  const origDim = rawOriginalImage 
+    ? `${rawOriginalImage.naturalWidth || rawOriginalImage.width}x${rawOriginalImage.naturalHeight || rawOriginalImage.height}` 
+    : (originalSourceCanvas ? `${originalSourceCanvas.width}x${originalSourceCanvas.height}` : "Demo Canvas");
 
   const lines = [
     `=== LOOKLITE DIAGNOSTIC REPORT ===`,
@@ -847,33 +911,138 @@ if (el.btnCopyDebug) {
   };
 }
 
-// Export / Save full resolution image
-el.export.onclick = () => {
-  if (!originalSourceCanvas) return;
-  el.status.textContent = "Rendering export…";
+// ---------------------------------------------------------------------------
+// Export Resolution Selector Modal & Image Render Pipeline
+// ---------------------------------------------------------------------------
+function showExportModal() {
+  if (!originalSourceCanvas && !rawOriginalImage) return;
+  if (el.modalExport) {
+    // Refresh original dimension label
+    const src = rawOriginalImage || originalSourceCanvas;
+    const w = src.naturalWidth || src.width;
+    const h = src.naturalHeight || src.height;
+    const mp = ((w * h) / 1000000).toFixed(1);
+    if (el.optDimOriginal) {
+      el.optDimOriginal.textContent = `${w} × ${h} (${mp} MP)`;
+    }
+    el.modalExport.classList.add("active");
+  } else {
+    executeExport("original");
+  }
+}
+
+function hideExportModal() {
+  if (el.modalExport) el.modalExport.classList.remove("active");
+}
+
+if (el.export) {
+  el.export.onclick = showExportModal;
+}
+
+if (el.btnCloseExport) {
+  el.btnCloseExport.onclick = hideExportModal;
+}
+
+if (el.modalExport) {
+  el.modalExport.onclick = (e) => {
+    if (e.target === el.modalExport) hideExportModal();
+  };
+}
+
+if (el.btnConfirmExport) {
+  el.btnConfirmExport.onclick = async () => {
+    const checked = document.querySelector('input[name="export-res"]:checked');
+    const resChoice = checked ? checked.value : "original";
+    hideExportModal();
+    await executeExport(resChoice);
+  };
+}
+
+async function executeExport(resChoice) {
+  if (!originalSourceCanvas && !rawOriginalImage) return;
+  el.status.textContent = "Memproses resolusi ekspor…";
   
-  const origW = el.canvas.width;
-  const origH = el.canvas.height;
+  const src = rawOriginalImage || originalSourceCanvas;
+  const origW = src.naturalWidth || src.width;
+  const origH = src.naturalHeight || src.height;
+  const aspect = origW / origH;
+  
+  let targetW = origW;
+  let targetH = origH;
+
+  if (resChoice === "4k") {
+    const maxDim = 3840;
+    if (origW >= origH) {
+      targetW = Math.min(origW, maxDim);
+      targetH = Math.round(targetW / aspect);
+    } else {
+      targetH = Math.min(origH, maxDim);
+      targetW = Math.round(targetH * aspect);
+    }
+  } else if (resChoice === "social") {
+    const maxDim = 2048;
+    if (origW >= origH) {
+      targetW = Math.min(origW, maxDim);
+      targetH = Math.round(targetW / aspect);
+    } else {
+      targetH = Math.min(origH, maxDim);
+      targetW = Math.round(targetH * aspect);
+    }
+  } else if (resChoice === "fhd") {
+    const maxDim = 1080;
+    if (origW >= origH) {
+      targetW = Math.min(origW, maxDim);
+      targetH = Math.round(targetW / aspect);
+    } else {
+      targetH = Math.min(origH, maxDim);
+      targetW = Math.round(targetH * aspect);
+    }
+  }
+
+  // Safety cap at WebGL max texture size to guarantee no GPU crash
+  const maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096;
+  if (targetW > maxTex || targetH > maxTex) {
+    if (targetW >= targetH) {
+      targetH = Math.round((targetH * maxTex) / targetW);
+      targetW = maxTex;
+    } else {
+      targetW = Math.round((targetW * maxTex) / targetH);
+      targetH = maxTex;
+    }
+  }
+
+  logDebug("INFO", `Exporting with [${resChoice}]: ${targetW}x${targetH} (Original: ${origW}x${origH})`);
+
+  // Render on offscreen export canvas
+  const expCanvas = document.createElement("canvas");
+  expCanvas.width = targetW;
+  expCanvas.height = targetH;
+  const expCtx = expCanvas.getContext("2d");
+  expCtx.drawImage(src, 0, 0, targetW, targetH);
+
+  // Preserve state & upload export canvas to WebGL
   const wasSplit = state.splitActive;
   state.splitActive = false;
-  el.canvas.width = originalSourceCanvas.width;
-  el.canvas.height = originalSourceCanvas.height;
-  gl.viewport(0, 0, el.canvas.width, el.canvas.height);
+
+  uploadImageFromCanvas(expCanvas);
+  el.canvas.width = targetW;
+  el.canvas.height = targetH;
+  gl.viewport(0, 0, targetW, targetH);
   draw();
 
   const dataUrl = el.canvas.toDataURL("image/jpeg", 0.95);
 
+  // Restore preview image & canvas
   state.splitActive = wasSplit;
-  el.canvas.width = origW;
-  el.canvas.height = origH;
-  gl.viewport(0, 0, origW, origH);
+  uploadImageFromCanvas(originalSourceCanvas);
+  fitCanvas();
   draw();
 
-  const filename = `looklite_${state.active?.look_name.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${Date.now()}.jpg`;
+  const filename = `looklite_${state.active?.look_name.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${resChoice}_${Date.now()}.jpg`;
 
   if (window.LookLiteNative && typeof window.LookLiteNative.saveImage === "function") {
     window.LookLiteNative.saveImage(dataUrl, filename);
-    el.status.textContent = "Saved to Gallery!";
+    el.status.textContent = `Disimpan ke Galeri (${targetW}x${targetH})!`;
     return;
   }
 
@@ -883,8 +1052,8 @@ el.export.onclick = () => {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  el.status.textContent = "Export downloaded";
-};
+  el.status.textContent = `Foto diunduh (${targetW}x${targetH})`;
+}
 
 window.addEventListener("resize", () => {
   fitCanvas();
