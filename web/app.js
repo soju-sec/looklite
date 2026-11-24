@@ -901,8 +901,114 @@ window.addEventListener("unhandledrejection", (e) => {
 });
 
 // ---------------------------------------------------------------------------
-// Bulletproof Photo Loader (URL.createObjectURL -> Bitmap -> FileReader cascade)
+// Bulletproof Photo Loader & Native Android Bridge
 // ---------------------------------------------------------------------------
+async function applyImageSource(imgSource) {
+  const rawW = imgSource.naturalWidth || imgSource.width;
+  const rawH = imgSource.naturalHeight || imgSource.height;
+
+  if (!rawW || !rawH) {
+    throw new Error("Dimensi gambar tidak valid");
+  }
+
+  // Keep raw original image reference for pristine high-res export choices
+  rawOriginalImage = imgSource;
+  state.originalWidth = rawW;
+  state.originalHeight = rawH;
+
+  if (el.optDimOriginal) {
+    const mp = ((rawW * rawH) / 1000000).toFixed(1);
+    el.optDimOriginal.textContent = `${rawW} × ${rawH} (${mp} MP)`;
+  }
+
+  // Check WebGL max texture size limit for interactive preview
+  const maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096;
+  const maxAllowed = Math.min(maxTex, 4096);
+  let previewW = rawW;
+  let previewH = rawH;
+
+  if (previewW > maxAllowed || previewH > maxAllowed) {
+    if (previewW > previewH) {
+      previewH = Math.round((previewH * maxAllowed) / previewW);
+      previewW = maxAllowed;
+    } else {
+      previewW = Math.round((previewW * maxAllowed) / previewH);
+      previewH = maxAllowed;
+    }
+    logDebug("INFO", `Preview texture scaled to: ${previewW}x${previewH} (Original: ${rawW}x${rawH})`);
+  }
+
+  const c = document.createElement("canvas");
+  c.width = previewW;
+  c.height = previewH;
+  const ctx = c.getContext("2d");
+  if (!ctx) throw new Error("Gagal membuat Canvas 2D context");
+  ctx.drawImage(imgSource, 0, 0, previewW, previewH);
+
+  uploadImageFromCanvas(c);
+  if (el.canvasHint) el.canvasHint.style.display = "none";
+  el.status.textContent = `Foto aktif: ${rawW}x${rawH}`;
+  logDebug("INFO", `Photo successfully uploaded to WebGL canvas (${rawW}x${rawH})`);
+}
+
+async function loadPhotoFromDataUrl(dataUrl) {
+  el.status.textContent = "Mendecode foto dari native…";
+  try {
+    const img = new Image();
+    await new Promise((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("Gagal mendecode format gambar"));
+      img.src = dataUrl;
+    });
+    await applyImageSource(img);
+    logDebug("INFO", "Photo loaded successfully from Native Java Bridge!");
+  } catch (err) {
+    logDebug("ERROR", "Gagal memproses foto dari native bridge", err.message || err);
+    alert(`Gagal memuat foto: ${err.message || err}`);
+  }
+}
+
+// Receive photo directly from Android MainActivity native ContentResolver
+window.onNativePhotoLoaded = function(dataUrl) {
+  logDebug("INFO", "Photo received via Native Java Bridge");
+  loadPhotoFromDataUrl(dataUrl);
+};
+
+// Chunked loader for very large files (> 6MB) bypassing Binder limits
+window.onNativePhotoChunksReady = async function(totalSize) {
+  logDebug("INFO", `Large photo ready via native chunked reader (${(totalSize / 1024 / 1024).toFixed(1)} MB)`);
+  el.status.textContent = "Membaca data foto resolusi tinggi…";
+  try {
+    const chunkSize = 256 * 1024; // 256KB per chunk
+    const chunks = [];
+    let offset = 0;
+    while (offset < totalSize) {
+      const b64 = window.LookLiteNative.readPhotoChunk(offset, chunkSize);
+      if (!b64) break;
+      const bin = atob(b64);
+      const u8 = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      chunks.push(u8);
+      offset += bin.length;
+      el.status.textContent = `Membaca foto: ${Math.round((offset / totalSize) * 100)}%`;
+    }
+    const blob = new Blob(chunks, { type: "image/jpeg" });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    await new Promise((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("Gagal mendecode foto resolusi tinggi"));
+      img.src = url;
+    });
+    URL.revokeObjectURL(url);
+    await applyImageSource(img);
+    logDebug("INFO", "Chunked native photo load complete!");
+  } catch (err) {
+    logDebug("ERROR", "Chunked load failed", err.message || err);
+    alert(`Gagal memuat foto resolusi tinggi: ${err.message || err}`);
+  }
+};
+
 async function loadPhotoFile(file) {
   if (!file) return;
   el.status.textContent = "Membaca file foto…";
@@ -911,7 +1017,7 @@ async function loadPhotoFile(file) {
   try {
     let imgSource = null;
 
-    // Method 1 (Primary & Fastest for Android WebViews): URL.createObjectURL
+    // Method 1: URL.createObjectURL
     if (typeof URL !== "undefined" && typeof URL.createObjectURL === "function") {
       try {
         imgSource = await new Promise((resolve, reject) => {
@@ -932,7 +1038,7 @@ async function loadPhotoFile(file) {
       }
     }
 
-    // Method 2: Try createImageBitmap (GPU accelerated)
+    // Method 2: createImageBitmap (GPU accelerated)
     if (!imgSource && typeof createImageBitmap === "function") {
       try {
         imgSource = await createImageBitmap(file);
@@ -942,7 +1048,7 @@ async function loadPhotoFile(file) {
       }
     }
 
-    // Method 3: Fallback FileReader ArrayBuffer -> Blob -> Image
+    // Method 3: FileReader ArrayBuffer -> Blob -> Image
     if (!imgSource) {
       try {
         const buffer = await new Promise((resolve, reject) => {
@@ -966,7 +1072,7 @@ async function loadPhotoFile(file) {
       }
     }
 
-    // Method 4: Fallback to DataURL
+    // Method 4: FileReader DataURL
     if (!imgSource) {
       const dataUrl = await new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -985,51 +1091,7 @@ async function loadPhotoFile(file) {
       logDebug("INFO", `Method 4 (DataURL) success: ${img.width}x${img.height}`);
     }
 
-    const rawW = imgSource.naturalWidth || imgSource.width;
-    const rawH = imgSource.naturalHeight || imgSource.height;
-
-    if (!rawW || !rawH) {
-      throw new Error("Dimensi gambar tidak valid");
-    }
-
-    // Keep raw original image reference for pristine high-res export choices
-    rawOriginalImage = imgSource;
-    state.originalWidth = rawW;
-    state.originalHeight = rawH;
-
-    if (el.optDimOriginal) {
-      const mp = ((rawW * rawH) / 1000000).toFixed(1);
-      el.optDimOriginal.textContent = `${rawW} × ${rawH} (${mp} MP)`;
-    }
-
-    // Check WebGL max texture size limit for interactive preview
-    const maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096;
-    const maxAllowed = Math.min(maxTex, 4096);
-    let previewW = rawW;
-    let previewH = rawH;
-
-    if (previewW > maxAllowed || previewH > maxAllowed) {
-      if (previewW > previewH) {
-        previewH = Math.round((previewH * maxAllowed) / previewW);
-        previewW = maxAllowed;
-      } else {
-        previewW = Math.round((previewW * maxAllowed) / previewH);
-        previewH = maxAllowed;
-      }
-      logDebug("INFO", `Preview texture scaled to: ${previewW}x${previewH} (Original: ${rawW}x${rawH})`);
-    }
-
-    const c = document.createElement("canvas");
-    c.width = previewW;
-    c.height = previewH;
-    const ctx = c.getContext("2d");
-    if (!ctx) throw new Error("Gagal membuat Canvas 2D context");
-    ctx.drawImage(imgSource, 0, 0, previewW, previewH);
-
-    uploadImageFromCanvas(c);
-    if (el.canvasHint) el.canvasHint.style.display = "none";
-    el.status.textContent = `Foto aktif: ${rawW}x${rawH}`;
-    logDebug("INFO", `Photo successfully uploaded to WebGL canvas (${rawW}x${rawH})`);
+    await applyImageSource(imgSource);
   } catch (err) {
     logDebug("ERROR", "Gagal memuat foto", err.message || err);
     el.status.textContent = `Gagal memuat: ${err.message || err}`;
@@ -1039,10 +1101,16 @@ async function loadPhotoFile(file) {
   }
 }
 
-// Reset input value on open button click to allow picking same photo repeatedly
+// Open button click: use native Android picker if available, otherwise reset input for browser
 if (el.fileLabel) {
-  el.fileLabel.addEventListener("click", () => {
-    if (el.file) el.file.value = "";
+  el.fileLabel.addEventListener("click", (e) => {
+    if (window.LookLiteNative && typeof window.LookLiteNative.openPhotoPicker === "function") {
+      e.preventDefault();
+      logDebug("INFO", "Opening photo picker via LookLiteNative bridge");
+      window.LookLiteNative.openPhotoPicker();
+    } else {
+      if (el.file) el.file.value = "";
+    }
   });
 }
 

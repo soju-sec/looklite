@@ -21,8 +21,11 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 
 public class MainActivity extends Activity {
 
@@ -94,26 +97,71 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
-            if (uploadMessage != null) {
-                Uri[] results = null;
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    String dataString = data.getDataString();
-                    if (dataString != null) {
-                        results = new Uri[]{Uri.parse(dataString)};
-                    } else if (data.getClipData() != null) {
-                        final int count = data.getClipData().getItemCount();
-                        results = new Uri[count];
-                        for (int i = 0; i < count; i++) {
-                            results[i] = data.getClipData().getItemAt(i).getUri();
-                        }
-                    }
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                Uri uri = data.getData();
+                if (uri == null && data.getClipData() != null && data.getClipData().getItemCount() > 0) {
+                    uri = data.getClipData().getItemAt(0).getUri();
                 }
-                uploadMessage.onReceiveValue(results);
+                if (uri != null) {
+                    processSelectedUri(uri);
+                }
+            }
+            if (uploadMessage != null) {
+                uploadMessage.onReceiveValue(null);
                 uploadMessage = null;
             }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void processSelectedUri(Uri uri) {
+        new Thread(() -> {
+            try {
+                File cacheFile = new File(getCacheDir(), "picked_image.jpg");
+                try (InputStream in = getContentResolver().openInputStream(uri);
+                     FileOutputStream out = new FileOutputStream(cacheFile)) {
+                    if (in == null) return;
+                    byte[] buf = new byte[65536];
+                    int len;
+                    while ((len = in.read(buf)) != -1) {
+                        out.write(buf, 0, len);
+                    }
+                    out.flush();
+                }
+
+                long len = cacheFile.length();
+                if (len <= 0) return;
+
+                if (len <= 6 * 1024 * 1024) {
+                    byte[] bytes = new byte[(int) len];
+                    try (FileInputStream fis = new FileInputStream(cacheFile)) {
+                        int read = 0;
+                        while (read < bytes.length) {
+                            int r = fis.read(bytes, read, bytes.length - read);
+                            if (r == -1) break;
+                            read += r;
+                        }
+                    }
+                    String b64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
+                    String mime = getContentResolver().getType(uri);
+                    if (mime == null || !mime.startsWith("image/")) mime = "image/jpeg";
+                    final String dataUrl = "data:" + mime + ";base64," + b64;
+                    runOnUiThread(() -> {
+                        webView.evaluateJavascript("if (window.onNativePhotoLoaded) { window.onNativePhotoLoaded('" + dataUrl + "'); }", null);
+                    });
+                } else {
+                    runOnUiThread(() -> {
+                        webView.evaluateJavascript("if (window.onNativePhotoChunksReady) { window.onNativePhotoChunksReady(" + len + "); }", null);
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> {
+                    Toast.makeText(MainActivity.this, "Gagal memuat foto: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+            }
+        }).start();
     }
 
     @Override
@@ -127,6 +175,33 @@ public class MainActivity extends Activity {
 
     // Native Bridge exposed to LookLite WebGL Engine
     public class LookLiteNativeInterface {
+
+        @JavascriptInterface
+        public void openPhotoPicker() {
+            runOnUiThread(() -> {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("image/*");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivityForResult(Intent.createChooser(intent, "Select Photo"), FILE_CHOOSER_REQUEST_CODE);
+            });
+        }
+
+        @JavascriptInterface
+        public String readPhotoChunk(int offset, int length) {
+            File cacheFile = new File(getCacheDir(), "picked_image.jpg");
+            if (!cacheFile.exists()) return "";
+            try (RandomAccessFile raf = new RandomAccessFile(cacheFile, "r")) {
+                raf.seek(offset);
+                int toRead = Math.min(length, (int) (raf.length() - offset));
+                if (toRead <= 0) return "";
+                byte[] buf = new byte[toRead];
+                raf.readFully(buf);
+                return Base64.encodeToString(buf, Base64.NO_WRAP);
+            } catch (Exception e) {
+                return "";
+            }
+        }
 
         @JavascriptInterface
         public void saveImage(String base64Data, String filename) {
