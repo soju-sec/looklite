@@ -147,16 +147,16 @@ fun CropOverlay(
         Surface(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 76.dp),
+                .padding(bottom = 12.dp),
             shape = RoundedCornerShape(9999.dp),
             color = Color(0xD91D1D1F)
         ) {
             Text(
                 text = "Geser bingkai untuk mengatur komposisi",
                 color = Color.White,
-                fontSize = 10.5.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
             )
         }
     }

@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -147,144 +148,183 @@ fun LookLiteApp() {
         glView?.requestRender()
     }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF0F0F12))
             .systemBarsPadding()
     ) {
-        // Center Viewport: Native OpenGL ES 3.0 Surface
+        // 1. Top UI Layer: Unified Modern Header & Vibe Prompts Aspect Ratio Bar
+        LookLiteHeader(
+            activePresetName = activePreset.name,
+            selectedRatioId = selectedRatioOption.id,
+            onRatioSelected = { option ->
+                selectedRatioOption = option
+                cropNormX = 0.5f
+                cropNormY = 0.5f
+            },
+            onOpenPhoto = {
+                photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            },
+            onReset = {
+                intensity = 100
+                currentSliders = activePreset.defaultSliders
+                renderer.setSliders(activePreset.defaultSliders)
+                renderer.setIntensity(100)
+                isSplitActive = false
+                renderer.setSplitPosition(-1f)
+                selectedRatioOption = PresetCatalog.aspectRatios.first()
+                cropNormX = 0.5f
+                cropNormY = 0.5f
+                glView?.requestRender()
+            },
+            onDiagnostic = { showDiagnosticDialog = true },
+            onSave = { showExportDialog = true },
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+        )
+
+        // 2. Center Viewport Canvas (Proportionally fitted, never stretched or hidden under controls)
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp)
                 .onSizeChanged { size ->
                     containerWidth = size.width.toFloat()
                     containerHeight = size.height.toFloat()
-                }
-                .pointerInput(isSplitActive) {
-                    if (isSplitActive) {
-                        detectDragGestures { change, _ ->
-                            change.consume()
-                            val relX = (change.position.x / size.width).coerceIn(0.02f, 0.98f)
-                            splitPos = relX
-                            renderer.setSplitPosition(relX)
-                            glView?.requestRender()
-                        }
-                    }
-                }
-        ) {
-            AndroidView(
-                factory = { ctx ->
-                    LookLiteGLView(ctx, renderer).also { glView = it }
                 },
-                modifier = Modifier.fillMaxSize()
-            )
+            contentAlignment = Alignment.Center
+        ) {
+            val density = LocalDensity.current
+            val imageAspect = originalBitmap?.let { it.width.toFloat() / it.height.toFloat() } ?: (4f / 3f)
 
-            // Split View Divider Label Badges
-            if (isSplitActive) {
-                // Split Line indicator
+            if (containerWidth > 0 && containerHeight > 0) {
+                var fitPxW = containerWidth
+                var fitPxH = fitPxW / imageAspect
+                if (fitPxH > containerHeight) {
+                    fitPxH = containerHeight
+                    fitPxW = fitPxH * imageAspect
+                }
+
+                val fitWdp = with(density) { fitPxW.toDp() }
+                val fitHdp = with(density) { fitPxH.toDp() }
+
                 Box(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .width(2.dp)
-                        .offset(x = (containerWidth * splitPos).dp)
-                        .background(Color.White)
-                )
-
-                // Sebelum & Sesudah Badges
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 96.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .size(width = fitWdp, height = fitHdp)
+                        .shadow(12.dp, RoundedCornerShape(8.dp), spotColor = Color(0x33000000))
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.Black)
+                        .pointerInput(isSplitActive, fitPxW) {
+                            if (isSplitActive) {
+                                detectDragGestures { change, _ ->
+                                    change.consume()
+                                    val relX = (change.position.x / fitPxW).coerceIn(0.02f, 0.98f)
+                                    splitPos = relX
+                                    renderer.setSplitPosition(relX)
+                                    glView?.requestRender()
+                                }
+                            }
+                        }
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(9999.dp),
-                        color = Color(0xCC000000)
-                    ) {
-                        Text(
-                            text = "SEBELUM",
-                            color = Color.White,
-                            fontSize = 10.5.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                    // Native OpenGL ES 3.0 Viewport
+                    AndroidView(
+                        factory = { ctx ->
+                            LookLiteGLView(ctx, renderer).also { glView = it }
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+
+                    // Interactive Split View
+                    if (isSplitActive) {
+                        val splitXdp = with(density) { (fitPxW * splitPos).toDp() }
+
+                        // White Divider Line
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .width(1.5.dp)
+                                .offset(x = splitXdp - 0.75.dp)
+                                .background(Color.White)
                         )
+
+                        // Center Circle Handle
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.CenterStart)
+                                .offset(x = splitXdp - 12.dp)
+                                .size(24.dp)
+                                .shadow(4.dp, RoundedCornerShape(12.dp))
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color.White),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "‹›",
+                                color = Color.Black,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        // Sebelum & Sesudah Badges inside photo corners
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Surface(
+                                shape = RoundedCornerShape(9999.dp),
+                                color = Color(0xCC000000)
+                            ) {
+                                Text(
+                                    text = "SEBELUM",
+                                    color = Color.White,
+                                    fontSize = 9.5.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                )
+                            }
+
+                            Surface(
+                                shape = RoundedCornerShape(9999.dp),
+                                color = Color(0xCC007AFF)
+                            ) {
+                                Text(
+                                    text = "SESUDAH",
+                                    color = Color.White,
+                                    fontSize = 9.5.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                )
+                            }
+                        }
                     }
 
-                    Surface(
-                        shape = RoundedCornerShape(9999.dp),
-                        color = Color(0xCC007AFF)
-                    ) {
-                        Text(
-                            text = "SESUDAH",
-                            color = Color.White,
-                            fontSize = 10.5.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
-                        )
-                    }
+                    // Interactive Crop Framing Overlay
+                    CropOverlay(
+                        containerWidth = fitPxW,
+                        containerHeight = fitPxH,
+                        imageAspect = imageAspect,
+                        targetAspect = selectedRatioOption.ratio,
+                        normX = cropNormX,
+                        normY = cropNormY,
+                        onNormOffsetChanged = { nx, ny ->
+                            cropNormX = nx
+                            cropNormY = ny
+                        }
+                    )
                 }
             }
-
-            // Interactive Crop Overlay
-            val imageAspect = originalBitmap?.let { it.width.toFloat() / it.height.toFloat() } ?: (4f / 3f)
-            CropOverlay(
-                containerWidth = containerWidth,
-                containerHeight = containerHeight,
-                imageAspect = imageAspect,
-                targetAspect = selectedRatioOption.ratio,
-                normX = cropNormX,
-                normY = cropNormY,
-                onNormOffsetChanged = { nx, ny ->
-                    cropNormX = nx
-                    cropNormY = ny
-                }
-            )
         }
 
-        // Top UI Layer: Boxy Modern Header & Aspect Ratio Bar
+        // 3. Bottom Controls Layer: Sub-Menu Card + Floating Dock Navigation Bar
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            LookLiteHeader(
-                activePresetName = activePreset.name,
-                onOpenPhoto = {
-                    photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                },
-                onReset = {
-                    intensity = 100
-                    currentSliders = activePreset.defaultSliders
-                    renderer.setSliders(activePreset.defaultSliders)
-                    renderer.setIntensity(100)
-                    isSplitActive = false
-                    renderer.setSplitPosition(-1f)
-                    glView?.requestRender()
-                },
-                onDiagnostic = { showDiagnosticDialog = true },
-                onSave = { showExportDialog = true }
-            )
-
-            // Ratio Bar directly above image view
-            AspectRatioBar(
-                selectedRatioId = selectedRatioOption.id,
-                onRatioSelected = { option ->
-                    selectedRatioOption = option
-                    cropNormX = 0.5f
-                    cropNormY = 0.5f
-                }
-            )
-        }
-
-        // Bottom UI Layer: Sub-Menu Card + Floating Dock Navigation Bar
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Sub-Menu Controls Card (Separated from bottom navigation)
@@ -343,42 +383,42 @@ fun LookLiteApp() {
                 }
             )
         }
+    }
 
-        // Export Dialog
-        if (showExportDialog) {
-            val bmp = originalBitmap
-            ExportDialog(
-                originalWidth = bmp?.width ?: 1200,
-                originalHeight = bmp?.height ?: 900,
-                onDismiss = { showExportDialog = false },
-                onConfirmExport = { resolution ->
-                    showExportDialog = false
-                    scope.launch {
-                        executeNativeExport(
-                            context = context,
-                            sourceBitmap = originalBitmap ?: createDemoBitmap(),
-                            targetRatio = selectedRatioOption.ratio,
-                            normX = cropNormX,
-                            normY = cropNormY,
-                            resolution = resolution,
-                            renderer = renderer,
-                            presetName = activePreset.name
-                        )
-                    }
+    // Export Dialog
+    if (showExportDialog) {
+        val bmp = originalBitmap
+        ExportDialog(
+            originalWidth = bmp?.width ?: 1200,
+            originalHeight = bmp?.height ?: 900,
+            onDismiss = { showExportDialog = false },
+            onConfirmExport = { resolution ->
+                showExportDialog = false
+                scope.launch {
+                    executeNativeExport(
+                        context = context,
+                        sourceBitmap = originalBitmap ?: createDemoBitmap(),
+                        targetRatio = selectedRatioOption.ratio,
+                        normX = cropNormX,
+                        normY = cropNormY,
+                        resolution = resolution,
+                        renderer = renderer,
+                        presetName = activePreset.name
+                    )
                 }
-            )
-        }
+            }
+        )
+    }
 
-        // Diagnostic Dialog
-        if (showDiagnosticDialog) {
-            val bmp = originalBitmap
-            DiagnosticDialog(
-                activePresetName = "${activePreset.name} (${activePreset.brand.displayName})",
-                imageDimensions = "${bmp?.width ?: 0} × ${bmp?.height ?: 0}",
-                intensity = intensity,
-                onDismiss = { showDiagnosticDialog = false }
-            )
-        }
+    // Diagnostic Dialog
+    if (showDiagnosticDialog) {
+        val bmp = originalBitmap
+        DiagnosticDialog(
+            activePresetName = "${activePreset.name} (${activePreset.brand.displayName})",
+            imageDimensions = "${bmp?.width ?: 0} × ${bmp?.height ?: 0}",
+            intensity = intensity,
+            onDismiss = { showDiagnosticDialog = false }
+        )
     }
 }
 
