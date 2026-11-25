@@ -20,6 +20,15 @@ object PresetCatalog {
         "poles.golden_radiance" to Pair(0xFFFF8C00, 0xFFFFD700),
         "poles.dark_aesthetic" to Pair(0xFF141414, 0xFF434343),
 
+        "meitu.cream_skin" to Pair(0xFFF6D5C8, 0xFFFFF1E6),
+        "meitu.cool_white" to Pair(0xFFD8E6F8, 0xFFFDF2F8),
+        "meitu.natural_clear" to Pair(0xFFA8D8EA, 0xFFF7E8D8),
+        "meitu.pearl_violet" to Pair(0xFFC5B4E3, 0xFFF6D6E8),
+        "meitu.peach_milk" to Pair(0xFFFFB5A7, 0xFFFCD5CE),
+        "meitu.airy_fresh" to Pair(0xFF9ED5D6, 0xFFEEF5F6),
+        "meitu.glass_sea" to Pair(0xFF1CB5E0, 0xFF8CE0EA),
+        "meitu.editorial_dim" to Pair(0xFF23252E, 0xFF6B6E7A),
+
         "fuji.classic_chrome" to Pair(0xFF2C3848, 0xFF9B8270),
         "fuji.classic_neg" to Pair(0xFF324338, 0xFFB86242),
         "fuji.velvia_50" to Pair(0xFF1B5E20, 0xFFD81B60),
@@ -74,6 +83,7 @@ object PresetCatalog {
                 val id = obj.getString("preset_id")
                 val brandStr = obj.optString("camera_system", "poles")
                 val brand = when (brandStr.lowercase()) {
+                    "meitu" -> CameraBrand.MEITU
                     "fuji", "fujifilm" -> CameraBrand.FUJIFILM
                     "kodak" -> CameraBrand.KODAK
                     "leica" -> CameraBrand.LEICA

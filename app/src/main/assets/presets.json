@@ -840,6 +840,846 @@
     }
   },
   {
+    "preset_id": "meitu.cream_skin",
+    "camera_system": "meitu",
+    "look_name": "Cream Skin",
+    "display_label": "Cream Skin",
+    "tag": "CREAM",
+    "lut_asset_path": "luts/meitu.cream_skin.cube",
+    "lut_stage": "early",
+    "description": "Meitu signature creamy pastel skin polish with lifted shadow floor and luminous soft glow.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.15,
+      "contrast": -8,
+      "highlights": -12,
+      "shadows": 18,
+      "whites": 10,
+      "blacks": 8,
+      "temp": 4,
+      "tint": 6,
+      "vibrance": 4,
+      "saturation": -6,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 55,
+      "skin_radiance": 45,
+      "clarity": -6,
+      "glow": 25,
+      "sharpness": 10,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "meitu.cool_white",
+    "camera_system": "meitu",
+    "look_name": "Cool Porcelain",
+    "display_label": "Cool Porcelain",
+    "tag": "COOL WHITE",
+    "lut_asset_path": "luts/meitu.cool_white.cube",
+    "lut_stage": "early",
+    "description": "Cool-toned porcelain brightening with ivory highlights and subtle rose-pink skin clarity.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.2,
+      "contrast": 4,
+      "highlights": 6,
+      "shadows": 20,
+      "whites": 14,
+      "blacks": 5,
+      "temp": -8,
+      "tint": 8,
+      "vibrance": 2,
+      "saturation": -8,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 45,
+      "skin_radiance": 55,
+      "clarity": 5,
+      "glow": 18,
+      "sharpness": 15,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "meitu.natural_clear",
+    "camera_system": "meitu",
+    "look_name": "Ziran Natural",
+    "display_label": "Ziran Natural",
+    "tag": "CLEAR",
+    "lut_asset_path": "luts/meitu.natural_clear.cube",
+    "lut_stage": "early",
+    "description": "Clean daylight transparency inspired by natural camera tone, balanced contrast, and fresh greens.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.1,
+      "contrast": 6,
+      "highlights": -5,
+      "shadows": 10,
+      "whites": 8,
+      "blacks": 0,
+      "temp": 0,
+      "tint": 2,
+      "vibrance": 10,
+      "saturation": 0,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 25,
+      "skin_radiance": 25,
+      "clarity": 14,
+      "glow": 8,
+      "sharpness": 18,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "meitu.pearl_violet",
+    "camera_system": "meitu",
+    "look_name": "Pearl Violet",
+    "display_label": "Pearl Violet",
+    "tag": "PEARL",
+    "lut_asset_path": "luts/meitu.pearl_violet.cube",
+    "lut_stage": "early",
+    "description": "Dreamy pearl-lavender atmosphere with soft diffused glow and muted harsh yellows.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.12,
+      "contrast": -10,
+      "highlights": -8,
+      "shadows": 15,
+      "whites": 8,
+      "blacks": 12,
+      "temp": -10,
+      "tint": 14,
+      "vibrance": 6,
+      "saturation": -10,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 40,
+      "skin_radiance": 35,
+      "clarity": -10,
+      "glow": 35,
+      "sharpness": 8,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "meitu.peach_milk",
+    "camera_system": "meitu",
+    "look_name": "Peach Milk",
+    "display_label": "Peach Milk",
+    "tag": "PEACH",
+    "lut_asset_path": "luts/meitu.peach_milk.cube",
+    "lut_stage": "early",
+    "description": "Warm peachy-rose portrait glow with velvety highlights and gentle saturation.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.12,
+      "contrast": -4,
+      "highlights": -10,
+      "shadows": 14,
+      "whites": 6,
+      "blacks": 6,
+      "temp": 10,
+      "tint": 12,
+      "vibrance": 12,
+      "saturation": -2,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 45,
+      "skin_radiance": 40,
+      "clarity": -4,
+      "glow": 20,
+      "sharpness": 12,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "meitu.airy_fresh",
+    "camera_system": "meitu",
+    "look_name": "Airy Fresh",
+    "display_label": "Airy Fresh",
+    "tag": "AIRY",
+    "lut_asset_path": "luts/meitu.airy_fresh.cube",
+    "lut_stage": "early",
+    "description": "Japanese airy film aesthetic with lifted matte blacks, cyan skies, and crisp clean whites.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.15,
+      "contrast": -8,
+      "highlights": -12,
+      "shadows": 18,
+      "whites": 12,
+      "blacks": 16,
+      "temp": -6,
+      "tint": -2,
+      "vibrance": 8,
+      "saturation": -8,
+      "vignette": 0,
+      "grain_intensity": 6,
+      "grain_size": 12,
+      "skin_smooth": 20,
+      "skin_radiance": 20,
+      "clarity": 4,
+      "glow": 12,
+      "sharpness": 12,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "meitu.glass_sea",
+    "camera_system": "meitu",
+    "look_name": "Glass Sea",
+    "display_label": "Glass Sea",
+    "tag": "GLASS SEA",
+    "lut_asset_path": "luts/meitu.glass_sea.cube",
+    "lut_stage": "early",
+    "description": "Translucent aquamarine ocean pop with crisp sunlight clarity and vibrant summer blues.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.08,
+      "contrast": 8,
+      "highlights": -6,
+      "shadows": 10,
+      "whites": 12,
+      "blacks": -4,
+      "temp": -8,
+      "tint": -4,
+      "vibrance": 22,
+      "saturation": 4,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 15,
+      "skin_radiance": 20,
+      "clarity": 20,
+      "glow": 10,
+      "sharpness": 20,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "meitu.editorial_dim",
+    "camera_system": "meitu",
+    "look_name": "Soft Dim",
+    "display_label": "Soft Dim",
+    "tag": "LOW-KEY",
+    "lut_asset_path": "luts/meitu.editorial_dim.cube",
+    "lut_stage": "early",
+    "description": "Editorial low-key mood with controlled highlights, cool-neutral shadows, and subtle vignette.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": -0.15,
+      "contrast": 12,
+      "highlights": -25,
+      "shadows": -8,
+      "whites": -10,
+      "blacks": -6,
+      "temp": -4,
+      "tint": 2,
+      "vibrance": 4,
+      "saturation": -10,
+      "vignette": 18,
+      "grain_intensity": 8,
+      "grain_size": 14,
+      "skin_smooth": 30,
+      "skin_radiance": 25,
+      "clarity": 12,
+      "glow": 10,
+      "sharpness": 15,
+      "hsl": {}
+    }
+  },
+  {
     "preset_id": "fuji.classic_chrome",
     "camera_system": "fujifilm",
     "look_name": "Classic Chrome",

@@ -2,6 +2,7 @@ package app.looklite.android.model
 
 enum class CameraBrand(val id: String, val displayName: String) {
     POLES("poles", "POLES"),
+    MEITU("meitu", "MEITU"),
     FUJIFILM("fuji", "FUJI"),
     KODAK("kodak", "KODAK"),
     LEICA("leica", "LEICA"),
