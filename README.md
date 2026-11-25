@@ -162,7 +162,6 @@ The output APK is generated at `app/build/outputs/apk/release/LookLite-release.a
 ## Author
 
 - Developer: **soju-sec** ([@soju-sec](https://github.com/soju-sec))
-- Instagram: [@abcdeco.id](https://www.instagram.com/abcdeco.id)
 
 ---
 
