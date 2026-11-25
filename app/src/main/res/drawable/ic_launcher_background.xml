@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Deep Studio Obsidian Gradient -->
+    <path android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="0"
+                android:endX="108"
+                android:endY="108"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF1E212B" />
+                <item android:offset="0.55" android:color="#FF12141B" />
+                <item android:offset="1.0" android:color="#FF0B0C10" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Subtle Coral Ambient Glow -->
+    <path android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="28"
+                android:centerY="28"
+                android:gradientRadius="72"
+                android:type="radial">
+                <item android:offset="0.0" android:color="#3DFF2D55" />
+                <item android:offset="1.0" android:color="#00FF2D55" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Subtle Cyan Counter-Glow -->
+    <path android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="84"
+                android:centerY="84"
+                android:gradientRadius="68"
+                android:type="radial">
+                <item android:offset="0.0" android:color="#3032ADE6" />
+                <item android:offset="1.0" android:color="#0032ADE6" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

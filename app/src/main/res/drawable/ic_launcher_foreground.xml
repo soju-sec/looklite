@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Outer Frosted Glass Squircle Frame (inside 66dp safe zone) -->
+    <path
+        android:pathData="M34,27 L74,27 A7,7 0 0,1 81,34 L81,74 A7,7 0 0,1 74,81 L34,81 A7,7 0 0,1 27,74 L27,34 A7,7 0 0,1 34,27 Z"
+        android:fillColor="#18FFFFFF"
+        android:strokeWidth="2.2"
+        android:strokeColor="#CCFFFFFF" />
+
+    <!-- Top-Right Viewfinder Corner Accent -->
+    <path
+        android:pathData="M71.5,34.5 A2.5,2.5 0 1,1 71.5,39.5 A2.5,2.5 0 1,1 71.5,34.5 Z"
+        android:fillColor="#FFFF2D55" />
+
+    <!-- Color-Science Tri-Prism Circles inside Lens -->
+    <!-- 1. Coral Red Channel -->
+    <path
+        android:pathData="M48,48 m-11,0 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0"
+        android:fillColor="#CCFF2D55" />
+
+    <!-- 2. Golden Amber Channel -->
+    <path
+        android:pathData="M60,50 m-11,0 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0"
+        android:fillColor="#BBFF9F0A" />
+
+    <!-- 3. Cool Cyan Channel -->
+    <path
+        android:pathData="M54,60 m-11,0 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0"
+        android:fillColor="#BB32ADE6" />
+
+    <!-- Crisp Precision Lens Ring -->
+    <path
+        android:pathData="M54,54 m-17.5,0 a17.5,17.5 0 1,0 35,0 a17.5,17.5 0 1,0 -35,0"
+        android:fillColor="#00000000"
+        android:strokeWidth="2.4"
+        android:strokeColor="#F5FFFFFF" />
+
+    <!-- Center Luminous Aperture Core -->
+    <path
+        android:pathData="M54,54 m-5.5,0 a5.5,5.5 0 1,0 11,0 a5.5,5.5 0 1,0 -11,0"
+        android:fillColor="#FFFFFFFF" />
+</vector>
