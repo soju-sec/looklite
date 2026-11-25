@@ -1,55 +1,55 @@
-# LookLite
+# LookLite — Darkroom Studio & 3D LUT Color Grading for Android
 
-**LookLite** adalah aplikasi *photo color-grading* Android native berbasis **Kotlin**, **Jetpack Compose**, dan **OpenGL ES 3.0** dengan filosofi **Preset First, Fine-Tune Second** — ringan, real-time 60 FPS, dan non-destruktif.
+[![Android](https://img.shields.io/badge/Android-8.0%20--%2017%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
+[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
+[![OpenGL ES](https://img.shields.io/badge/OpenGL%20ES-3.0-5586A4?style=for-the-badge&logo=opengl&logoColor=white)](https://www.khronos.org/opengles/)
+[![Author](https://img.shields.io/badge/Author-soju--sec-blue?style=for-the-badge)](https://github.com/soju-sec)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
----
-
-## Fitur Utama
-
-### 1. Mesin Rendering GPU Native (OpenGL ES 3.0)
-- **3D LUT Hardware Trilinear (`sampler3D`):** Mendukung profil LUT `.cube` **17³** dengan interpolasi trilinear langsung di GPU.
-- **Stage Placement (`early` / `late`):** Preset dapat mengeksekusi 3D LUT sebelum *tone/color matrix* (mengunci *base look*) atau sesudahnya (film *print* look).
-- **Real-Time Non-Destructive Pipeline:** Seluruh penyesuaian dihitung per-frame tanpa mengubah piksel sumber.
-- **Offscreen FBO High-Res Export:** Ekspor resolusi penuh via *Framebuffer Object* (FBO) langsung ke Android `MediaStore` (`Pictures/LookLite/`).
-
-### 2. Koreksi Warna Otomatis (*Auto Color*)
-- Analisis histogram RGB (persentil **2%–98%** *Auto Levels*) dan estimasi *Gray-World White Balance* saat foto dimuat.
-- Toggle satu ketukan (**Koreksi Warna**) di panel preset untuk menetralkan *color cast* dan menyeimbangkan rentang dinamis sebelum filter diterapkan.
-
-### 3. Katalog 50 Preset & 7 Kategori
-- **POLES** (8 preset): *Fnatix Moody Flash, Korean Porcelain, Emerald Moody, Night Ocean, Pro-Mist Dream, Studio Flash, Golden Radiance, Dark Aesthetic*
-- **BEAUTY** (8 preset): *Cream Skin, Cool Porcelain, Ziran Natural, Pearl Violet, Peach Milk, Airy Fresh, Glass Sea, Soft Dim*
-- **FUJI** (10 preset): *Classic Chrome, Classic Neg, Velvia 50, Provia 100F, Astia, Reala Ace, Eterna, Nostalgic Neg, ACROS, Bleach Bypass*
-- **KODAK** (9 preset): *Portra 400, Portra 160, Portra 800, Gold 200, Ektar 100, Kodachrome 64, CineStill 800T, Vision3 500T, Tri-X 400*
-- **LEICA** (6 preset): *Classic, Natural, Vivid, Teal, Monochrom, Greg Williams*
-- **HASSELBLAD** (4 preset): *HNCS Standard, HNCS Portrait, HNCS Landscape, HNCS Monochrome*
-- **ILFORD / VINTAGE** (5 preset): *HP5 Plus, Disposable 400, Polaroid Color, Golden Light, Street Car*
-
-### 4. Fine-Tune & Detail Controls
-- **Light:** Exposure (`-3..3`), Contrast, Highlights, Shadows, Whites, Blacks (`-100..100`)
-- **Color:** Temperature, Tint, Vibrance, Saturation (`-100..100`)
-- **Poles / Portrait:** Skin Smooth, Skin Radiance, Glow (`0..100`), Clarity (`-100..100`)
-- **Grain / FX:** Sharpness, Vignette, Grain Intensity (`0..100`), Grain Size (`1..100`)
-- **HSL & Color Balance:** 8-channel HSL (*Red, Orange, Yellow, Green, Aqua, Blue, Purple, Magenta*) dan 3-way *Color Balance* (*Shadows, Midtones, Highlights*).
-
-### 5. Crop Aspek Rasio, Split View & Ekspor
-- **Aspect Ratio Bar + Interactive Crop:** `Asli`, `1:1 Persegi`, `4:5 Feed IG`, `9:16 Story`, `16:9 Cinema`, `3:2 Foto` dengan grid *Rule-of-Thirds* yang dapat digeser.
-- **Split View (Sebelum / Sesudah):** Garis pemisah interaktif yang dapat digeser langsung pada foto.
-- **Before Hold:** Tekan & tahan tombol *Before* untuk membandingkan foto asli secara instan.
-- **Pilihan Resolusi Ekspor:** Ukuran Asli, `4K Ultra HD (3840px)`, `Media Sosial (2048px)`, `Full HD (1080px)`.
+A native Android **Darkroom Studio** photo color-grading application built with **Kotlin**, **Jetpack Compose**, and **OpenGL ES 3.0**. Designed around a **Preset First, Fine-Tune Second** workflow for real-time 60 FPS non-destructive 3D LUT processing, custom look recipes, and full-resolution GPU offscreen export.
 
 ---
 
-## Arsitektur Pipeline Shader (`looklite_native.frag`)
+## Key Features
 
-Urutan pemrosesan per-piksel pada OpenGL ES 3.0 (`#version 300 es`):
+- **Native OpenGL ES 3.0 GPU Pipeline**:
+  - Hardware **17³ 3D LUT (`sampler3D`)** trilinear interpolation executed directly on the GPU.
+  - Configurable LUT stage placement (`early` or `late`) relative to tone and color matrices.
+  - High-resolution **Offscreen FBO Export** saved directly to Android `MediaStore` (`Pictures/LookLite/`).
+- **Auto Tone (Histogram & Color Cast Correction)**:
+  - Fast per-image RGB percentile analysis (**2%–98% Auto Levels**) and **Gray-World White Balance** neutralization executed on GPU before preset grading.
+- **50 Built-In Film & Color Looks (7 Categories)**:
+  - **Kodak** (9): *Portra 400, Portra 160, Portra 800, Gold 200, Ektar 100, Kodachrome 64, CineStill 800T, Vision3 500T, Tri-X 400*
+  - **Fuji** (10): *Classic Chrome, Classic Neg, Velvia 50, Provia 100F, Astia, Reala Ace, Eterna, Nostalgic Neg, ACROS, Bleach Bypass*
+  - **Leica** (6): *Classic, Natural, Vivid, Teal, Monochrom, Greg Williams*
+  - **Hasselblad** (4): *HNCS Standard, HNCS Portrait, HNCS Landscape, HNCS Monochrome*
+  - **Ilford / Vintage** (5): *HP5 Plus, Disposable 400, Polaroid Color, Golden Light, Street Car*
+  - **Retouch** (8): *Fnatix Moody Flash, Korean Porcelain, Emerald Moody, Night Ocean, Pro-Mist Dream, Studio Flash, Golden Radiance, Dark Aesthetic*
+  - **Beauty** (8): *Cream Skin, Cool Porcelain, Ziran Natural, Pearl Violet, Peach Milk, Airy Fresh, Glass Sea, Soft Dim*
+- **Darkroom Studio Interface**:
+  - **Live-Filtered Preset Thumbnails**: Real-time `68dp × 88dp` LUT previews rendered from the currently loaded photo.
+  - **Floating Canvas Inspector**: Translucent overlay pill for interactive **Aspect Ratio Crop** (`Original`, `1:1`, `4:5`, `9:16`, `16:9`, `3:2` with Rule-of-Thirds grid), **Split View** (`BEFORE` / `AFTER` draggable divider), and **Hold for Original**.
+  - **Center-Detent Fine-Tune Sliders**: Borderless sliders with haptic center-detent at `0`, double-tap label reset, and tabular monospace (`tnum`) readouts across **Light**, **Color**, **Retouch**, and **Grain / FX**.
+- **Custom User Recipes & Frame Templates (`DataStore`)**:
+  - **My Looks**: Save active LUT + intensity + all slider adjustments as named custom presets, with long-press Rename, Overwrite, and Delete.
+  - **Frame & Export Templates**: Add Classic White, Darkroom Black, or Film Polaroid borders with adjustable padding and custom signature captions, and save reusable one-tap frame templates.
+- **Instant Localization & Studio Settings**:
+  - Supports **System**, **English**, and **Indonesia** via `LocaleManager` / `AppCompatDelegate` without restarting the activity.
+  - Hidden **Developer Diagnostics** unlocked by tapping the app version 5 times in Settings (GPU frame time, active 3D LUT, canvas resolution, and debug report console).
+
+---
+
+## Shader Pipeline & Data Schema
+
+### 1. Fragment Shader Order (`looklite_native.frag`)
 
 ```text
 Input Texture (uImage)
   ├── [uShowBefore == 1 / vUv.x < uSplitPos] ──▶ Output Original
   ▼
 1. applyAutoColor()         ── Auto Levels (2%-98%) + Gray-World WB + Subtle Vibrance
-2. applySkinPolish()        ── Surface-aware skin smoothing & skin luminance radiance
+2. applySkinPolish()        ── Surface-aware skin smoothing & luminance radiance
 3. applyWB()                ── Temperature & Tint matrix
 4. [uLutStage == 0 ?]
      ├─ Early: applyLut() ─▶ toneBlock() ─▶ colorBlock()
@@ -61,22 +61,18 @@ Input Texture (uImage)
 Output FragColor (Screen / Offscreen FBO)
 ```
 
----
-
-## Skema Data & Preset
-
-### 1. Skema Preset (`app/src/main/assets/presets.json`)
+### 2. Preset Catalog Schema (`app/src/main/assets/presets.json`)
 
 ```json
 {
-  "preset_id": "meitu.cream_skin",
-  "camera_system": "meitu",
+  "preset_id": "beauty.cream_skin",
+  "camera_system": "beauty",
   "look_name": "Cream Skin",
   "display_label": "Cream Skin",
   "tag": "CREAM",
   "lut_asset_path": "luts/meitu.cream_skin.cube",
   "lut_stage": "early",
-  "description": "Creamy pastel skin polish with lifted shadow floor and luminous soft glow.",
+  "description": "Signature creamy pastel skin polish with lifted shadow floor and luminous soft glow.",
   "slider_ranges": {
     "exposure": { "min": -3, "max": 3 },
     "contrast": { "min": -100, "max": 100 },
@@ -106,9 +102,9 @@ Output FragColor (Screen / Offscreen FBO)
 }
 ```
 
-### 2. Format 3D LUT (`.cube`)
+### 3. 3D LUT Format (`.cube`)
 
-Setiap file LUT di `app/src/main/assets/luts/` menggunakan format standar `.cube` **17³** (`4913` entri RGB float `0.0..1.0`):
+All LUT files in `app/src/main/assets/luts/` use standard **17³** `.cube` format (`4913` RGB float entries in `0.0..1.0`):
 
 ```text
 TITLE "Cream Skin"
@@ -117,49 +113,59 @@ DOMAIN_MIN 0.0 0.0 0.0
 DOMAIN_MAX 1.0 1.0 1.0
 ```
 
-### 3. Model State Kotlin (`PresetModels.kt`)
-
-- `CameraBrand` — enum kategori preset (`POLES`, `BEAUTY`, `FUJIFILM`, `KODAK`, `LEICA`, `HASSELBLAD`, `VINTAGE`)
-- `PresetProfile` — metadata preset, path LUT, `lutStage`, `defaultSliders`, dan warna *swatch*
-- `SliderValues` — seluruh parameter *tone*, *color*, *skin/FX*, `HslChannels`, dan `ColorBalance`
-- `AspectRatioOption` — konfigurasi rasio *crop* (`id`, `label`, `badge`, `ratio`)
-
-> Referensi JSON Schema formal tersedia di direktori [`schemas/`](schemas/).
-
 ---
 
-## Struktur Proyek
+## Installation & Usage
 
-```text
-app/src/main/
-├── assets/
-│   ├── luts/                      # 50+ file 3D LUT .cube (17³)
-│   ├── shaders/
-│   │   ├── looklite_native.vert   # Vertex shader (orientasi UV Android Bitmap)
-│   │   └── looklite_native.frag   # Fragment shader pipeline lengkap
-│   └── presets.json               # Katalog 50 preset
-├── java/app/looklite/android/
-│   ├── MainActivity.kt            # Compose UI, Photo Picker, Crop, Export MediaStore
-│   ├── data/PresetCatalog.kt      # Loader katalog preset, swatch, & rasio aspek
-│   ├── engine/
-│   │   ├── LookLiteGLView.kt      # GLSurfaceView wrapper (EGL ES 3.0)
-│   │   ├── LookLiteRenderer.kt    # Renderer, Auto Color analyzer, & Offscreen FBO export
-│   │   └── LutLoader.kt           # Parser .cube ke ByteBuffer 3D RGB8
-│   ├── model/PresetModels.kt      # Data classes & enums
-│   └── ui/
-│       ├── components/            # LookLiteHeader, SubMenuCard, FloatingDockBar, CropOverlay, Dialogs
-│       └── theme/Theme.kt         # Tema Apple Glass & Coral
-└── res/                           # Adaptive Icon & resources
+### 1. Install APK
+Download the latest signed APK from [Releases](../../releases) or install `LookLite-release.apk` via ADB:
+
+```bash
+adb install -r LookLite-release.apk
 ```
 
----
-
-## Build APK
-
-Membutuhkan **JDK 17** dan **Android SDK (API 34)**:
+### 2. Build from Source
+Requires **JDK 17** and **Android SDK (API 34)**:
 
 ```bash
 ./gradlew assembleRelease
 ```
 
-Output APK tersedia di `app/build/outputs/apk/release/LookLite-release.apk`.
+The output APK is generated at `app/build/outputs/apk/release/LookLite-release.apk`.
+
+---
+
+## Repository Structure
+
+```text
+├── app/src/main/
+│   ├── AndroidManifest.xml          # App manifest & locale configuration
+│   ├── assets/
+│   │   ├── luts/                    # 50+ 3D LUT .cube files (17³)
+│   │   ├── shaders/                 # GLSL ES 3.0 vertex & fragment shaders
+│   │   └── presets.json             # Preset catalog & default parameters
+│   ├── java/app/looklite/android/
+│   │   ├── MainActivity.kt          # Darkroom Studio UI, crop, export, localization
+│   │   ├── data/                    # PresetCatalog & StudioPreferences (DataStore)
+│   │   ├── engine/                  # LookLiteGLView, LookLiteRenderer, LutLoader, Thumbnails
+│   │   ├── model/                   # Data models & enums
+│   │   └── ui/                      # Compose components & Darkroom Studio theme
+│   └── res/                         # Adaptive icon, EN/ID string resources, styles
+├── schemas/                         # Formal JSON schemas
+├── LookLite-release.apk             # Signed release APK
+├── LICENSE                          # MIT License
+└── README.md                        # Project documentation
+```
+
+---
+
+## Author
+
+- Developer: **soju-sec** ([@soju-sec](https://github.com/soju-sec))
+- Instagram: [@abcdeco.id](https://www.instagram.com/abcdeco.id)
+
+---
+
+## License
+
+This project is distributed under the [MIT](LICENSE) License.
