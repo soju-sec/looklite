@@ -28,6 +28,13 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private var surfaceWidth = 1
     private var surfaceHeight = 1
 
+    @Volatile
+    var lastFrameTimeMs: Float = 0f
+        private set
+    @Volatile
+    var glRendererName: String = "OpenGL ES 3.0"
+        private set
+
     // State updated from main/UI thread
     private val lock = Any()
     private var pendingBitmap: Bitmap? = null
@@ -125,6 +132,7 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
         // Upload identity LUT initially
         val identity = LutLoader.createIdentityLut(17)
         upload3DLut(identity, 17)
+        glRendererName = GLES30.glGetString(GLES30.GL_RENDERER) ?: "OpenGL ES 3.0"
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -134,6 +142,7 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
     }
 
     override fun onDrawFrame(gl: GL10?) {
+        val frameStartNs = System.nanoTime()
         var bmpToUpload: Bitmap? = null
         var lutToUpload: ByteBuffer? = null
         var currentLutSize = 17
@@ -227,6 +236,7 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
         GLES30.glBindVertexArray(vaoId)
         GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP, 0, 4)
         GLES30.glBindVertexArray(0)
+        lastFrameTimeMs = (System.nanoTime() - frameStartNs) / 1_000_000f
     }
 
     private fun upload3DLut(buffer: ByteBuffer, size: Int) {

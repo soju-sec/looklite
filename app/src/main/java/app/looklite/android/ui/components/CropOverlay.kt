@@ -14,9 +14,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.looklite.android.R
+import app.looklite.android.ui.theme.StudioGlassOverlay
+import app.looklite.android.ui.theme.StudioHairlineBorder
+import app.looklite.android.ui.theme.StudioTextPrimary
 
 @Composable
 fun CropOverlay(
@@ -143,20 +148,20 @@ fun CropOverlay(
             drawLine(Color.White, Offset(boxX + boxW, boxY + boxH + 1f), Offset(boxX + boxW, boxY + boxH - cornerLen), strokeWidth = cornerThick)
         }
 
-        // Draggable Hint Pill
+        // Draggable Hint Pill (positioned near top so it doesn't collide with bottom floating inspector)
         Surface(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 12.dp),
+                .align(Alignment.TopCenter)
+                .padding(top = 12.dp),
             shape = RoundedCornerShape(9999.dp),
-            color = Color(0xD91D1D1F)
+            color = StudioGlassOverlay
         ) {
             Text(
-                text = "Geser bingkai untuk mengatur komposisi",
-                color = Color.White,
+                text = stringResource(R.string.crop_hint),
+                color = StudioTextPrimary,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
             )
         }
     }

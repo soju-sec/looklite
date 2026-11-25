@@ -81,7 +81,56 @@ data class PresetProfile(
 
 data class AspectRatioOption(
     val id: String,
+    val labelResId: Int = 0,
     val label: String,
     val badge: String? = null,
     val ratio: Float? = null // null means Original
 )
+
+enum class LookCategory {
+    MY_LOOKS,
+    ALL,
+    KODAK,
+    FUJI,
+    LEICA,
+    HASSELBLAD,
+    ILFORD,
+    RETOUCH,
+    MEITU
+}
+
+data class CustomLook(
+    val id: String,
+    val name: String,
+    val basePresetId: String,
+    val lutFile: String,
+    val lutStage: String,
+    val intensity: Int,
+    val autoColor: Boolean,
+    val sliders: SliderValues
+)
+
+enum class FrameStyle(val id: String) {
+    NONE("none"),
+    WHITE("white"),
+    DARK("dark"),
+    POLAROID("polaroid")
+}
+
+data class FrameSettings(
+    val style: FrameStyle = FrameStyle.NONE,
+    val paddingFraction: Float = 0.04f,
+    val signatureText: String = ""
+)
+
+data class CustomFrameTemplate(
+    val id: String,
+    val name: String,
+    val settings: FrameSettings
+)
+
+enum class AppLanguageOption(val tag: String) {
+    SYSTEM("system"),
+    ENGLISH("en"),
+    INDONESIAN("in")
+}

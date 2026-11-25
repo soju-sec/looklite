@@ -1,4 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LookLite</string>
+
+    <!-- Top Bar -->
+    <string name="action_open">Open</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_export">Export</string>
+
+    <!-- Canvas & Floating Inspector -->
+    <string name="badge_before">BEFORE</string>
+    <string name="badge_after">AFTER</string>
+    <string name="badge_original">ORIGINAL</string>
+    <string name="crop_hint">Drag frame to adjust composition</string>
+    <string name="inspector_ratio">Aspect Ratio</string>
+    <string name="inspector_split">Split View</string>
+    <string name="inspector_before">Hold for Original</string>
+
+    <!-- Aspect Ratios -->
+    <string name="ratio_original">Original</string>
+    <string name="ratio_square">1:1</string>
+    <string name="ratio_feed">4:5</string>
+    <string name="ratio_story">9:16</string>
+    <string name="ratio_cinema">16:9</string>
+    <string name="ratio_photo">3:2</string>
+
+    <!-- Bottom Workbench Tabs -->
+    <string name="tab_looks">Looks</string>
+    <string name="tab_adjust">Adjust</string>
+    <string name="tab_frame">Frame</string>
+
+    <!-- Looks Tab -->
+    <string name="cat_my_looks">My Looks</string>
+    <string name="cat_all">All</string>
+    <string name="cat_retouch">Retouch</string>
+    <string name="auto_tone">Auto Tone</string>
+    <string name="save_look">+ Save Look</string>
+    <string name="save_look_title">Save Custom Look</string>
+    <string name="save_look_hint">Enter look name…</string>
+    <string name="my_looks_empty">Save your favorite LUT &amp; slider recipes here.</string>
+    <string name="action_rename">Rename</string>
+    <string name="action_overwrite">Overwrite with Current</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_save">Save</string>
+    <string name="action_confirm">Confirm</string>
+
+    <!-- Adjust Tab Categories -->
+    <string name="adjust_light">Light</string>
+    <string name="adjust_color">Color</string>
+    <string name="adjust_retouch">Retouch</string>
+    <string name="adjust_fx">Grain / FX</string>
+    <string name="adjust_double_tap_hint">Double-tap label to reset</string>
+
+    <!-- Frame Tab -->
+    <string name="frame_style">Border Style</string>
+    <string name="frame_none">None</string>
+    <string name="frame_white">Classic White</string>
+    <string name="frame_dark">Darkroom Black</string>
+    <string name="frame_polaroid">Film Polaroid</string>
+    <string name="frame_padding">Padding</string>
+    <string name="frame_signature">Signature / Caption</string>
+    <string name="frame_signature_hint">e.g. Shot on LookLite</string>
+    <string name="frame_templates">Templates</string>
+    <string name="frame_save_template">+ Save Template</string>
+    <string name="frame_save_title">Save Frame Template</string>
+    <string name="frame_save_hint">Template name…</string>
+
+    <!-- Settings Bottom Sheet -->
+    <string name="settings_title">Studio Settings</string>
+    <string name="settings_language">App Language</string>
+    <string name="lang_system">System</string>
+    <string name="lang_english">English</string>
+    <string name="lang_indonesian">Indonesia</string>
+    <string name="settings_dev_title">Developer Diagnostics</string>
+    <string name="settings_dev_open_console">Open Debug Console</string>
+    <string name="settings_dev_gpu_label">GPU Frame Time</string>
+    <string name="settings_dev_lut_label">Active 3D LUT</string>
+    <string name="settings_dev_res_label">Canvas Resolution</string>
+    <string name="settings_version_format">LookLite v%1$s (%2$d)</string>
+
+    <!-- Export Dialog -->
+    <string name="export_title">Export Photo</string>
+    <string name="export_subtitle">High-resolution OpenGL ES 3.0 render</string>
+    <string name="export_res_original">Original Size</string>
+    <string name="export_res_original_desc">Full native resolution without downscaling</string>
+    <string name="export_res_4k">4K Ultra HD (3840px)</string>
+    <string name="export_res_4k_desc">Ideal for print &amp; large displays</string>
+    <string name="export_res_social">Social Media (2048px)</string>
+    <string name="export_res_social_desc">Optimal sharpness for feed &amp; web</string>
+    <string name="export_res_fhd">Full HD (1080px)</string>
+    <string name="export_res_fhd_desc">Compact file size</string>
+
+    <!-- Diagnostics Dialog -->
+    <string name="diag_title">Diagnostic Report</string>
+    <string name="diag_copy">Copy Report</string>
+    <string name="diag_close">Close</string>
+    <string name="diag_copied">Diagnostic report copied</string>
+
+    <!-- Toasts / Status -->
+    <string name="toast_loaded">Loaded (%1$d × %2$d)</string>
+    <string name="toast_load_failed">Failed to decode image</string>
+    <string name="toast_saved_gallery">Saved to Gallery (%1$d × %2$d)</string>
+    <string name="toast_export_failed">Export failed: %1$s</string>
+    <string name="toast_look_saved">Saved \"%1$s\"</string>
+    <string name="toast_template_saved">Template \"%1$s\" saved</string>
+    <string name="toast_dev_unlocked">Developer Diagnostics unlocked</string>
 </resources>

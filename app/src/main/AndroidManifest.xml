@@ -18,6 +18,7 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
+        android:localeConfig="@xml/locales_config"
         android:hardwareAccelerated="true"
         android:supportsRtl="true"
         android:allowBackup="false">
@@ -26,7 +27,7 @@
             android:name="app.looklite.android.MainActivity"
             android:exported="true"
             android:hardwareAccelerated="true"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize">
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize|locale|layoutDirection">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

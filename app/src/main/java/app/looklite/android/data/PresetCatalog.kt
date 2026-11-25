@@ -1,6 +1,7 @@
 package app.looklite.android.data
 
 import android.content.Context
+import app.looklite.android.R
 import app.looklite.android.model.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -186,12 +187,11 @@ object PresetCatalog {
     }
 
     val aspectRatios = listOf(
-        AspectRatioOption("original", "Asli", null, null),
-        AspectRatioOption("1:1", "Persegi", "1:1", 1.0f),
-        AspectRatioOption("4:5", "Feed IG", "4:5", 4f / 5f),
-        AspectRatioOption("9:16", "Story", "9:16", 9f / 16f),
-        AspectRatioOption("16:9", "Cinema", "16:9", 16f / 9f),
-        AspectRatioOption("3:2", "35mm", "3:2", 3f / 2f),
-        AspectRatioOption("2:3", "Portrait", "2:3", 2f / 3f)
+        AspectRatioOption("original", R.string.ratio_original, "Original", null, null),
+        AspectRatioOption("1:1", R.string.ratio_square, "1:1", "1:1", 1.0f),
+        AspectRatioOption("4:5", R.string.ratio_feed, "4:5", "4:5", 4f / 5f),
+        AspectRatioOption("9:16", R.string.ratio_story, "9:16", "9:16", 9f / 16f),
+        AspectRatioOption("16:9", R.string.ratio_cinema, "16:9", "16:9", 16f / 9f),
+        AspectRatioOption("3:2", R.string.ratio_photo, "3:2", "3:2", 3f / 2f)
     )
 }

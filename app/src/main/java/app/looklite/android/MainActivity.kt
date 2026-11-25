@@ -1,64 +1,81 @@
 package app.looklite.android
 
+import android.app.LocaleManager
 import android.content.ContentValues
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.LocaleList
 import android.provider.MediaStore
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
+import androidx.core.os.LocaleListCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.exifinterface.media.ExifInterface
 import app.looklite.android.data.PresetCatalog
+import app.looklite.android.data.StudioPreferences
 import app.looklite.android.engine.LookLiteGLView
 import app.looklite.android.engine.LookLiteRenderer
 import app.looklite.android.engine.LutLoader
+import app.looklite.android.engine.PresetThumbnailGenerator
 import app.looklite.android.model.*
 import app.looklite.android.ui.components.*
-import app.looklite.android.ui.theme.LookLiteTheme
+import app.looklite.android.ui.theme.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
+import java.util.UUID
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Immersive edge-to-edge UI with fully transparent system bars
+        // Immersive edge-to-edge Darkroom Studio UI
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.statusBarColor = android.graphics.Color.TRANSPARENT
         window.navigationBarColor = android.graphics.Color.TRANSPARENT
@@ -67,43 +84,118 @@ class MainActivity : ComponentActivity() {
             window.isNavigationBarContrastEnforced = false
         }
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-        insetsController.isAppearanceLightStatusBars = true
-        insetsController.isAppearanceLightNavigationBars = true
+        insetsController.isAppearanceLightStatusBars = false
+        insetsController.isAppearanceLightNavigationBars = false
 
         setContent {
             LookLiteTheme {
-                LookLiteApp()
+                LookLiteLocalizedRoot()
             }
         }
     }
 }
 
 @Composable
-fun LookLiteApp() {
+private fun LookLiteLocalizedRoot() {
+    val baseContext = LocalContext.current
+    val prefs = remember { StudioPreferences(baseContext.applicationContext) }
+    val selectedLang by prefs.languageFlow.collectAsState(initial = AppLanguageOption.SYSTEM)
+    val scope = rememberCoroutineScope()
+
+    val localizedContext = remember(baseContext, selectedLang) {
+        if (selectedLang == AppLanguageOption.SYSTEM) {
+            baseContext
+        } else {
+            val locale = Locale(selectedLang.tag)
+            val config = Configuration(baseContext.resources.configuration)
+            config.setLocale(locale)
+            baseContext.createConfigurationContext(config)
+        }
+    }
+
+    CompositionLocalProvider(LocalContext provides localizedContext) {
+        LookLiteApp(
+            prefs = prefs,
+            selectedLanguage = selectedLang,
+            onChangeLanguage = { option ->
+                scope.launch {
+                    prefs.setLanguage(option)
+                }
+                applyAppLocale(baseContext, option)
+            }
+        )
+    }
+}
+
+private fun applyAppLocale(context: Context, option: AppLanguageOption) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val lm = context.getSystemService(LocaleManager::class.java)
+        lm?.applicationLocales = if (option == AppLanguageOption.SYSTEM) {
+            LocaleList.getEmptyLocaleList()
+        } else {
+            LocaleList.forLanguageTags(option.tag)
+        }
+    } else {
+        val locales = if (option == AppLanguageOption.SYSTEM) {
+            LocaleListCompat.getEmptyLocaleList()
+        } else {
+            LocaleListCompat.forLanguageTags(option.tag)
+        }
+        AppCompatDelegate.setApplicationLocales(locales)
+    }
+}
+
+@Composable
+fun LookLiteApp(
+    prefs: StudioPreferences,
+    selectedLanguage: AppLanguageOption,
+    onChangeLanguage: (AppLanguageOption) -> Unit
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val presets = remember { PresetCatalog.getAllPresets(context) }
-    var activePreset by remember { mutableStateOf(presets.firstOrNull() ?: PresetProfile("default", "Standard", CameraBrand.POLES, "", "")) }
-    var selectedBrand by remember { mutableStateOf(activePreset.brand) }
+    var activePreset by remember {
+        mutableStateOf(presets.firstOrNull() ?: PresetProfile("default", "Standard", CameraBrand.POLES, "", ""))
+    }
+    var activeCustomLookId by remember { mutableStateOf<String?>(null) }
+    var activeLabel by remember { mutableStateOf(activePreset.name) }
+
+    var selectedCategory by remember { mutableStateOf(LookCategory.ALL) }
+    var activeWorkbenchTab by remember { mutableStateOf(WorkbenchTab.LOOKS) }
+
     var intensity by remember { mutableIntStateOf(100) }
     var currentSliders by remember { mutableStateOf(activePreset.defaultSliders) }
-
-    var currentMode by remember { mutableStateOf(ActiveMode.PRESETS) }
-    var isSubMenuCollapsed by remember { mutableStateOf(false) }
+    var baseSlidersForReset by remember { mutableStateOf(activePreset.defaultSliders) }
+    var isAutoToneEnabled by remember { mutableStateOf(false) }
 
     var isSplitActive by remember { mutableStateOf(false) }
     var splitPos by remember { mutableFloatStateOf(0.5f) }
-    var isAutoColorEnabled by remember { mutableStateOf(false) }
+    var isHoldingOriginal by remember { mutableStateOf(false) }
+    var isRatioStripOpen by remember { mutableStateOf(false) }
 
     var selectedRatioOption by remember { mutableStateOf(PresetCatalog.aspectRatios.first()) }
     var cropNormX by remember { mutableFloatStateOf(0.5f) }
     var cropNormY by remember { mutableFloatStateOf(0.5f) }
 
+    var frameSettings by remember { mutableStateOf(FrameSettings()) }
+
+    val customLooks by prefs.customLooksFlow.collectAsState(initial = emptyList())
+    val frameTemplates by prefs.frameTemplatesFlow.collectAsState(initial = emptyList())
+
     var showExportDialog by remember { mutableStateOf(false) }
+    var showSettingsSheet by remember { mutableStateOf(false) }
     var showDiagnosticDialog by remember { mutableStateOf(false) }
+    var isDeveloperUnlocked by remember { mutableStateOf(false) }
+
+    // Name input dialogs state
+    var showSaveLookDialog by remember { mutableStateOf(false) }
+    var renamingLook by remember { mutableStateOf<CustomLook?>(null) }
+    var showSaveTemplateDialog by remember { mutableStateOf(false) }
+    var renamingTemplate by remember { mutableStateOf<CustomFrameTemplate?>(null) }
 
     var originalBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var baseThumbPixels by remember { mutableStateOf<IntArray?>(null) }
     var containerWidth by remember { mutableFloatStateOf(0f) }
     var containerHeight by remember { mutableFloatStateOf(0f) }
 
@@ -115,7 +207,9 @@ fun LookLiteApp() {
         val demo = createDemoBitmap()
         originalBitmap = demo
         renderer.setImageBitmap(demo)
-        // Load initial LUT
+        baseThumbPixels = withContext(Dispatchers.Default) {
+            PresetThumbnailGenerator.createBaseThumbnail(demo)
+        }
         val lutBuf = LutLoader.loadLut(context, activePreset.lutFile)
         renderer.setLut(lutBuf, 17, activePreset.lutStage)
         renderer.setSliders(activePreset.defaultSliders)
@@ -129,16 +223,23 @@ fun LookLiteApp() {
     ) { uri: Uri? ->
         if (uri != null) {
             scope.launch {
-                val bmp = loadBitmapWithExif(context, uri)
+                val bmp = withContext(Dispatchers.IO) { loadBitmapWithExif(context, uri) }
                 if (bmp != null) {
                     originalBitmap = bmp
                     renderer.setImageBitmap(bmp)
                     cropNormX = 0.5f
                     cropNormY = 0.5f
                     glView?.requestRender()
-                    Toast.makeText(context, "Foto dimuat (${bmp.width} × ${bmp.height})", Toast.LENGTH_SHORT).show()
+                    baseThumbPixels = withContext(Dispatchers.Default) {
+                        PresetThumbnailGenerator.createBaseThumbnail(bmp)
+                    }
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.toast_loaded, bmp.width, bmp.height),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
-                    Toast.makeText(context, "Gagal membaca format foto", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_load_failed), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -146,9 +247,11 @@ fun LookLiteApp() {
 
     fun applyPreset(preset: PresetProfile) {
         activePreset = preset
-        selectedBrand = preset.brand
+        activeCustomLookId = null
+        activeLabel = preset.name
         intensity = 100
         currentSliders = preset.defaultSliders
+        baseSlidersForReset = preset.defaultSliders
         val buf = LutLoader.loadLut(context, preset.lutFile)
         renderer.setLut(buf, 17, preset.lutStage)
         renderer.setSliders(preset.defaultSliders)
@@ -156,53 +259,68 @@ fun LookLiteApp() {
         glView?.requestRender()
     }
 
+    fun applyCustomLook(look: CustomLook) {
+        activeCustomLookId = look.id
+        activeLabel = look.name
+        presets.firstOrNull { it.id == look.basePresetId }?.let { activePreset = it }
+        intensity = look.intensity
+        currentSliders = look.sliders
+        baseSlidersForReset = look.sliders
+        isAutoToneEnabled = look.autoColor
+        val buf = LutLoader.loadLut(context, look.lutFile)
+        renderer.setLut(buf, 17, look.lutStage)
+        renderer.setSliders(look.sliders)
+        renderer.setIntensity(look.intensity)
+        renderer.setAutoColor(look.autoColor)
+        glView?.requestRender()
+    }
+
+    val hasEdits = intensity != 100 ||
+        currentSliders != baseSlidersForReset ||
+        isAutoToneEnabled ||
+        selectedRatioOption.id != "original" ||
+        frameSettings.style != FrameStyle.NONE ||
+        isSplitActive
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color(0xFFF6F7FB), Color(0xFFEAEEF6))
-                )
-            )
-            .systemBarsPadding()
+            .background(StudioCanvasBg)
+            .statusBarsPadding()
     ) {
-        // 1. Top UI Layer: Unified Modern Header & Vibe Prompts Aspect Ratio Bar
+        // 1. TOP BAR (48.dp, flat dark studio)
         LookLiteHeader(
-            activePresetName = activePreset.name,
-            selectedRatioId = selectedRatioOption.id,
-            onRatioSelected = { option ->
-                selectedRatioOption = option
-                cropNormX = 0.5f
-                cropNormY = 0.5f
-            },
+            activePresetName = activeLabel,
+            hasEdits = hasEdits,
             onOpenPhoto = {
                 photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             },
             onReset = {
                 intensity = 100
-                currentSliders = activePreset.defaultSliders
-                renderer.setSliders(activePreset.defaultSliders)
+                currentSliders = baseSlidersForReset
+                renderer.setSliders(baseSlidersForReset)
                 renderer.setIntensity(100)
+                isAutoToneEnabled = false
+                renderer.setAutoColor(false)
                 isSplitActive = false
                 renderer.setSplitPosition(-1f)
-                isAutoColorEnabled = false
-                renderer.setAutoColor(false)
                 selectedRatioOption = PresetCatalog.aspectRatios.first()
                 cropNormX = 0.5f
                 cropNormY = 0.5f
+                isRatioStripOpen = false
+                frameSettings = FrameSettings()
                 glView?.requestRender()
             },
-            onDiagnostic = { showDiagnosticDialog = true },
-            onSave = { showExportDialog = true },
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+            onOpenSettings = { showSettingsSheet = true },
+            onExport = { showExportDialog = true }
         )
 
-        // 2. Center Viewport Canvas (Proportionally fitted, never stretched or hidden under controls)
+        // 2. PHOTO CANVAS & FLOATING INSPECTOR (~68% screen height)
         Box(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .padding(horizontal = 10.dp, vertical = 6.dp)
                 .onSizeChanged { size ->
                     containerWidth = size.width.toFloat()
                     containerHeight = size.height.toFloat()
@@ -223,189 +341,291 @@ fun LookLiteApp() {
                 val fitWdp = with(density) { fitPxW.toDp() }
                 val fitHdp = with(density) { fitPxH.toDp() }
 
+                val frameColor = when (frameSettings.style) {
+                    FrameStyle.NONE -> Color.Transparent
+                    FrameStyle.WHITE, FrameStyle.POLAROID -> Color(0xFFF6F6F4)
+                    FrameStyle.DARK -> Color(0xFF1A1A1E)
+                }
+                val frameTextColor = when (frameSettings.style) {
+                    FrameStyle.DARK -> Color(0xFFB0B0B8)
+                    else -> Color(0xFF3A3A40)
+                }
+
+                // Frame Container around the Photo Canvas
+                val padSide = if (frameSettings.style != FrameStyle.NONE) {
+                    (fitWdp * frameSettings.paddingFraction).coerceAtLeast(4.dp)
+                } else 0.dp
+                val padBottom = when (frameSettings.style) {
+                    FrameStyle.POLAROID -> (padSide * 2.8f).coerceAtLeast(20.dp)
+                    FrameStyle.NONE -> 0.dp
+                    else -> if (frameSettings.signatureText.isNotBlank()) (padSide * 2.0f).coerceAtLeast(18.dp) else padSide
+                }
+
                 Box(
                     modifier = Modifier
                         .size(width = fitWdp, height = fitHdp)
-                        .shadow(12.dp, RoundedCornerShape(8.dp), spotColor = Color(0x33000000))
                         .clip(RoundedCornerShape(8.dp))
-                        .background(Color.Black)
-                        .pointerInput(isSplitActive, fitPxW) {
-                            if (isSplitActive) {
-                                detectDragGestures { change, _ ->
-                                    change.consume()
-                                    val relX = (change.position.x / fitPxW).coerceIn(0.02f, 0.98f)
-                                    splitPos = relX
-                                    renderer.setSplitPosition(relX)
-                                    glView?.requestRender()
+                        .background(if (frameSettings.style != FrameStyle.NONE) frameColor else Color.Black)
+                        .padding(start = padSide, end = padSide, top = padSide, bottom = padBottom)
+                ) {
+                    val innerW = with(density) { (fitWdp - padSide * 2).toPx() }.coerceAtLeast(1f)
+                    val innerH = with(density) { (fitHdp - padSide - padBottom).toPx() }.coerceAtLeast(1f)
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(if (frameSettings.style == FrameStyle.NONE) 8.dp else 2.dp))
+                            .pointerInput(isSplitActive, selectedRatioOption.ratio, innerW) {
+                                if (isSplitActive) {
+                                    detectDragGestures { change, _ ->
+                                        change.consume()
+                                        val relX = (change.position.x / innerW).coerceIn(0.02f, 0.98f)
+                                        splitPos = relX
+                                        renderer.setSplitPosition(relX)
+                                        glView?.requestRender()
+                                    }
+                                } else if (selectedRatioOption.ratio == null) {
+                                    // Press-and-hold on canvas temporarily shows unedited Original
+                                    awaitEachGesture {
+                                        awaitFirstDown()
+                                        isHoldingOriginal = true
+                                        renderer.setShowBefore(true)
+                                        glView?.requestRender()
+                                        waitForUpOrCancellation()
+                                        isHoldingOriginal = false
+                                        renderer.setShowBefore(false)
+                                        glView?.requestRender()
+                                    }
+                                }
+                            }
+                    ) {
+                        AndroidView(
+                            factory = { ctx ->
+                                LookLiteGLView(ctx, renderer).also { glView = it }
+                            },
+                            modifier = Modifier.fillMaxSize()
+                        )
+
+                        // Original Badge while holding
+                        if (isHoldingOriginal) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                                    .padding(top = 10.dp)
+                                    .clip(RoundedCornerShape(9999.dp))
+                                    .background(StudioGlassOverlay)
+                                    .border(1.dp, StudioGlassBorder, RoundedCornerShape(9999.dp))
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.badge_original),
+                                    color = StudioTextPrimary,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    letterSpacing = 0.8.sp
+                                )
+                            }
+                        }
+
+                        // Split View Divider + Drag Handle + BEFORE / AFTER Micro Badges
+                        if (isSplitActive) {
+                            val splitXdp = with(density) { (innerW * splitPos).toDp() }
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .width(1.5.dp)
+                                    .offset(x = splitXdp - 0.75.dp)
+                                    .background(Color.White)
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .offset(x = splitXdp - 11.dp)
+                                    .size(22.dp)
+                                    .clip(RoundedCornerShape(11.dp))
+                                    .background(StudioGlassOverlay)
+                                    .border(1.dp, Color.White, RoundedCornerShape(11.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "‹›",
+                                    color = Color.White,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(9999.dp))
+                                        .background(StudioGlassOverlay)
+                                        .border(1.dp, StudioGlassBorder, RoundedCornerShape(9999.dp))
+                                        .padding(horizontal = 8.dp, vertical = 3.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.badge_before),
+                                        color = StudioTextPrimary,
+                                        fontSize = 9.5.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(9999.dp))
+                                        .background(StudioAccent)
+                                        .padding(horizontal = 8.dp, vertical = 3.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.badge_after),
+                                        color = Color.White,
+                                        fontSize = 9.5.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
                                 }
                             }
                         }
-                ) {
-                    // Native OpenGL ES 3.0 Viewport
-                    AndroidView(
-                        factory = { ctx ->
-                            LookLiteGLView(ctx, renderer).also { glView = it }
-                        },
-                        modifier = Modifier.fillMaxSize()
-                    )
 
-                    // Interactive Split View
-                    if (isSplitActive) {
-                        val splitXdp = with(density) { (fitPxW * splitPos).toDp() }
-
-                        // White Divider Line
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.5.dp)
-                                .offset(x = splitXdp - 0.75.dp)
-                                .background(Color.White)
+                        // Interactive Crop Overlay
+                        CropOverlay(
+                            containerWidth = innerW,
+                            containerHeight = innerH,
+                            imageAspect = imageAspect,
+                            targetAspect = selectedRatioOption.ratio,
+                            normX = cropNormX,
+                            normY = cropNormY,
+                            onNormOffsetChanged = { nx, ny ->
+                                cropNormX = nx
+                                cropNormY = ny
+                            }
                         )
-
-                        // Center Circle Handle
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .offset(x = splitXdp - 12.dp)
-                                .size(24.dp)
-                                .shadow(4.dp, RoundedCornerShape(12.dp))
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(Color.White),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "‹›",
-                                color = Color.Black,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-
-                        // Sebelum & Sesudah Badges inside photo corners
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Surface(
-                                shape = RoundedCornerShape(9999.dp),
-                                color = Color(0xCC000000)
-                            ) {
-                                Text(
-                                    text = "SEBELUM",
-                                    color = Color.White,
-                                    fontSize = 9.5.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                                )
-                            }
-
-                            Surface(
-                                shape = RoundedCornerShape(9999.dp),
-                                color = Color(0xCC007AFF)
-                            ) {
-                                Text(
-                                    text = "SESUDAH",
-                                    color = Color.White,
-                                    fontSize = 9.5.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                                )
-                            }
-                        }
                     }
+                }
 
-                    // Interactive Crop Framing Overlay
-                    CropOverlay(
-                        containerWidth = fitPxW,
-                        containerHeight = fitPxH,
-                        imageAspect = imageAspect,
-                        targetAspect = selectedRatioOption.ratio,
-                        normX = cropNormX,
-                        normY = cropNormY,
-                        onNormOffsetChanged = { nx, ny ->
-                            cropNormX = nx
-                            cropNormY = ny
-                        }
-                    )
+                // Frame Signature / Caption rendered in bottom frame margin
+                if (frameSettings.style != FrameStyle.NONE && frameSettings.signatureText.isNotBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .size(width = fitWdp, height = fitHdp)
+                            .padding(bottom = 4.dp, start = padSide, end = padSide),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        Text(
+                            text = frameSettings.signatureText,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = frameTextColor,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
-        }
 
-        // 3. Bottom Controls Layer: Sub-Menu Card + Floating Dock Navigation Bar
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 6.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Sub-Menu Controls Card (Separated from bottom navigation)
-            SubMenuCard(
-                mode = currentMode,
-                isCollapsed = isSubMenuCollapsed || isSplitActive,
-                onToggleCollapse = { isSubMenuCollapsed = !isSubMenuCollapsed },
-                selectedBrand = selectedBrand,
-                onBrandSelected = { brand ->
-                    selectedBrand = brand
-                    // Switch to first preset of this brand
-                    presets.firstOrNull { it.brand == brand }?.let { applyPreset(it) }
+            // Floating Glassmorphic Inspector Pill Bar at Bottom-Center of Photo Canvas
+            FloatingCanvasInspector(
+                selectedRatio = selectedRatioOption,
+                onRatioSelected = { option ->
+                    selectedRatioOption = option
+                    cropNormX = 0.5f
+                    cropNormY = 0.5f
+                    isRatioStripOpen = false
                 },
-                presets = presets,
-                selectedPresetId = activePreset.id,
-                onPresetSelected = { preset -> applyPreset(preset) },
-                intensity = intensity,
-                onIntensityChanged = { newIntensity ->
-                    intensity = newIntensity
-                    renderer.setIntensity(newIntensity)
-                    glView?.requestRender()
-                },
-                isAutoColorEnabled = isAutoColorEnabled,
-                onToggleAutoColor = { enabled ->
-                    isAutoColorEnabled = enabled
-                    renderer.setAutoColor(enabled)
-                    glView?.requestRender()
-                },
-                sliders = currentSliders,
-                onSliderChanged = { newSliders ->
-                    currentSliders = newSliders
-                    renderer.setSliders(newSliders)
-                    glView?.requestRender()
-                }
-            )
-
-            // Floating Navigation Pill Bar
-            FloatingDockBar(
-                currentMode = currentMode,
+                isRatioStripOpen = isRatioStripOpen,
+                onToggleRatioStrip = { isRatioStripOpen = !isRatioStripOpen },
                 isSplitActive = isSplitActive,
-                onModeSelected = { mode ->
-                    if (isSplitActive) {
-                        isSplitActive = false
-                        renderer.setSplitPosition(-1f)
-                        glView?.requestRender()
-                    }
-                    if (currentMode == mode) {
-                        isSubMenuCollapsed = !isSubMenuCollapsed
-                    } else {
-                        currentMode = mode
-                        isSubMenuCollapsed = false
-                    }
-                },
                 onToggleSplit = {
                     isSplitActive = !isSplitActive
                     renderer.setSplitPosition(if (isSplitActive) splitPos else -1f)
                     glView?.requestRender()
                 },
-                onHoldBeforeChanged = { holding ->
+                isHoldingOriginal = isHoldingOriginal,
+                onHoldOriginalChanged = { holding ->
+                    isHoldingOriginal = holding
                     renderer.setShowBefore(holding)
                     glView?.requestRender()
-                }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 8.dp)
             )
         }
+
+        // 3. DOCKED BOTTOM WORKBENCH (Flush to bottom edge, #131316)
+        StudioWorkbench(
+            activeTab = activeWorkbenchTab,
+            onTabSelected = { activeWorkbenchTab = it },
+            selectedCategory = selectedCategory,
+            onCategorySelected = { selectedCategory = it },
+            presets = presets,
+            activePresetId = activePreset.id,
+            activeCustomLookId = activeCustomLookId,
+            onPresetSelected = { preset -> applyPreset(preset) },
+            customLooks = customLooks,
+            onCustomLookSelected = { look -> applyCustomLook(look) },
+            onRequestSaveCustomLook = { showSaveLookDialog = true },
+            onRenameCustomLook = { look -> renamingLook = look },
+            onOverwriteCustomLook = { look ->
+                val updated = customLooks.map {
+                    if (it.id == look.id) {
+                        it.copy(
+                            basePresetId = activePreset.id,
+                            lutFile = activePreset.lutFile,
+                            lutStage = activePreset.lutStage,
+                            intensity = intensity,
+                            autoColor = isAutoToneEnabled,
+                            sliders = currentSliders
+                        )
+                    } else it
+                }
+                scope.launch { prefs.saveCustomLooks(updated) }
+                Toast.makeText(context, context.getString(R.string.toast_look_saved, look.name), Toast.LENGTH_SHORT).show()
+            },
+            onDeleteCustomLook = { look ->
+                val updated = customLooks.filterNot { it.id == look.id }
+                if (activeCustomLookId == look.id) activeCustomLookId = null
+                scope.launch { prefs.saveCustomLooks(updated) }
+            },
+            baseThumbPixels = baseThumbPixels,
+            intensity = intensity,
+            onIntensityChanged = { newIntensity ->
+                intensity = newIntensity
+                renderer.setIntensity(newIntensity)
+                glView?.requestRender()
+            },
+            isAutoToneEnabled = isAutoToneEnabled,
+            onToggleAutoTone = { enabled ->
+                isAutoToneEnabled = enabled
+                renderer.setAutoColor(enabled)
+                glView?.requestRender()
+            },
+            sliders = currentSliders,
+            onSliderChanged = { newSliders ->
+                currentSliders = newSliders
+                renderer.setSliders(newSliders)
+                glView?.requestRender()
+            },
+            frameSettings = frameSettings,
+            onFrameSettingsChanged = { frameSettings = it },
+            frameTemplates = frameTemplates,
+            onApplyFrameTemplate = { tpl -> frameSettings = tpl.settings },
+            onRequestSaveFrameTemplate = { showSaveTemplateDialog = true },
+            onRenameFrameTemplate = { tpl -> renamingTemplate = tpl },
+            onDeleteFrameTemplate = { tpl ->
+                scope.launch { prefs.saveFrameTemplates(frameTemplates.filterNot { it.id == tpl.id }) }
+            }
+        )
     }
 
-    // Export Dialog
+    // Export Modal Sheet
     if (showExportDialog) {
         val bmp = originalBitmap
         ExportDialog(
@@ -422,23 +642,218 @@ fun LookLiteApp() {
                         normX = cropNormX,
                         normY = cropNormY,
                         resolution = resolution,
+                        frameSettings = frameSettings,
                         renderer = renderer,
-                        presetName = activePreset.name
+                        presetName = activeLabel
                     )
                 }
             }
         )
     }
 
-    // Diagnostic Dialog
+    // Settings Modal Sheet
+    if (showSettingsSheet) {
+        val bmp = originalBitmap
+        SettingsBottomSheet(
+            selectedLanguage = selectedLanguage,
+            onLanguageSelected = onChangeLanguage,
+            isDeveloperUnlocked = isDeveloperUnlocked,
+            onUnlockDeveloper = { isDeveloperUnlocked = true },
+            gpuFrameTimeMs = renderer.lastFrameTimeMs,
+            glRendererName = renderer.glRendererName,
+            activePresetName = activeLabel,
+            imageDimensions = "${bmp?.width ?: 0} × ${bmp?.height ?: 0}",
+            onOpenDebugConsole = {
+                showSettingsSheet = false
+                showDiagnosticDialog = true
+            },
+            onDismiss = { showSettingsSheet = false }
+        )
+    }
+
+    // Developer Diagnostics Dialog
     if (showDiagnosticDialog) {
         val bmp = originalBitmap
         DiagnosticDialog(
-            activePresetName = "${activePreset.name} (${activePreset.brand.displayName})",
+            activePresetName = "$activeLabel (${activePreset.brand.displayName})",
             imageDimensions = "${bmp?.width ?: 0} × ${bmp?.height ?: 0}",
             intensity = intensity,
+            gpuFrameTimeMs = renderer.lastFrameTimeMs,
+            glRendererName = renderer.glRendererName,
             onDismiss = { showDiagnosticDialog = false }
         )
+    }
+
+    // Save Custom Look Dialog
+    if (showSaveLookDialog) {
+        StudioNameInputDialog(
+            title = stringResource(R.string.save_look_title),
+            hint = stringResource(R.string.save_look_hint),
+            initialValue = "",
+            onDismiss = { showSaveLookDialog = false },
+            onConfirm = { name ->
+                showSaveLookDialog = false
+                val newLook = CustomLook(
+                    id = UUID.randomUUID().toString(),
+                    name = name,
+                    basePresetId = activePreset.id,
+                    lutFile = activePreset.lutFile,
+                    lutStage = activePreset.lutStage,
+                    intensity = intensity,
+                    autoColor = isAutoToneEnabled,
+                    sliders = currentSliders
+                )
+                activeCustomLookId = newLook.id
+                activeLabel = name
+                scope.launch { prefs.saveCustomLooks(listOf(newLook) + customLooks) }
+                Toast.makeText(context, context.getString(R.string.toast_look_saved, name), Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+    // Rename Custom Look Dialog
+    renamingLook?.let { target ->
+        StudioNameInputDialog(
+            title = stringResource(R.string.action_rename),
+            hint = stringResource(R.string.save_look_hint),
+            initialValue = target.name,
+            onDismiss = { renamingLook = null },
+            onConfirm = { newName ->
+                renamingLook = null
+                val updated = customLooks.map { if (it.id == target.id) it.copy(name = newName) else it }
+                if (activeCustomLookId == target.id) activeLabel = newName
+                scope.launch { prefs.saveCustomLooks(updated) }
+            }
+        )
+    }
+
+    // Save Frame Template Dialog
+    if (showSaveTemplateDialog) {
+        StudioNameInputDialog(
+            title = stringResource(R.string.frame_save_title),
+            hint = stringResource(R.string.frame_save_hint),
+            initialValue = "",
+            onDismiss = { showSaveTemplateDialog = false },
+            onConfirm = { name ->
+                showSaveTemplateDialog = false
+                val tpl = CustomFrameTemplate(
+                    id = UUID.randomUUID().toString(),
+                    name = name,
+                    settings = frameSettings
+                )
+                scope.launch { prefs.saveFrameTemplates(listOf(tpl) + frameTemplates) }
+                Toast.makeText(context, context.getString(R.string.toast_template_saved, name), Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+    // Rename Frame Template Dialog
+    renamingTemplate?.let { target ->
+        StudioNameInputDialog(
+            title = stringResource(R.string.action_rename),
+            hint = stringResource(R.string.frame_save_hint),
+            initialValue = target.name,
+            onDismiss = { renamingTemplate = null },
+            onConfirm = { newName ->
+                renamingTemplate = null
+                val updated = frameTemplates.map { if (it.id == target.id) it.copy(name = newName) else it }
+                scope.launch { prefs.saveFrameTemplates(updated) }
+            }
+        )
+    }
+}
+
+@Composable
+private fun StudioNameInputDialog(
+    title: String,
+    hint: String,
+    initialValue: String,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var text by remember(initialValue) { mutableStateOf(initialValue) }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(14.dp))
+                .background(StudioWorkbenchBg)
+                .border(1.dp, StudioHairlineBorder, RoundedCornerShape(14.dp))
+                .padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            Text(
+                text = title,
+                fontSize = 15.5.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = StudioTextPrimary
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(StudioElevatedBg)
+                    .border(1.dp, StudioHairlineBorder, RoundedCornerShape(8.dp))
+                    .padding(horizontal = 12.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                if (text.isEmpty()) {
+                    Text(text = hint, fontSize = 13.sp, color = StudioTextSecondary)
+                }
+                BasicTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    singleLine = true,
+                    textStyle = TextStyle(color = StudioTextPrimary, fontSize = 13.sp),
+                    cursorBrush = SolidColor(StudioAccent),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .height(34.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(StudioElevatedBg)
+                        .border(1.dp, StudioHairlineBorder, RoundedCornerShape(8.dp))
+                        .clickable { onDismiss() }
+                        .padding(horizontal = 14.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.action_cancel),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = StudioTextSecondary
+                    )
+                }
+
+                val canSave = text.trim().isNotEmpty()
+                Box(
+                    modifier = Modifier
+                        .height(34.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(if (canSave) StudioAccent else StudioElevatedBg)
+                        .clickable(enabled = canSave) { onConfirm(text.trim()) }
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.action_save),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (canSave) Color.White else StudioTextSecondary
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -449,6 +864,7 @@ private suspend fun executeNativeExport(
     normX: Float,
     normY: Float,
     resolution: ExportResolution,
+    frameSettings: FrameSettings,
     renderer: LookLiteRenderer,
     presetName: String
 ) = withContext(Dispatchers.IO) {
@@ -456,7 +872,6 @@ private suspend fun executeNativeExport(
         val origW = sourceBitmap.width
         val origH = sourceBitmap.height
 
-        // Calculate Crop Rect
         val cropX: Int
         val cropY: Int
         val cropW: Int
@@ -486,7 +901,6 @@ private suspend fun executeNativeExport(
 
         val croppedBitmap = Bitmap.createBitmap(sourceBitmap, cropX, cropY, cropW, cropH)
 
-        // Calculate Target Export Dimensions
         var targetW = cropW
         var targetH = cropH
         val aspect = cropW.toFloat() / cropH.toFloat()
@@ -501,12 +915,14 @@ private suspend fun executeNativeExport(
             }
         }
 
-        // Render with Native OpenGL ES 3.0 Offscreen FBO
         val renderedBitmap = renderer.renderOffscreen(croppedBitmap, targetW, targetH)
+        val finalBitmap = if (frameSettings.style != FrameStyle.NONE) {
+            applyFrameToBitmap(renderedBitmap, frameSettings)
+        } else {
+            renderedBitmap
+        }
 
-        // Save to Android MediaStore
         val filename = "LookLite_${presetName.replace("\\s+".toRegex(), "_")}_${System.currentTimeMillis()}.jpg"
-
         val values = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, filename)
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
@@ -518,20 +934,64 @@ private suspend fun executeNativeExport(
         val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
         if (uri != null) {
             context.contentResolver.openOutputStream(uri)?.use { out ->
-                renderedBitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
+                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
             }
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Disimpan ke Galeri ($targetW × $targetH)! ✓", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.toast_saved_gallery, finalBitmap.width, finalBitmap.height),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } else {
-            throw RuntimeException("Gagal mengalokasikan file MediaStore")
+            throw RuntimeException("MediaStore allocation failed")
         }
     } catch (e: Exception) {
         e.printStackTrace()
         withContext(Dispatchers.Main) {
-            Toast.makeText(context, "Gagal mengekspor foto: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.toast_export_failed, e.message ?: "Unknown"),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
+}
+
+private fun applyFrameToBitmap(photo: Bitmap, settings: FrameSettings): Bitmap {
+    val pad = (photo.width.coerceAtMost(photo.height) * settings.paddingFraction).toInt().coerceAtLeast(16)
+    val bottomPad = when (settings.style) {
+        FrameStyle.POLAROID -> (pad * 2.8f).toInt()
+        else -> if (settings.signatureText.isNotBlank()) (pad * 2.0f).toInt() else pad
+    }
+    val outW = photo.width + pad * 2
+    val outH = photo.height + pad + bottomPad
+    val out = Bitmap.createBitmap(outW, outH, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(out)
+
+    val bgColor = when (settings.style) {
+        FrameStyle.DARK -> android.graphics.Color.parseColor("#1A1A1E")
+        else -> android.graphics.Color.parseColor("#F6F6F4")
+    }
+    canvas.drawColor(bgColor)
+    canvas.drawBitmap(photo, pad.toFloat(), pad.toFloat(), null)
+
+    if (settings.signatureText.isNotBlank()) {
+        val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = if (settings.style == FrameStyle.DARK) {
+                android.graphics.Color.parseColor("#B0B0B8")
+            } else {
+                android.graphics.Color.parseColor("#3A3A40")
+            }
+            textSize = (bottomPad * 0.34f).coerceAtLeast(22f)
+            textAlign = Paint.Align.CENTER
+            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+        }
+        val textY = photo.height + pad + bottomPad * 0.62f
+        canvas.drawText(settings.signatureText, outW / 2f, textY, textPaint)
+    }
+
+    return out
 }
 
 private fun loadBitmapWithExif(context: Context, uri: Uri): Bitmap? {
@@ -552,6 +1012,14 @@ private fun loadBitmapWithExif(context: Context, uri: Uri): Bitmap? {
             ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
             ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.postScale(-1f, 1f)
             ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.postScale(1f, -1f)
+            ExifInterface.ORIENTATION_TRANSPOSE -> {
+                matrix.postRotate(90f)
+                matrix.postScale(-1f, 1f)
+            }
+            ExifInterface.ORIENTATION_TRANSVERSE -> {
+                matrix.postRotate(270f)
+                matrix.postScale(-1f, 1f)
+            }
             else -> return original
         }
         Bitmap.createBitmap(original, 0, 0, original.width, original.height, matrix, true)
@@ -568,7 +1036,6 @@ private fun createDemoBitmap(): Bitmap {
     val canvas = Canvas(bmp)
     val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    // 1. Luminous Golden-Hour Sky Gradient
     paint.shader = android.graphics.LinearGradient(
         0f, 0f, 0f, 540f,
         intArrayOf(
@@ -582,7 +1049,6 @@ private fun createDemoBitmap(): Bitmap {
     )
     canvas.drawRect(0f, 0f, w.toFloat(), 540f, paint)
 
-    // 2. Soft Sun Glow
     paint.shader = android.graphics.RadialGradient(
         820f, 350f, 340f,
         intArrayOf(
@@ -595,7 +1061,6 @@ private fun createDemoBitmap(): Bitmap {
     )
     canvas.drawCircle(820f, 350f, 340f, paint)
 
-    // 3. Distant Atmospheric Mountain Ridge
     paint.shader = android.graphics.LinearGradient(
         0f, 270f, 0f, 540f,
         android.graphics.Color.parseColor("#8A96B5"),
@@ -615,7 +1080,6 @@ private fun createDemoBitmap(): Bitmap {
     }
     canvas.drawPath(farMountain, paint)
 
-    // 4. Foreground Mountain Ridge
     paint.shader = android.graphics.LinearGradient(
         0f, 340f, 0f, 540f,
         android.graphics.Color.parseColor("#556078"),
@@ -634,7 +1098,6 @@ private fun createDemoBitmap(): Bitmap {
     }
     canvas.drawPath(nearMountain, paint)
 
-    // 5. Reflective Alpine Lake Water
     paint.shader = android.graphics.LinearGradient(
         0f, 540f, 0f, h.toFloat(),
         intArrayOf(
@@ -648,7 +1111,6 @@ private fun createDemoBitmap(): Bitmap {
     )
     canvas.drawRect(0f, 540f, w.toFloat(), h.toFloat(), paint)
 
-    // 6. Subtle Sun Reflection Shimmer on Water
     paint.shader = android.graphics.RadialGradient(
         820f, 620f, 260f,
         intArrayOf(

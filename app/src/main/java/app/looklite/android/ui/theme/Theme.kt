@@ -1,37 +1,39 @@
 package app.looklite.android.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-val AppleCoral = Color(0xFFFF2D55)
-val AppleLabelPrimary = Color(0xFF1D1D1F)
-val AppleLabelSecondary = Color(0xFF6E6E73)
-val AppleLabelTertiary = Color(0xFF8E8E93)
-val AppleGlassBg = Color(0xEEFFFFFF)
-val AppleGlassBorder = Color(0x40FFFFFF)
-val AppleGlassBorderSubtle = Color(0x1F000000)
-val AppleCardBg = Color(0xF5FFFFFF)
+// Darkroom Studio Palette
+val StudioCanvasBg = Color(0xFF0A0A0C)
+val StudioWorkbenchBg = Color(0xFF131316)
+val StudioElevatedBg = Color(0xFF1C1C21)
+val StudioHairlineBorder = Color(0x14FFFFFF) // rgba(255,255,255,0.08)
+val StudioGlassOverlay = Color(0xCC131316)
+val StudioGlassBorder = Color(0x22FFFFFF)
+val StudioTextPrimary = Color(0xFFF4F4F6)
+val StudioTextSecondary = Color(0xFF8E8E98)
+val StudioAccent = Color(0xFFFF3B5C)
 
-private val LightColorScheme = lightColorScheme(
-    primary = AppleCoral,
+private val DarkStudioColorScheme = darkColorScheme(
+    primary = StudioAccent,
     onPrimary = Color.White,
-    background = Color(0xFFF2F2F7),
-    surface = AppleCardBg,
-    onSurface = AppleLabelPrimary,
-    onSurfaceVariant = AppleLabelSecondary
+    background = StudioCanvasBg,
+    onBackground = StudioTextPrimary,
+    surface = StudioWorkbenchBg,
+    onSurface = StudioTextPrimary,
+    surfaceVariant = StudioElevatedBg,
+    onSurfaceVariant = StudioTextSecondary,
+    outline = StudioHairlineBorder
 )
 
 @Composable
 fun LookLiteTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colorScheme = LightColorScheme,
+        colorScheme = DarkStudioColorScheme,
         content = content
     )
 }

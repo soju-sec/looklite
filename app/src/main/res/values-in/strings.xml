@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LookLite</string>
+
+    <!-- Top Bar -->
+    <string name="action_open">Buka</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_settings">Pengaturan</string>
+    <string name="action_export">Ekspor</string>
+
+    <!-- Canvas & Floating Inspector -->
+    <string name="badge_before">SEBELUM</string>
+    <string name="badge_after">SESUDAH</string>
+    <string name="badge_original">ASLI</string>
+    <string name="crop_hint">Geser bingkai untuk mengatur komposisi</string>
+    <string name="inspector_ratio">Rasio Aspek</string>
+    <string name="inspector_split">Split View</string>
+    <string name="inspector_before">Tahan untuk Asli</string>
+
+    <!-- Aspect Ratios -->
+    <string name="ratio_original">Asli</string>
+    <string name="ratio_square">1:1</string>
+    <string name="ratio_feed">4:5</string>
+    <string name="ratio_story">9:16</string>
+    <string name="ratio_cinema">16:9</string>
+    <string name="ratio_photo">3:2</string>
+
+    <!-- Bottom Workbench Tabs -->
+    <string name="tab_looks">Looks</string>
+    <string name="tab_adjust">Atur</string>
+    <string name="tab_frame">Bingkai</string>
+
+    <!-- Looks Tab -->
+    <string name="cat_my_looks">Look Saya</string>
+    <string name="cat_all">Semua</string>
+    <string name="cat_retouch">Retouch</string>
+    <string name="auto_tone">Auto Tone</string>
+    <string name="save_look">+ Simpan Look</string>
+    <string name="save_look_title">Simpan Look Kustom</string>
+    <string name="save_look_hint">Masukkan nama look…</string>
+    <string name="my_looks_empty">Simpan resep LUT &amp; slider favorit Anda di sini.</string>
+    <string name="action_rename">Ubah Nama</string>
+    <string name="action_overwrite">Timpa dengan Saat Ini</string>
+    <string name="action_delete">Hapus</string>
+    <string name="action_cancel">Batal</string>
+    <string name="action_save">Simpan</string>
+    <string name="action_confirm">Konfirmasi</string>
+
+    <!-- Adjust Tab Categories -->
+    <string name="adjust_light">Light</string>
+    <string name="adjust_color">Color</string>
+    <string name="adjust_retouch">Retouch</string>
+    <string name="adjust_fx">Grain / FX</string>
+    <string name="adjust_double_tap_hint">Ketuk dua kali label untuk reset</string>
+
+    <!-- Frame Tab -->
+    <string name="frame_style">Gaya Bingkai</string>
+    <string name="frame_none">Tanpa Bingkai</string>
+    <string name="frame_white">Putih Klasik</string>
+    <string name="frame_dark">Hitam Darkroom</string>
+    <string name="frame_polaroid">Film Polaroid</string>
+    <string name="frame_padding">Jarak Bingkai</string>
+    <string name="frame_signature">Tanda Tangan / Teks</string>
+    <string name="frame_signature_hint">mis. Shot on LookLite</string>
+    <string name="frame_templates">Templat</string>
+    <string name="frame_save_template">+ Simpan Templat</string>
+    <string name="frame_save_title">Simpan Templat Bingkai</string>
+    <string name="frame_save_hint">Nama templat…</string>
+
+    <!-- Settings Bottom Sheet -->
+    <string name="settings_title">Pengaturan Studio</string>
+    <string name="settings_language">Bahasa Aplikasi</string>
+    <string name="lang_system">Sistem</string>
+    <string name="lang_english">English</string>
+    <string name="lang_indonesian">Indonesia</string>
+    <string name="settings_dev_title">Diagnostik Pengembang</string>
+    <string name="settings_dev_open_console">Buka Konsol Debug</string>
+    <string name="settings_dev_gpu_label">Waktu Frame GPU</string>
+    <string name="settings_dev_lut_label">3D LUT Aktif</string>
+    <string name="settings_dev_res_label">Resolusi Kanvas</string>
+    <string name="settings_version_format">LookLite v%1$s (%2$d)</string>
+
+    <!-- Export Dialog -->
+    <string name="export_title">Ekspor Foto</string>
+    <string name="export_subtitle">Render resolusi tinggi OpenGL ES 3.0</string>
+    <string name="export_res_original">Ukuran Asli</string>
+    <string name="export_res_original_desc">Resolusi penuh tanpa kompresi</string>
+    <string name="export_res_4k">4K Ultra HD (3840px)</string>
+    <string name="export_res_4k_desc">Ideal untuk cetak &amp; layar besar</string>
+    <string name="export_res_social">Media Sosial (2048px)</string>
+    <string name="export_res_social_desc">Ketajaman optimal untuk feed &amp; web</string>
+    <string name="export_res_fhd">Full HD (1080px)</string>
+    <string name="export_res_fhd_desc">Ukuran file lebih hemat</string>
+
+    <!-- Diagnostics Dialog -->
+    <string name="diag_title">Laporan Diagnostik</string>
+    <string name="diag_copy">Salin Laporan</string>
+    <string name="diag_close">Tutup</string>
+    <string name="diag_copied">Laporan diagnostik disalin</string>
+
+    <!-- Toasts / Status -->
+    <string name="toast_loaded">Foto dimuat (%1$d × %2$d)</string>
+    <string name="toast_load_failed">Gagal membaca format foto</string>
+    <string name="toast_saved_gallery">Disimpan ke Galeri (%1$d × %2$d)</string>
+    <string name="toast_export_failed">Gagal ekspor: %1$s</string>
+    <string name="toast_look_saved">\"%1$s\" disimpan</string>
+    <string name="toast_template_saved">Templat \"%1$s\" disimpan</string>
+    <string name="toast_dev_unlocked">Diagnostik Pengembang aktif</string>
+</resources>
