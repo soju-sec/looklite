@@ -47,7 +47,7 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 enum class WorkbenchTab {
-    LOOKS, ADJUST, FRAME
+    LOOKS, ADJUST
 }
 
 enum class AdjustSubTab(val labelResId: Int) {
@@ -78,19 +78,9 @@ fun StudioWorkbench(
     baseThumbPixels: IntArray?,
     intensity: Int,
     onIntensityChanged: (Int) -> Unit,
-    isAutoToneEnabled: Boolean,
-    onToggleAutoTone: (Boolean) -> Unit,
     // Adjust Tab
     sliders: SliderValues,
     onSliderChanged: (SliderValues) -> Unit,
-    // Frame Tab
-    frameSettings: FrameSettings,
-    onFrameSettingsChanged: (FrameSettings) -> Unit,
-    frameTemplates: List<CustomFrameTemplate>,
-    onApplyFrameTemplate: (CustomFrameTemplate) -> Unit,
-    onRequestSaveFrameTemplate: () -> Unit,
-    onRenameFrameTemplate: (CustomFrameTemplate) -> Unit,
-    onDeleteFrameTemplate: (CustomFrameTemplate) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -140,29 +130,17 @@ fun StudioWorkbench(
                     onDeleteCustomLook = onDeleteCustomLook,
                     baseThumbPixels = baseThumbPixels,
                     intensity = intensity,
-                    onIntensityChanged = onIntensityChanged,
-                    isAutoToneEnabled = isAutoToneEnabled,
-                    onToggleAutoTone = onToggleAutoTone
+                    onIntensityChanged = onIntensityChanged
                 )
 
                 WorkbenchTab.ADJUST -> AdjustPanel(
                     sliders = sliders,
                     onSliderChanged = onSliderChanged
                 )
-
-                WorkbenchTab.FRAME -> FramePanel(
-                    frameSettings = frameSettings,
-                    onFrameSettingsChanged = onFrameSettingsChanged,
-                    frameTemplates = frameTemplates,
-                    onApplyFrameTemplate = onApplyFrameTemplate,
-                    onRequestSaveFrameTemplate = onRequestSaveFrameTemplate,
-                    onRenameFrameTemplate = onRenameFrameTemplate,
-                    onDeleteFrameTemplate = onDeleteFrameTemplate
-                )
             }
         }
 
-        // Apple 0.5.dp hairline divider above bottom 3-tab bar
+        // Apple 0.5.dp hairline divider above bottom 2-tab bar
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -170,7 +148,7 @@ fun StudioWorkbench(
                 .background(StudioHairlineBorder)
         )
 
-        // Flush Bottom Navigation Bar (3 Focused Tabs: Looks, Adjust, Frame)
+        // Flush Bottom Navigation Bar (2 Focused Tabs: Looks, Adjust)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -189,7 +167,7 @@ fun StudioWorkbench(
                     } else Modifier
                 )
                 .background(StudioWorkbenchBg)
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 24.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
@@ -204,12 +182,6 @@ fun StudioWorkbench(
                 icon = Icons.Rounded.Tune,
                 isActive = activeTab == WorkbenchTab.ADJUST,
                 onClick = { onTabSelected(WorkbenchTab.ADJUST) }
-            )
-            DockedNavTab(
-                label = stringResource(R.string.tab_frame),
-                icon = Icons.Rounded.FilterFrames,
-                isActive = activeTab == WorkbenchTab.FRAME,
-                onClick = { onTabSelected(WorkbenchTab.FRAME) }
             )
         }
     }
@@ -270,9 +242,7 @@ private fun LooksPanel(
     onDeleteCustomLook: (CustomLook) -> Unit,
     baseThumbPixels: IntArray?,
     intensity: Int,
-    onIntensityChanged: (Int) -> Unit,
-    isAutoToneEnabled: Boolean,
-    onToggleAutoTone: (Boolean) -> Unit
+    onIntensityChanged: (Int) -> Unit
 ) {
     val haptic = LocalHapticFeedback.current
 
@@ -328,47 +298,14 @@ private fun LooksPanel(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        // Compact Auto Tone Toggle Chip + Slim Borderless Intensity Slider
+        // Slim Borderless Intensity Slider
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .height(28.dp)
-                    .clip(RoundedCornerShape(9999.dp))
-                    .background(if (isAutoToneEnabled) StudioAccent.copy(alpha = 0.16f) else StudioElevatedBg)
-                    .border(
-                        1.dp,
-                        if (isAutoToneEnabled) StudioAccent else StudioHairlineBorder,
-                        RoundedCornerShape(9999.dp)
-                    )
-                    .clickable {
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        onToggleAutoTone(!isAutoToneEnabled)
-                    }
-                    .padding(horizontal = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.AutoFixHigh,
-                    contentDescription = null,
-                    tint = if (isAutoToneEnabled) StudioAccent else StudioTextSecondary,
-                    modifier = Modifier.size(13.dp)
-                )
-                Text(
-                    text = stringResource(R.string.auto_tone),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = if (isAutoToneEnabled) StudioAccent else StudioTextPrimary
-                )
-            }
-
-            // Slim Borderless Intensity Slider
             BorderlessSlider(
                 value = intensity.toFloat(),
                 min = 0f,
@@ -993,233 +930,3 @@ fun BorderlessSlider(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun FramePanel(
-    frameSettings: FrameSettings,
-    onFrameSettingsChanged: (FrameSettings) -> Unit,
-    frameTemplates: List<CustomFrameTemplate>,
-    onApplyFrameTemplate: (CustomFrameTemplate) -> Unit,
-    onRequestSaveFrameTemplate: () -> Unit,
-    onRenameFrameTemplate: (CustomFrameTemplate) -> Unit,
-    onDeleteFrameTemplate: (CustomFrameTemplate) -> Unit
-) {
-    val haptic = LocalHapticFeedback.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        // 1. Border Style Row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            FrameStyle.values().forEach { style ->
-                val isSelected = frameSettings.style == style
-                val label = when (style) {
-                    FrameStyle.NONE -> stringResource(R.string.frame_none)
-                    FrameStyle.WHITE -> stringResource(R.string.frame_white)
-                    FrameStyle.DARK -> stringResource(R.string.frame_dark)
-                    FrameStyle.POLAROID -> stringResource(R.string.frame_polaroid)
-                }
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(if (isSelected) StudioAccent.copy(alpha = 0.16f) else StudioElevatedBg)
-                        .border(
-                            1.dp,
-                            if (isSelected) StudioAccent else StudioHairlineBorder,
-                            RoundedCornerShape(6.dp)
-                        )
-                        .clickable {
-                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                            onFrameSettingsChanged(frameSettings.copy(style = style))
-                        }
-                        .padding(horizontal = 10.dp, vertical = 5.dp)
-                ) {
-                    Text(
-                        text = label,
-                        fontSize = 11.sp,
-                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
-                        color = if (isSelected) StudioAccent else StudioTextPrimary
-                    )
-                }
-            }
-        }
-
-        // 2. Padding Slider + Signature Input
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.frame_padding),
-                fontSize = 11.sp,
-                color = StudioTextSecondary,
-                modifier = Modifier.width(56.dp)
-            )
-            BorderlessSlider(
-                value = frameSettings.paddingFraction * 100f,
-                min = 1f,
-                max = 12f,
-                defaultValue = 4f,
-                onValueChange = {
-                    onFrameSettingsChanged(frameSettings.copy(paddingFraction = it / 100f))
-                },
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = "${(frameSettings.paddingFraction * 100).roundToInt()}%",
-                fontSize = 11.sp,
-                color = StudioTextPrimary,
-                style = TextStyle(fontFeatureSettings = "tnum"),
-                modifier = Modifier.width(34.dp),
-                textAlign = TextAlign.End
-            )
-        }
-
-        // Signature Text Input
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(32.dp)
-                .clip(RoundedCornerShape(6.dp))
-                .background(StudioElevatedBg)
-                .border(1.dp, StudioHairlineBorder, RoundedCornerShape(6.dp))
-                .padding(horizontal = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(modifier = Modifier.weight(1f)) {
-                if (frameSettings.signatureText.isEmpty()) {
-                    Text(
-                        text = stringResource(R.string.frame_signature_hint),
-                        fontSize = 11.5.sp,
-                        color = StudioTextSecondary
-                    )
-                }
-                BasicTextField(
-                    value = frameSettings.signatureText,
-                    onValueChange = { onFrameSettingsChanged(frameSettings.copy(signatureText = it)) },
-                    singleLine = true,
-                    textStyle = TextStyle(color = StudioTextPrimary, fontSize = 11.5.sp),
-                    cursorBrush = SolidColor(StudioAccent),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-            if (frameSettings.signatureText.isNotEmpty()) {
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = null,
-                    tint = StudioTextSecondary,
-                    modifier = Modifier
-                        .size(15.dp)
-                        .clickable { onFrameSettingsChanged(frameSettings.copy(signatureText = "")) }
-                )
-            }
-        }
-
-        // 3. Custom Frame Templates Row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .height(28.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(StudioElevatedBg)
-                    .clickable {
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        onRequestSaveFrameTemplate()
-                    }
-                    .padding(horizontal = 10.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Canvas(modifier = Modifier.matchParentSize()) {
-                    drawRoundRect(
-                        color = StudioAccent.copy(alpha = 0.6f),
-                        style = Stroke(
-                            width = 1.dp.toPx(),
-                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 6f), 0f)
-                        ),
-                        cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
-                    )
-                }
-                Text(
-                    text = stringResource(R.string.frame_save_template),
-                    fontSize = 10.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = StudioAccent
-                )
-            }
-
-            frameTemplates.forEach { tpl ->
-                var showMenu by remember { mutableStateOf(false) }
-                val isMatch = frameSettings == tpl.settings
-                Box {
-                    Box(
-                        modifier = Modifier
-                            .height(28.dp)
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(if (isMatch) StudioAccent.copy(alpha = 0.16f) else StudioElevatedBg)
-                            .border(
-                                1.dp,
-                                if (isMatch) StudioAccent else StudioHairlineBorder,
-                                RoundedCornerShape(6.dp)
-                            )
-                            .combinedClickable(
-                                onClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                    onApplyFrameTemplate(tpl)
-                                },
-                                onLongClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    showMenu = true
-                                }
-                            )
-                            .padding(horizontal = 10.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = tpl.name,
-                            fontSize = 10.5.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = if (isMatch) StudioAccent else StudioTextPrimary
-                        )
-                    }
-
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false },
-                        modifier = Modifier.background(StudioElevatedBg)
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.action_rename), color = StudioTextPrimary, fontSize = 13.sp) },
-                            onClick = {
-                                showMenu = false
-                                onRenameFrameTemplate(tpl)
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.action_delete), color = StudioAccent, fontSize = 13.sp) },
-                            onClick = {
-                                showMenu = false
-                                onDeleteFrameTemplate(tpl)
-                            }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}

@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -74,13 +73,13 @@ fun LookLiteHeader(
                 )
             }
 
+            val resetEnabled = hasPhoto && hasEdits
             Box(
                 modifier = Modifier
                     .size(32.dp)
                     .clip(CircleShape)
-                    .background(StudioElevatedBg)
-                    .alpha(if (hasPhoto && hasEdits) 1f else 0.30f)
-                    .clickable(enabled = hasPhoto && hasEdits) {
+                    .background(if (resetEnabled) StudioElevatedBg else StudioElevatedBg.copy(alpha = 0.45f))
+                    .clickable(enabled = resetEnabled) {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         onReset()
                     },
@@ -89,7 +88,7 @@ fun LookLiteHeader(
                 Icon(
                     imageVector = Icons.Rounded.Refresh,
                     contentDescription = stringResource(R.string.action_reset),
-                    tint = StudioTextPrimary,
+                    tint = if (resetEnabled) StudioTextPrimary else StudioTextSecondary.copy(alpha = 0.45f),
                     modifier = Modifier.size(17.dp)
                 )
             }
@@ -157,7 +156,6 @@ fun LookLiteHeader(
                     .height(30.dp)
                     .clip(RoundedCornerShape(9999.dp))
                     .background(if (hasPhoto) StudioAccent else StudioElevatedBg)
-                    .alpha(if (hasPhoto) 1f else 0.40f)
                     .clickable(enabled = hasPhoto) {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         onExport()
@@ -170,7 +168,7 @@ fun LookLiteHeader(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.1).sp,
-                    color = if (hasPhoto) Color.White else StudioTextSecondary
+                    color = if (hasPhoto) Color.White else StudioTextSecondary.copy(alpha = 0.55f)
                 )
             }
         }

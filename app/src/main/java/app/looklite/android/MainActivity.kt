@@ -183,8 +183,6 @@ fun LookLiteApp(
     var intensity by remember { mutableIntStateOf(100) }
     var currentSliders by remember { mutableStateOf(activePreset.defaultSliders) }
     var baseSlidersForReset by remember { mutableStateOf(activePreset.defaultSliders) }
-    var isAutoToneEnabled by remember { mutableStateOf(false) }
-
     var isSplitActive by remember { mutableStateOf(false) }
     var splitPos by remember { mutableFloatStateOf(0.5f) }
     var isHoldingOriginal by remember { mutableStateOf(false) }
@@ -194,10 +192,7 @@ fun LookLiteApp(
     var cropNormX by remember { mutableFloatStateOf(0.5f) }
     var cropNormY by remember { mutableFloatStateOf(0.5f) }
 
-    var frameSettings by remember { mutableStateOf(FrameSettings()) }
-
     val customLooks by prefs.customLooksFlow.collectAsState(initial = emptyList())
-    val frameTemplates by prefs.frameTemplatesFlow.collectAsState(initial = emptyList())
 
     var showExportDialog by remember { mutableStateOf(false) }
     var showSettingsSheet by remember { mutableStateOf(false) }
@@ -207,8 +202,6 @@ fun LookLiteApp(
     // Name input dialogs state
     var showSaveLookDialog by remember { mutableStateOf(false) }
     var renamingLook by remember { mutableStateOf<CustomLook?>(null) }
-    var showSaveTemplateDialog by remember { mutableStateOf(false) }
-    var renamingTemplate by remember { mutableStateOf<CustomFrameTemplate?>(null) }
 
     var originalBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var baseThumbPixels by remember { mutableStateOf<IntArray?>(null) }
@@ -275,12 +268,10 @@ fun LookLiteApp(
         intensity = look.intensity
         currentSliders = look.sliders
         baseSlidersForReset = look.sliders
-        isAutoToneEnabled = look.autoColor
         val buf = LutLoader.loadLut(context, look.lutFile)
         renderer.setLut(buf, 17, look.lutStage)
         renderer.setSliders(look.sliders)
         renderer.setIntensity(look.intensity)
-        renderer.setAutoColor(look.autoColor)
         glView?.requestRender()
     }
 
@@ -288,9 +279,7 @@ fun LookLiteApp(
     val hasEdits = hasPhoto && (
         intensity != 100 ||
             currentSliders != baseSlidersForReset ||
-            isAutoToneEnabled ||
             selectedRatioOption.id != "original" ||
-            frameSettings.style != FrameStyle.NONE ||
             isSplitActive
         )
 
@@ -313,15 +302,12 @@ fun LookLiteApp(
                 currentSliders = baseSlidersForReset
                 renderer.setSliders(baseSlidersForReset)
                 renderer.setIntensity(100)
-                isAutoToneEnabled = false
-                renderer.setAutoColor(false)
                 isSplitActive = false
                 renderer.setSplitPosition(-1f)
                 selectedRatioOption = PresetCatalog.aspectRatios.first()
                 cropNormX = 0.5f
                 cropNormY = 0.5f
                 isRatioStripOpen = false
-                frameSettings = FrameSettings()
                 glView?.requestRender()
             },
             onOpenSettings = { showSettingsSheet = true },
@@ -420,186 +406,139 @@ fun LookLiteApp(
                     val fitWdp = with(density) { fitPxW.toDp() }
                     val fitHdp = with(density) { fitPxH.toDp() }
 
-                    val frameColor = when (frameSettings.style) {
-                        FrameStyle.NONE -> Color.Transparent
-                        FrameStyle.WHITE, FrameStyle.POLAROID -> Color(0xFFF6F6F4)
-                        FrameStyle.DARK -> Color(0xFF1A1A1E)
-                    }
-                    val frameTextColor = when (frameSettings.style) {
-                        FrameStyle.DARK -> Color(0xFFB0B0B8)
-                        else -> Color(0xFF3A3A40)
-                    }
-
-                    val padSide = if (frameSettings.style != FrameStyle.NONE) {
-                        (fitWdp * frameSettings.paddingFraction).coerceAtLeast(4.dp)
-                    } else 0.dp
-                    val padBottom = when (frameSettings.style) {
-                        FrameStyle.POLAROID -> (padSide * 2.8f).coerceAtLeast(20.dp)
-                        FrameStyle.NONE -> 0.dp
-                        else -> if (frameSettings.signatureText.isNotBlank()) (padSide * 2.0f).coerceAtLeast(18.dp) else padSide
-                    }
-
                     Box(
                         modifier = Modifier
                             .size(width = fitWdp, height = fitHdp)
                             .clip(RoundedCornerShape(8.dp))
-                            .background(if (frameSettings.style != FrameStyle.NONE) frameColor else Color.Black)
-                            .padding(start = padSide, end = padSide, top = padSide, bottom = padBottom)
-                    ) {
-                        val innerW = with(density) { (fitWdp - padSide * 2).toPx() }.coerceAtLeast(1f)
-                        val innerH = with(density) { (fitHdp - padSide - padBottom).toPx() }.coerceAtLeast(1f)
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(if (frameSettings.style == FrameStyle.NONE) 8.dp else 2.dp))
-                                .pointerInput(isSplitActive, selectedRatioOption.ratio, innerW) {
-                                    if (isSplitActive) {
-                                        detectDragGestures { change, _ ->
-                                            change.consume()
-                                            val relX = (change.position.x / innerW).coerceIn(0.02f, 0.98f)
-                                            splitPos = relX
-                                            renderer.setSplitPosition(relX)
-                                            glView?.requestRender()
-                                        }
-                                    } else if (selectedRatioOption.ratio == null) {
-                                        awaitEachGesture {
-                                            awaitFirstDown()
-                                            isHoldingOriginal = true
-                                            renderer.setShowBefore(true)
-                                            glView?.requestRender()
-                                            waitForUpOrCancellation()
-                                            isHoldingOriginal = false
-                                            renderer.setShowBefore(false)
-                                            glView?.requestRender()
-                                        }
+                            .background(Color.Black)
+                            .pointerInput(isSplitActive, selectedRatioOption.ratio, fitPxW) {
+                                if (isSplitActive) {
+                                    detectDragGestures { change, _ ->
+                                        change.consume()
+                                        val relX = (change.position.x / fitPxW).coerceIn(0.02f, 0.98f)
+                                        splitPos = relX
+                                        renderer.setSplitPosition(relX)
+                                        glView?.requestRender()
+                                    }
+                                } else if (selectedRatioOption.ratio == null) {
+                                    awaitEachGesture {
+                                        awaitFirstDown()
+                                        isHoldingOriginal = true
+                                        renderer.setShowBefore(true)
+                                        glView?.requestRender()
+                                        waitForUpOrCancellation()
+                                        isHoldingOriginal = false
+                                        renderer.setShowBefore(false)
+                                        glView?.requestRender()
                                     }
                                 }
-                        ) {
-                            AndroidView(
-                                factory = { ctx ->
-                                    LookLiteGLView(ctx, renderer).also { glView = it }
-                                },
-                                modifier = Modifier.fillMaxSize()
+                            }
+                    ) {
+                        AndroidView(
+                            factory = { ctx ->
+                                LookLiteGLView(ctx, renderer).also { glView = it }
+                            },
+                            modifier = Modifier.fillMaxSize()
+                        )
+
+                        if (isHoldingOriginal) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                                    .padding(top = 10.dp)
+                                    .clip(RoundedCornerShape(9999.dp))
+                                    .background(StudioGlassOverlay)
+                                    .border(0.5.dp, StudioGlassBorder, RoundedCornerShape(9999.dp))
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.badge_original),
+                                    color = StudioTextPrimary,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    letterSpacing = 0.8.sp
+                                )
+                            }
+                        }
+
+                        if (isSplitActive) {
+                            val splitXdp = with(density) { (fitPxW * splitPos).toDp() }
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .width(1.5.dp)
+                                    .offset(x = splitXdp - 0.75.dp)
+                                    .background(Color.White)
                             )
 
-                            if (isHoldingOriginal) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .offset(x = splitXdp - 11.dp)
+                                    .size(22.dp)
+                                    .clip(RoundedCornerShape(11.dp))
+                                    .background(StudioGlassOverlay)
+                                    .border(1.dp, Color.White, RoundedCornerShape(11.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "‹›",
+                                    color = Color.White,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
                                 Box(
                                     modifier = Modifier
-                                        .align(Alignment.TopCenter)
-                                        .padding(top = 10.dp)
                                         .clip(RoundedCornerShape(9999.dp))
                                         .background(StudioGlassOverlay)
                                         .border(0.5.dp, StudioGlassBorder, RoundedCornerShape(9999.dp))
-                                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                                        .padding(horizontal = 8.dp, vertical = 3.dp)
                                 ) {
                                     Text(
-                                        text = stringResource(R.string.badge_original),
+                                        text = stringResource(R.string.badge_before),
                                         color = StudioTextPrimary,
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        letterSpacing = 0.8.sp
+                                        fontSize = 9.5.sp,
+                                        fontWeight = FontWeight.SemiBold
                                     )
                                 }
-                            }
-
-                            if (isSplitActive) {
-                                val splitXdp = with(density) { (innerW * splitPos).toDp() }
 
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxHeight()
-                                        .width(1.5.dp)
-                                        .offset(x = splitXdp - 0.75.dp)
-                                        .background(Color.White)
-                                )
-
-                                Box(
-                                    modifier = Modifier
-                                        .align(Alignment.CenterStart)
-                                        .offset(x = splitXdp - 11.dp)
-                                        .size(22.dp)
-                                        .clip(RoundedCornerShape(11.dp))
-                                        .background(StudioGlassOverlay)
-                                        .border(1.dp, Color.White, RoundedCornerShape(11.dp)),
-                                    contentAlignment = Alignment.Center
+                                        .clip(RoundedCornerShape(9999.dp))
+                                        .background(StudioAccent)
+                                        .padding(horizontal = 8.dp, vertical = 3.dp)
                                 ) {
                                     Text(
-                                        text = "‹›",
+                                        text = stringResource(R.string.badge_after),
                                         color = Color.White,
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold
+                                        fontSize = 9.5.sp,
+                                        fontWeight = FontWeight.SemiBold
                                     )
                                 }
-
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 8.dp, vertical = 8.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(9999.dp))
-                                            .background(StudioGlassOverlay)
-                                            .border(0.5.dp, StudioGlassBorder, RoundedCornerShape(9999.dp))
-                                            .padding(horizontal = 8.dp, vertical = 3.dp)
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.badge_before),
-                                            color = StudioTextPrimary,
-                                            fontSize = 9.5.sp,
-                                            fontWeight = FontWeight.SemiBold
-                                        )
-                                    }
-
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(9999.dp))
-                                            .background(StudioAccent)
-                                            .padding(horizontal = 8.dp, vertical = 3.dp)
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.badge_after),
-                                            color = Color.White,
-                                            fontSize = 9.5.sp,
-                                            fontWeight = FontWeight.SemiBold
-                                        )
-                                    }
-                                }
                             }
-
-                            CropOverlay(
-                                containerWidth = innerW,
-                                containerHeight = innerH,
-                                imageAspect = imageAspect,
-                                targetAspect = selectedRatioOption.ratio,
-                                normX = cropNormX,
-                                normY = cropNormY,
-                                onNormOffsetChanged = { nx, ny ->
-                                    cropNormX = nx
-                                    cropNormY = ny
-                                }
-                            )
                         }
-                    }
 
-                    if (frameSettings.style != FrameStyle.NONE && frameSettings.signatureText.isNotBlank()) {
-                        Box(
-                            modifier = Modifier
-                                .size(width = fitWdp, height = fitHdp)
-                                .padding(bottom = 4.dp, start = padSide, end = padSide),
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            Text(
-                                text = frameSettings.signatureText,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = frameTextColor,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                        CropOverlay(
+                            containerWidth = fitPxW,
+                            containerHeight = fitPxH,
+                            imageAspect = imageAspect,
+                            targetAspect = selectedRatioOption.ratio,
+                            normX = cropNormX,
+                            normY = cropNormY,
+                            onNormOffsetChanged = { nx, ny ->
+                                cropNormX = nx
+                                cropNormY = ny
+                            }
+                        )
                     }
                 }
 
@@ -656,7 +595,7 @@ fun LookLiteApp(
                             lutFile = activePreset.lutFile,
                             lutStage = activePreset.lutStage,
                             intensity = intensity,
-                            autoColor = isAutoToneEnabled,
+                            autoColor = false,
                             sliders = currentSliders
                         )
                     } else it
@@ -676,26 +615,11 @@ fun LookLiteApp(
                 renderer.setIntensity(newIntensity)
                 glView?.requestRender()
             },
-            isAutoToneEnabled = isAutoToneEnabled,
-            onToggleAutoTone = { enabled ->
-                isAutoToneEnabled = enabled
-                renderer.setAutoColor(enabled)
-                glView?.requestRender()
-            },
             sliders = currentSliders,
             onSliderChanged = { newSliders ->
                 currentSliders = newSliders
                 renderer.setSliders(newSliders)
                 glView?.requestRender()
-            },
-            frameSettings = frameSettings,
-            onFrameSettingsChanged = { frameSettings = it },
-            frameTemplates = frameTemplates,
-            onApplyFrameTemplate = { tpl -> frameSettings = tpl.settings },
-            onRequestSaveFrameTemplate = { showSaveTemplateDialog = true },
-            onRenameFrameTemplate = { tpl -> renamingTemplate = tpl },
-            onDeleteFrameTemplate = { tpl ->
-                scope.launch { prefs.saveFrameTemplates(frameTemplates.filterNot { it.id == tpl.id }) }
             }
         )
     }
@@ -717,7 +641,6 @@ fun LookLiteApp(
                         normX = cropNormX,
                         normY = cropNormY,
                         resolution = resolution,
-                        frameSettings = frameSettings,
                         renderer = renderer,
                         presetName = activeLabel
                     )
@@ -775,7 +698,7 @@ fun LookLiteApp(
                     lutFile = activePreset.lutFile,
                     lutStage = activePreset.lutStage,
                     intensity = intensity,
-                    autoColor = isAutoToneEnabled,
+                    autoColor = false,
                     sliders = currentSliders
                 )
                 activeCustomLookId = newLook.id
@@ -798,41 +721,6 @@ fun LookLiteApp(
                 val updated = customLooks.map { if (it.id == target.id) it.copy(name = newName) else it }
                 if (activeCustomLookId == target.id) activeLabel = newName
                 scope.launch { prefs.saveCustomLooks(updated) }
-            }
-        )
-    }
-
-    // Save Frame Template Dialog
-    if (showSaveTemplateDialog) {
-        StudioNameInputDialog(
-            title = stringResource(R.string.frame_save_title),
-            hint = stringResource(R.string.frame_save_hint),
-            initialValue = "",
-            onDismiss = { showSaveTemplateDialog = false },
-            onConfirm = { name ->
-                showSaveTemplateDialog = false
-                val tpl = CustomFrameTemplate(
-                    id = UUID.randomUUID().toString(),
-                    name = name,
-                    settings = frameSettings
-                )
-                scope.launch { prefs.saveFrameTemplates(listOf(tpl) + frameTemplates) }
-                Toast.makeText(context, context.getString(R.string.toast_template_saved, name), Toast.LENGTH_SHORT).show()
-            }
-        )
-    }
-
-    // Rename Frame Template Dialog
-    renamingTemplate?.let { target ->
-        StudioNameInputDialog(
-            title = stringResource(R.string.action_rename),
-            hint = stringResource(R.string.frame_save_hint),
-            initialValue = target.name,
-            onDismiss = { renamingTemplate = null },
-            onConfirm = { newName ->
-                renamingTemplate = null
-                val updated = frameTemplates.map { if (it.id == target.id) it.copy(name = newName) else it }
-                scope.launch { prefs.saveFrameTemplates(updated) }
             }
         )
     }
@@ -939,7 +827,6 @@ private suspend fun executeNativeExport(
     normX: Float,
     normY: Float,
     resolution: ExportResolution,
-    frameSettings: FrameSettings,
     renderer: LookLiteRenderer,
     presetName: String
 ) = withContext(Dispatchers.IO) {
@@ -990,12 +877,7 @@ private suspend fun executeNativeExport(
             }
         }
 
-        val renderedBitmap = renderer.renderOffscreen(croppedBitmap, targetW, targetH)
-        val finalBitmap = if (frameSettings.style != FrameStyle.NONE) {
-            applyFrameToBitmap(renderedBitmap, frameSettings)
-        } else {
-            renderedBitmap
-        }
+        val finalBitmap = renderer.renderOffscreen(croppedBitmap, targetW, targetH)
 
         val filename = "LookLite_${presetName.replace("\\s+".toRegex(), "_")}_${System.currentTimeMillis()}.jpg"
         val values = ContentValues().apply {
@@ -1031,42 +913,6 @@ private suspend fun executeNativeExport(
             ).show()
         }
     }
-}
-
-private fun applyFrameToBitmap(photo: Bitmap, settings: FrameSettings): Bitmap {
-    val pad = (photo.width.coerceAtMost(photo.height) * settings.paddingFraction).toInt().coerceAtLeast(16)
-    val bottomPad = when (settings.style) {
-        FrameStyle.POLAROID -> (pad * 2.8f).toInt()
-        else -> if (settings.signatureText.isNotBlank()) (pad * 2.0f).toInt() else pad
-    }
-    val outW = photo.width + pad * 2
-    val outH = photo.height + pad + bottomPad
-    val out = Bitmap.createBitmap(outW, outH, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(out)
-
-    val bgColor = when (settings.style) {
-        FrameStyle.DARK -> android.graphics.Color.parseColor("#1A1A1E")
-        else -> android.graphics.Color.parseColor("#F6F6F4")
-    }
-    canvas.drawColor(bgColor)
-    canvas.drawBitmap(photo, pad.toFloat(), pad.toFloat(), null)
-
-    if (settings.signatureText.isNotBlank()) {
-        val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = if (settings.style == FrameStyle.DARK) {
-                android.graphics.Color.parseColor("#B0B0B8")
-            } else {
-                android.graphics.Color.parseColor("#3A3A40")
-            }
-            textSize = (bottomPad * 0.34f).coerceAtLeast(22f)
-            textAlign = Paint.Align.CENTER
-            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
-        }
-        val textY = photo.height + pad + bottomPad * 0.62f
-        canvas.drawText(settings.signatureText, outW / 2f, textY, textPaint)
-    }
-
-    return out
 }
 
 private fun loadBitmapWithExif(context: Context, uri: Uri): Bitmap? {
