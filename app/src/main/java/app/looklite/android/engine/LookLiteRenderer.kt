@@ -37,6 +37,10 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private var lutIntensity = 1.0f
     private var showBefore = false
     private var splitPos = -1.0f // < 0 means split off
+    private var autoColorEnabled = false
+    private var autoMin = floatArrayOf(0f, 0f, 0f)
+    private var autoMax = floatArrayOf(1f, 1f, 1f)
+    private var autoWb = floatArrayOf(1f, 1f, 1f)
 
     private var currentSliders = SliderValues()
 
@@ -176,6 +180,10 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
             setUniform1i("uLutStage", lutStage)
             setUniform1i("uShowBefore", if (showBefore) 1 else 0)
             setUniform1f("uSplitPos", splitPos)
+            setUniform1i("uAutoColor", if (autoColorEnabled) 1 else 0)
+            setUniform3f("uAutoMin", autoMin[0], autoMin[1], autoMin[2])
+            setUniform3f("uAutoMax", autoMax[0], autoMax[1], autoMax[2])
+            setUniform3f("uAutoWb", autoWb[0], autoWb[1], autoWb[2])
 
             setUniform2f("uResolution", surfaceWidth.toFloat(), surfaceHeight.toFloat())
 
@@ -232,9 +240,93 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
     }
 
     fun setImageBitmap(bitmap: Bitmap) {
+        val (minRgb, maxRgb, wbRgb) = analyzeAutoColor(bitmap)
         synchronized(lock) {
             pendingBitmap = bitmap
+            autoMin = minRgb
+            autoMax = maxRgb
+            autoWb = wbRgb
         }
+    }
+
+    fun setAutoColor(enabled: Boolean) {
+        synchronized(lock) {
+            autoColorEnabled = enabled
+        }
+    }
+
+    private fun analyzeAutoColor(bitmap: Bitmap): Triple<FloatArray, FloatArray, FloatArray> {
+        val sampleW = 64
+        val sampleH = 64
+        val stepX = (bitmap.width / sampleW).coerceAtLeast(1)
+        val stepY = (bitmap.height / sampleH).coerceAtLeast(1)
+
+        val histR = IntArray(256)
+        val histG = IntArray(256)
+        val histB = IntArray(256)
+        var sumR = 0L
+        var sumG = 0L
+        var sumB = 0L
+        var count = 0
+
+        var y = 0
+        while (y < bitmap.height) {
+            var x = 0
+            while (x < bitmap.width) {
+                val px = bitmap.getPixel(x, y)
+                val r = (px shr 16) and 0xFF
+                val g = (px shr 8) and 0xFF
+                val b = px and 0xFF
+                histR[r]++
+                histG[g]++
+                histB[b]++
+                sumR += r
+                sumG += g
+                sumB += b
+                count++
+                x += stepX
+            }
+            y += stepY
+        }
+
+        if (count == 0) {
+            return Triple(floatArrayOf(0f, 0f, 0f), floatArrayOf(1f, 1f, 1f), floatArrayOf(1f, 1f, 1f))
+        }
+
+        fun percentile(hist: IntArray, pct: Float): Float {
+            val target = (count * pct).toInt()
+            var acc = 0
+            for (i in 0..255) {
+                acc += hist[i]
+                if (acc >= target) return i / 255f
+            }
+            return 1f
+        }
+
+        val minRgb = floatArrayOf(
+            percentile(histR, 0.02f).coerceAtMost(0.35f),
+            percentile(histG, 0.02f).coerceAtMost(0.35f),
+            percentile(histB, 0.02f).coerceAtMost(0.35f)
+        )
+        val maxRgb = floatArrayOf(
+            percentile(histR, 0.98f).coerceAtLeast(0.65f),
+            percentile(histG, 0.98f).coerceAtLeast(0.65f),
+            percentile(histB, 0.98f).coerceAtLeast(0.65f)
+        )
+
+        val meanR = (sumR.toFloat() / count) / 255f
+        val meanG = (sumG.toFloat() / count) / 255f
+        val meanB = (sumB.toFloat() / count) / 255f
+        val avgGray = (meanR + meanG + meanB) / 3f
+
+        fun safeGain(mean: Float): Float {
+            val raw = if (mean > 0.05f) avgGray / mean else 1f
+            // Blend 55% toward neutral gain and clamp so natural ambience stays intact
+            return (1f + (raw - 1f) * 0.55f).coerceIn(0.84f, 1.20f)
+        }
+
+        val wbRgb = floatArrayOf(safeGain(meanR), safeGain(meanG), safeGain(meanB))
+        return Triple(minRgb, maxRgb, wbRgb)
     }
 
     fun setLut(buffer: ByteBuffer, size: Int = 17, stage: String = "early") {
@@ -340,6 +432,7 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private fun cacheUniformLocations() {
         val names = arrayOf(
             "uImage", "uLut", "uLutSize", "uLutIntensity", "uLutStage", "uShowBefore", "uSplitPos",
+            "uAutoColor", "uAutoMin", "uAutoMax", "uAutoWb",
             "uExposure", "uContrast", "uHighlights", "uShadows", "uWhites", "uBlacks",
             "uTemp", "uTint", "uVibrance", "uSaturation", "uVignette",
             "uGrainIntensity", "uGrainSize", "uSkinSmooth", "uSkinRadiance",

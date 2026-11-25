@@ -88,6 +88,7 @@ fun LookLiteApp() {
 
     var isSplitActive by remember { mutableStateOf(false) }
     var splitPos by remember { mutableFloatStateOf(0.5f) }
+    var isAutoColorEnabled by remember { mutableStateOf(false) }
 
     var selectedRatioOption by remember { mutableStateOf(PresetCatalog.aspectRatios.first()) }
     var cropNormX by remember { mutableFloatStateOf(0.5f) }
@@ -178,6 +179,8 @@ fun LookLiteApp() {
                 renderer.setIntensity(100)
                 isSplitActive = false
                 renderer.setSplitPosition(-1f)
+                isAutoColorEnabled = false
+                renderer.setAutoColor(false)
                 selectedRatioOption = PresetCatalog.aspectRatios.first()
                 cropNormX = 0.5f
                 cropNormY = 0.5f
@@ -350,6 +353,12 @@ fun LookLiteApp() {
                 onIntensityChanged = { newIntensity ->
                     intensity = newIntensity
                     renderer.setIntensity(newIntensity)
+                    glView?.requestRender()
+                },
+                isAutoColorEnabled = isAutoColorEnabled,
+                onToggleAutoColor = { enabled ->
+                    isAutoColorEnabled = enabled
+                    renderer.setAutoColor(enabled)
                     glView?.requestRender()
                 },
                 sliders = currentSliders,

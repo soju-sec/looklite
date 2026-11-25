@@ -12,6 +12,10 @@ uniform float uLutIntensity;
 uniform int uLutStage;
 uniform int uShowBefore;
 uniform float uSplitPos;
+uniform int uAutoColor;
+uniform vec3 uAutoMin;
+uniform vec3 uAutoMax;
+uniform vec3 uAutoWb;
 
 uniform float uExposure;
 uniform float uContrast;
@@ -276,6 +280,19 @@ vec3 colorBlock(vec3 c) {
     return c;
 }
 
+vec3 applyAutoColor(vec3 c) {
+    if (uAutoColor == 0) return c;
+    vec3 span = max(uAutoMax - uAutoMin, vec3(0.15));
+    vec3 leveled = clamp((c - uAutoMin) / span, 0.0, 1.0);
+    vec3 wbCorrected = clamp(leveled * uAutoWb, 0.0, 1.0);
+    float mx = max(wbCorrected.r, max(wbCorrected.g, wbCorrected.b));
+    float mn = min(wbCorrected.r, min(wbCorrected.g, wbCorrected.b));
+    float sat = mx - mn;
+    float l = dot(wbCorrected, vec3(0.2126, 0.7152, 0.0722));
+    vec3 vibranced = clamp(mix(vec3(l), wbCorrected, 1.0 + 0.18 * (1.0 - sat)), 0.0, 1.0);
+    return mix(c, vibranced, 0.65);
+}
+
 void main() {
     vec3 orig = texture(uImage, vUv).rgb;
     if (uShowBefore == 1) {
@@ -298,6 +315,7 @@ void main() {
     }
 
     vec3 c = orig;
+    c = applyAutoColor(c);
     c = applySkinPolish(c, vUv, uSkinSmooth, uSkinRadiance);
     c = applyWB(c, uTemp, uTint);
     if (uLutStage == 0) {

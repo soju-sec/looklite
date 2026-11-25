@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.AutoFixHigh
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,6 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,6 +58,8 @@ fun SubMenuCard(
     onPresetSelected: (PresetProfile) -> Unit,
     intensity: Int,
     onIntensityChanged: (Int) -> Unit,
+    isAutoColorEnabled: Boolean,
+    onToggleAutoColor: (Boolean) -> Unit,
     // Fine-Tune Mode Props
     sliders: SliderValues,
     onSliderChanged: (SliderValues) -> Unit,
@@ -122,53 +127,83 @@ fun SubMenuCard(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Direct Filter Intensity Slider (0–100%)
-                    Surface(
+                    // Koreksi Warna Toggle Pill + Direct Filter Intensity Slider (0–100%)
+                    val haptic = LocalHapticFeedback.current
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 14.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        color = Color(0x0D000000)
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                        // Koreksi Warna (Auto Color Correction) Pill
+                        Surface(
+                            modifier = Modifier
+                                .height(42.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable {
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                    onToggleAutoColor(!isAutoColorEnabled)
+                                }
+                                .then(
+                                    if (isAutoColorEnabled) Modifier.border(1.dp, AppleCoral.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                                    else Modifier.border(0.5.dp, Color(0x14000000), RoundedCornerShape(12.dp))
+                                ),
+                            shape = RoundedCornerShape(12.dp),
+                            color = if (isAutoColorEnabled) AppleCoral.copy(alpha = 0.10f) else Color(0x0D000000)
                         ) {
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "FILTER INTENSITY",
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = AppleLabelSecondary,
-                                    letterSpacing = 0.5.sp
-                                )
-                                Text(
-                                    text = "$intensity%",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = AppleCoral
-                                )
-                            }
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.padding(horizontal = 10.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.AutoFixHigh,
+                                    contentDescription = "Koreksi Warna",
+                                    tint = if (isAutoColorEnabled) AppleCoral else AppleLabelSecondary,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                                Text(
+                                    text = "Koreksi Warna",
+                                    fontSize = 10.5.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = if (isAutoColorEnabled) AppleCoral else AppleLabelPrimary
+                                )
+                                // Compact Pill Switch
                                 Box(
                                     modifier = Modifier
-                                        .size(28.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(Color.White)
-                                        .clickable { onIntensityChanged((intensity - 5).coerceAtLeast(0)) },
-                                    contentAlignment = Alignment.Center
+                                        .size(width = 28.dp, height = 16.dp)
+                                        .clip(CircleShape)
+                                        .background(if (isAutoColorEnabled) AppleCoral else Color(0x33000000))
+                                        .padding(2.dp),
+                                    contentAlignment = if (isAutoColorEnabled) Alignment.CenterEnd else Alignment.CenterStart
                                 ) {
-                                    Icon(Icons.Rounded.Remove, contentDescription = "-", tint = AppleLabelPrimary, modifier = Modifier.size(16.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .size(12.dp)
+                                            .shadow(2.dp, CircleShape)
+                                            .clip(CircleShape)
+                                            .background(Color.White)
+                                    )
                                 }
+                            }
+                        }
 
+                        // Filter Intensity Slider
+                        Surface(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(42.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            color = Color(0x0D000000)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
                                 Slider(
                                     value = intensity.toFloat(),
                                     onValueChange = { onIntensityChanged(it.toInt()) },
@@ -181,16 +216,12 @@ fun SubMenuCard(
                                     )
                                 )
 
-                                Box(
-                                    modifier = Modifier
-                                        .size(28.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(Color.White)
-                                        .clickable { onIntensityChanged((intensity + 5).coerceAtMost(100)) },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(Icons.Rounded.Add, contentDescription = "+", tint = AppleLabelPrimary, modifier = Modifier.size(16.dp))
-                                }
+                                Text(
+                                    text = "$intensity%",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = AppleCoral
+                                )
                             }
                         }
                     }
