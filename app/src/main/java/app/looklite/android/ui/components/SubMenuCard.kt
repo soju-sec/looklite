@@ -296,8 +296,8 @@ private fun PresetSquircleCard(
 ) {
     Surface(
         modifier = Modifier
-            .width(96.dp)
-            .height(78.dp)
+            .width(98.dp)
+            .height(84.dp)
             .clip(RoundedCornerShape(14.dp))
             .clickable { onClick() }
             .then(
@@ -314,7 +314,7 @@ private fun PresetSquircleCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(38.dp)
+                    .height(34.dp)
                     .background(
                         Brush.linearGradient(
                             listOf(Color(preset.gradientColors.first), Color(preset.gradientColors.second))
@@ -326,20 +326,24 @@ private fun PresetSquircleCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 6.dp, vertical = 3.dp),
+                    .weight(1f)
+                    .padding(horizontal = 7.dp, vertical = 4.dp),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = preset.name,
                     fontSize = 10.5.sp,
+                    lineHeight = 13.sp,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
                     color = if (isSelected) AppleCoral else AppleLabelPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                Spacer(modifier = Modifier.height(1.dp))
                 Text(
                     text = preset.description.ifEmpty { preset.brand.displayName },
                     fontSize = 8.5.sp,
+                    lineHeight = 11.sp,
                     fontWeight = FontWeight.Medium,
                     color = AppleLabelSecondary,
                     maxLines = 1,

@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -151,7 +152,11 @@ fun LookLiteApp() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF0F0F12))
+            .background(
+                Brush.verticalGradient(
+                    listOf(Color(0xFFF6F7FB), Color(0xFFEAEEF6))
+                )
+            )
             .systemBarsPadding()
     ) {
         // 1. Top UI Layer: Unified Modern Header & Vibe Prompts Aspect Ratio Bar
@@ -542,29 +547,104 @@ private fun loadBitmapWithExif(context: Context, uri: Uri): Bitmap? {
 }
 
 private fun createDemoBitmap(): Bitmap {
-    val bmp = Bitmap.createBitmap(1200, 900, Bitmap.Config.ARGB_8888)
+    val w = 1200
+    val h = 900
+    val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bmp)
     val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    paint.color = android.graphics.Color.parseColor("#2B4C6F")
-    canvas.drawRect(0f, 0f, 1200f, 450f, paint)
+    // 1. Luminous Golden-Hour Sky Gradient
+    paint.shader = android.graphics.LinearGradient(
+        0f, 0f, 0f, 540f,
+        intArrayOf(
+            android.graphics.Color.parseColor("#4A85C4"),
+            android.graphics.Color.parseColor("#88B4DC"),
+            android.graphics.Color.parseColor("#F5CA94"),
+            android.graphics.Color.parseColor("#FFE5B8")
+        ),
+        floatArrayOf(0f, 0.42f, 0.80f, 1f),
+        android.graphics.Shader.TileMode.CLAMP
+    )
+    canvas.drawRect(0f, 0f, w.toFloat(), 540f, paint)
 
-    paint.color = android.graphics.Color.parseColor("#F4B251")
-    canvas.drawRect(0f, 450f, 1200f, 520f, paint)
+    // 2. Soft Sun Glow
+    paint.shader = android.graphics.RadialGradient(
+        820f, 350f, 340f,
+        intArrayOf(
+            android.graphics.Color.parseColor("#FFFFF4D6"),
+            android.graphics.Color.parseColor("#88FFD78A"),
+            android.graphics.Color.parseColor("#00FFD78A")
+        ),
+        floatArrayOf(0f, 0.35f, 1f),
+        android.graphics.Shader.TileMode.CLAMP
+    )
+    canvas.drawCircle(820f, 350f, 340f, paint)
 
-    paint.color = android.graphics.Color.parseColor("#3A3845")
-    val path = android.graphics.Path().apply {
-        moveTo(0f, 520f)
-        lineTo(350f, 320f)
-        lineTo(650f, 420f)
-        lineTo(950f, 290f)
-        lineTo(1200f, 520f)
+    // 3. Distant Atmospheric Mountain Ridge
+    paint.shader = android.graphics.LinearGradient(
+        0f, 270f, 0f, 540f,
+        android.graphics.Color.parseColor("#8A96B5"),
+        android.graphics.Color.parseColor("#B8B5C8"),
+        android.graphics.Shader.TileMode.CLAMP
+    )
+    val farMountain = android.graphics.Path().apply {
+        moveTo(0f, 540f)
+        lineTo(0f, 390f)
+        lineTo(220f, 310f)
+        lineTo(470f, 405f)
+        lineTo(740f, 285f)
+        lineTo(1010f, 375f)
+        lineTo(1200f, 325f)
+        lineTo(1200f, 540f)
         close()
     }
-    canvas.drawPath(path, paint)
+    canvas.drawPath(farMountain, paint)
 
-    paint.color = android.graphics.Color.parseColor("#1F2A30")
-    canvas.drawRect(0f, 520f, 1200f, 900f, paint)
+    // 4. Foreground Mountain Ridge
+    paint.shader = android.graphics.LinearGradient(
+        0f, 340f, 0f, 540f,
+        android.graphics.Color.parseColor("#556078"),
+        android.graphics.Color.parseColor("#3E4658"),
+        android.graphics.Shader.TileMode.CLAMP
+    )
+    val nearMountain = android.graphics.Path().apply {
+        moveTo(0f, 540f)
+        lineTo(0f, 455f)
+        lineTo(310f, 360f)
+        lineTo(620f, 465f)
+        lineTo(940f, 350f)
+        lineTo(1200f, 450f)
+        lineTo(1200f, 540f)
+        close()
+    }
+    canvas.drawPath(nearMountain, paint)
+
+    // 5. Reflective Alpine Lake Water
+    paint.shader = android.graphics.LinearGradient(
+        0f, 540f, 0f, h.toFloat(),
+        intArrayOf(
+            android.graphics.Color.parseColor("#E6BA8B"),
+            android.graphics.Color.parseColor("#7E92AE"),
+            android.graphics.Color.parseColor("#475D7A"),
+            android.graphics.Color.parseColor("#2B3B50")
+        ),
+        floatArrayOf(0f, 0.28f, 0.65f, 1f),
+        android.graphics.Shader.TileMode.CLAMP
+    )
+    canvas.drawRect(0f, 540f, w.toFloat(), h.toFloat(), paint)
+
+    // 6. Subtle Sun Reflection Shimmer on Water
+    paint.shader = android.graphics.RadialGradient(
+        820f, 620f, 260f,
+        intArrayOf(
+            android.graphics.Color.parseColor("#AAFFE6B0"),
+            android.graphics.Color.parseColor("#00FFE6B0")
+        ),
+        null,
+        android.graphics.Shader.TileMode.CLAMP
+    )
+    canvas.drawOval(560f, 545f, 1080f, 760f, paint)
+    paint.shader = null
 
     return bmp
 }
