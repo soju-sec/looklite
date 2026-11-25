@@ -15,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -57,6 +59,7 @@ enum class AdjustSubTab(val labelResId: Int) {
 
 @Composable
 fun StudioWorkbench(
+    isEnabled: Boolean,
     activeTab: WorkbenchTab,
     onTabSelected: (WorkbenchTab) -> Unit,
     // Looks Tab
@@ -95,18 +98,30 @@ fun StudioWorkbench(
             .fillMaxWidth()
             .background(StudioWorkbenchBg)
     ) {
-        // Hairline top border separating canvas from docked workbench
+        // Apple 0.5.dp hairline separator
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(1.dp)
+                .height(0.5.dp)
                 .background(StudioHairlineBorder)
         )
 
-        // Active Workbench Panel
+        // Active Workbench Panel (dimmed & locked when no photo is loaded)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .alpha(if (isEnabled) 1f else 0.32f)
+                .then(
+                    if (!isEnabled) {
+                        Modifier.pointerInput(Unit) {
+                            awaitPointerEventScope {
+                                while (true) {
+                                    awaitPointerEvent().changes.forEach { it.consume() }
+                                }
+                            }
+                        }
+                    } else Modifier
+                )
                 .padding(top = 8.dp, bottom = 6.dp)
         ) {
             when (activeTab) {
@@ -147,11 +162,11 @@ fun StudioWorkbench(
             }
         }
 
-        // Hairline divider above bottom 3-tab bar
+        // Apple 0.5.dp hairline divider above bottom 3-tab bar
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(1.dp)
+                .height(0.5.dp)
                 .background(StudioHairlineBorder)
         )
 
@@ -161,6 +176,18 @@ fun StudioWorkbench(
                 .fillMaxWidth()
                 .navigationBarsPadding()
                 .height(50.dp)
+                .alpha(if (isEnabled) 1f else 0.45f)
+                .then(
+                    if (!isEnabled) {
+                        Modifier.pointerInput(Unit) {
+                            awaitPointerEventScope {
+                                while (true) {
+                                    awaitPointerEvent().changes.forEach { it.consume() }
+                                }
+                            }
+                        }
+                    } else Modifier
+                )
                 .background(StudioWorkbenchBg)
                 .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -919,45 +946,47 @@ fun BorderlessSlider(
             val frac = ((currentValue - min) / (max - min)).coerceIn(0f, 1f)
             val thumbX = frac * size.width
 
-            // Base hairline track
+            // Apple-style rounded 3.dp track
             drawLine(
                 color = Color(0x28FFFFFF),
                 start = Offset(0f, y),
                 end = Offset(size.width, y),
-                strokeWidth = 2.dp.toPx()
+                strokeWidth = 3.dp.toPx(),
+                cap = StrokeCap.Round
             )
 
             // Center detent tick & active fill
             if (hasCenterDetent) {
                 val zeroFrac = (0f - min) / (max - min)
                 val zeroX = zeroFrac * size.width
-                // Active segment from 0 to thumb
                 drawLine(
                     color = StudioAccent,
                     start = Offset(zeroX, y),
                     end = Offset(thumbX, y),
-                    strokeWidth = 2.dp.toPx()
+                    strokeWidth = 3.dp.toPx(),
+                    cap = StrokeCap.Round
                 )
-                // Center detent tick mark
                 drawLine(
-                    color = Color(0x88FFFFFF),
+                    color = Color(0x99FFFFFF),
                     start = Offset(zeroX, y - 5.dp.toPx()),
                     end = Offset(zeroX, y + 5.dp.toPx()),
-                    strokeWidth = 1.5.dp.toPx()
+                    strokeWidth = 1.5.dp.toPx(),
+                    cap = StrokeCap.Round
                 )
             } else {
                 drawLine(
                     color = StudioAccent,
                     start = Offset(0f, y),
                     end = Offset(thumbX, y),
-                    strokeWidth = 2.dp.toPx()
+                    strokeWidth = 3.dp.toPx(),
+                    cap = StrokeCap.Round
                 )
             }
 
-            // Minimal circular thumb
+            // Crisp Apple circular thumb
             drawCircle(
-                color = StudioTextPrimary,
-                radius = 6.dp.toPx(),
+                color = Color.White,
+                radius = 7.5.dp.toPx(),
                 center = Offset(thumbX, y)
             )
         }

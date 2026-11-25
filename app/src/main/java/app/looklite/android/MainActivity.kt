@@ -17,8 +17,10 @@ import android.os.Environment
 import android.os.LocaleList
 import android.provider.MediaStore
 import android.widget.Toast
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultRegistryOwner
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -31,8 +33,11 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AddPhotoAlternate
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -47,6 +52,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -113,7 +119,17 @@ private fun LookLiteLocalizedRoot() {
         }
     }
 
-    CompositionLocalProvider(LocalContext provides localizedContext) {
+    val activityRegistryOwner = baseContext as? ActivityResultRegistryOwner
+    val providers = remember(localizedContext, activityRegistryOwner) {
+        buildList {
+            add(LocalContext provides localizedContext)
+            if (activityRegistryOwner != null) {
+                add(LocalActivityResultRegistryOwner provides activityRegistryOwner)
+            }
+        }.toTypedArray()
+    }
+
+    CompositionLocalProvider(*providers) {
         LookLiteApp(
             prefs = prefs,
             selectedLanguage = selectedLang,
@@ -202,19 +218,12 @@ fun LookLiteApp(
     val renderer = remember { LookLiteRenderer(context) }
     var glView by remember { mutableStateOf<LookLiteGLView?>(null) }
 
-    // Initialize with default demo image
+    // Pre-load initial LUT so it's ready as soon as user opens a photo
     LaunchedEffect(Unit) {
-        val demo = createDemoBitmap()
-        originalBitmap = demo
-        renderer.setImageBitmap(demo)
-        baseThumbPixels = withContext(Dispatchers.Default) {
-            PresetThumbnailGenerator.createBaseThumbnail(demo)
-        }
         val lutBuf = LutLoader.loadLut(context, activePreset.lutFile)
         renderer.setLut(lutBuf, 17, activePreset.lutStage)
         renderer.setSliders(activePreset.defaultSliders)
         renderer.setIntensity(100)
-        glView?.requestRender()
     }
 
     // Photo picker launcher
@@ -275,12 +284,15 @@ fun LookLiteApp(
         glView?.requestRender()
     }
 
-    val hasEdits = intensity != 100 ||
-        currentSliders != baseSlidersForReset ||
-        isAutoToneEnabled ||
-        selectedRatioOption.id != "original" ||
-        frameSettings.style != FrameStyle.NONE ||
-        isSplitActive
+    val hasPhoto = originalBitmap != null
+    val hasEdits = hasPhoto && (
+        intensity != 100 ||
+            currentSliders != baseSlidersForReset ||
+            isAutoToneEnabled ||
+            selectedRatioOption.id != "original" ||
+            frameSettings.style != FrameStyle.NONE ||
+            isSplitActive
+        )
 
     Column(
         modifier = Modifier
@@ -288,9 +300,10 @@ fun LookLiteApp(
             .background(StudioCanvasBg)
             .statusBarsPadding()
     ) {
-        // 1. TOP BAR (48.dp, flat dark studio)
+        // 1. TOP BAR (48.dp, Apple Darkroom style)
         LookLiteHeader(
             activePresetName = activeLabel,
+            hasPhoto = hasPhoto,
             hasEdits = hasEdits,
             onOpenPhoto = {
                 photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -327,240 +340,302 @@ fun LookLiteApp(
                 },
             contentAlignment = Alignment.Center
         ) {
-            val density = LocalDensity.current
-            val imageAspect = originalBitmap?.let { it.width.toFloat() / it.height.toFloat() } ?: (4f / 3f)
-
-            if (containerWidth > 0 && containerHeight > 0) {
-                var fitPxW = containerWidth
-                var fitPxH = fitPxW / imageAspect
-                if (fitPxH > containerHeight) {
-                    fitPxH = containerHeight
-                    fitPxW = fitPxH * imageAspect
-                }
-
-                val fitWdp = with(density) { fitPxW.toDp() }
-                val fitHdp = with(density) { fitPxH.toDp() }
-
-                val frameColor = when (frameSettings.style) {
-                    FrameStyle.NONE -> Color.Transparent
-                    FrameStyle.WHITE, FrameStyle.POLAROID -> Color(0xFFF6F6F4)
-                    FrameStyle.DARK -> Color(0xFF1A1A1E)
-                }
-                val frameTextColor = when (frameSettings.style) {
-                    FrameStyle.DARK -> Color(0xFFB0B0B8)
-                    else -> Color(0xFF3A3A40)
-                }
-
-                // Frame Container around the Photo Canvas
-                val padSide = if (frameSettings.style != FrameStyle.NONE) {
-                    (fitWdp * frameSettings.paddingFraction).coerceAtLeast(4.dp)
-                } else 0.dp
-                val padBottom = when (frameSettings.style) {
-                    FrameStyle.POLAROID -> (padSide * 2.8f).coerceAtLeast(20.dp)
-                    FrameStyle.NONE -> 0.dp
-                    else -> if (frameSettings.signatureText.isNotBlank()) (padSide * 2.0f).coerceAtLeast(18.dp) else padSide
-                }
-
-                Box(
+            if (!hasPhoto) {
+                // Apple-style Empty Canvas State
+                Column(
                     modifier = Modifier
-                        .size(width = fitWdp, height = fitHdp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(if (frameSettings.style != FrameStyle.NONE) frameColor else Color.Black)
-                        .padding(start = padSide, end = padSide, top = padSide, bottom = padBottom)
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(StudioWorkbenchBg)
+                        .border(0.5.dp, StudioHairlineBorder, RoundedCornerShape(20.dp))
+                        .clickable {
+                            photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        }
+                        .padding(horizontal = 24.dp, vertical = 36.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    val innerW = with(density) { (fitWdp - padSide * 2).toPx() }.coerceAtLeast(1f)
-                    val innerH = with(density) { (fitHdp - padSide - padBottom).toPx() }.coerceAtLeast(1f)
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape)
+                            .background(StudioElevatedBg),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.AddPhotoAlternate,
+                            contentDescription = null,
+                            tint = StudioAccent,
+                            modifier = Modifier.size(26.dp)
+                        )
+                    }
+
+                    Text(
+                        text = stringResource(R.string.empty_title),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = (-0.2).sp,
+                        color = StudioTextPrimary,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Text(
+                        text = stringResource(R.string.empty_subtitle),
+                        fontSize = 12.5.sp,
+                        color = StudioTextSecondary,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
 
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(if (frameSettings.style == FrameStyle.NONE) 8.dp else 2.dp))
-                            .pointerInput(isSplitActive, selectedRatioOption.ratio, innerW) {
-                                if (isSplitActive) {
-                                    detectDragGestures { change, _ ->
-                                        change.consume()
-                                        val relX = (change.position.x / innerW).coerceIn(0.02f, 0.98f)
-                                        splitPos = relX
-                                        renderer.setSplitPosition(relX)
-                                        glView?.requestRender()
-                                    }
-                                } else if (selectedRatioOption.ratio == null) {
-                                    // Press-and-hold on canvas temporarily shows unedited Original
-                                    awaitEachGesture {
-                                        awaitFirstDown()
-                                        isHoldingOriginal = true
-                                        renderer.setShowBefore(true)
-                                        glView?.requestRender()
-                                        waitForUpOrCancellation()
-                                        isHoldingOriginal = false
-                                        renderer.setShowBefore(false)
-                                        glView?.requestRender()
-                                    }
-                                }
-                            }
+                            .height(36.dp)
+                            .clip(RoundedCornerShape(9999.dp))
+                            .background(StudioAccent)
+                            .padding(horizontal = 20.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        AndroidView(
-                            factory = { ctx ->
-                                LookLiteGLView(ctx, renderer).also { glView = it }
-                            },
-                            modifier = Modifier.fillMaxSize()
-                        )
-
-                        // Original Badge while holding
-                        if (isHoldingOriginal) {
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.TopCenter)
-                                    .padding(top = 10.dp)
-                                    .clip(RoundedCornerShape(9999.dp))
-                                    .background(StudioGlassOverlay)
-                                    .border(1.dp, StudioGlassBorder, RoundedCornerShape(9999.dp))
-                                    .padding(horizontal = 10.dp, vertical = 4.dp)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.badge_original),
-                                    color = StudioTextPrimary,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    letterSpacing = 0.8.sp
-                                )
-                            }
-                        }
-
-                        // Split View Divider + Drag Handle + BEFORE / AFTER Micro Badges
-                        if (isSplitActive) {
-                            val splitXdp = with(density) { (innerW * splitPos).toDp() }
-
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .width(1.5.dp)
-                                    .offset(x = splitXdp - 0.75.dp)
-                                    .background(Color.White)
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.CenterStart)
-                                    .offset(x = splitXdp - 11.dp)
-                                    .size(22.dp)
-                                    .clip(RoundedCornerShape(11.dp))
-                                    .background(StudioGlassOverlay)
-                                    .border(1.dp, Color.White, RoundedCornerShape(11.dp)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "‹›",
-                                    color = Color.White,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp, vertical = 8.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(9999.dp))
-                                        .background(StudioGlassOverlay)
-                                        .border(1.dp, StudioGlassBorder, RoundedCornerShape(9999.dp))
-                                        .padding(horizontal = 8.dp, vertical = 3.dp)
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.badge_before),
-                                        color = StudioTextPrimary,
-                                        fontSize = 9.5.sp,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                }
-
-                                Box(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(9999.dp))
-                                        .background(StudioAccent)
-                                        .padding(horizontal = 8.dp, vertical = 3.dp)
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.badge_after),
-                                        color = Color.White,
-                                        fontSize = 9.5.sp,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                }
-                            }
-                        }
-
-                        // Interactive Crop Overlay
-                        CropOverlay(
-                            containerWidth = innerW,
-                            containerHeight = innerH,
-                            imageAspect = imageAspect,
-                            targetAspect = selectedRatioOption.ratio,
-                            normX = cropNormX,
-                            normY = cropNormY,
-                            onNormOffsetChanged = { nx, ny ->
-                                cropNormX = nx
-                                cropNormY = ny
-                            }
+                        Text(
+                            text = stringResource(R.string.empty_cta),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
                         )
                     }
                 }
+            } else {
+                val density = LocalDensity.current
+                val imageAspect = originalBitmap!!.width.toFloat() / originalBitmap!!.height.toFloat()
 
-                // Frame Signature / Caption rendered in bottom frame margin
-                if (frameSettings.style != FrameStyle.NONE && frameSettings.signatureText.isNotBlank()) {
+                if (containerWidth > 0 && containerHeight > 0) {
+                    var fitPxW = containerWidth
+                    var fitPxH = fitPxW / imageAspect
+                    if (fitPxH > containerHeight) {
+                        fitPxH = containerHeight
+                        fitPxW = fitPxH * imageAspect
+                    }
+
+                    val fitWdp = with(density) { fitPxW.toDp() }
+                    val fitHdp = with(density) { fitPxH.toDp() }
+
+                    val frameColor = when (frameSettings.style) {
+                        FrameStyle.NONE -> Color.Transparent
+                        FrameStyle.WHITE, FrameStyle.POLAROID -> Color(0xFFF6F6F4)
+                        FrameStyle.DARK -> Color(0xFF1A1A1E)
+                    }
+                    val frameTextColor = when (frameSettings.style) {
+                        FrameStyle.DARK -> Color(0xFFB0B0B8)
+                        else -> Color(0xFF3A3A40)
+                    }
+
+                    val padSide = if (frameSettings.style != FrameStyle.NONE) {
+                        (fitWdp * frameSettings.paddingFraction).coerceAtLeast(4.dp)
+                    } else 0.dp
+                    val padBottom = when (frameSettings.style) {
+                        FrameStyle.POLAROID -> (padSide * 2.8f).coerceAtLeast(20.dp)
+                        FrameStyle.NONE -> 0.dp
+                        else -> if (frameSettings.signatureText.isNotBlank()) (padSide * 2.0f).coerceAtLeast(18.dp) else padSide
+                    }
+
                     Box(
                         modifier = Modifier
                             .size(width = fitWdp, height = fitHdp)
-                            .padding(bottom = 4.dp, start = padSide, end = padSide),
-                        contentAlignment = Alignment.BottomCenter
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (frameSettings.style != FrameStyle.NONE) frameColor else Color.Black)
+                            .padding(start = padSide, end = padSide, top = padSide, bottom = padBottom)
                     ) {
-                        Text(
-                            text = frameSettings.signatureText,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = frameTextColor,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        val innerW = with(density) { (fitWdp - padSide * 2).toPx() }.coerceAtLeast(1f)
+                        val innerH = with(density) { (fitHdp - padSide - padBottom).toPx() }.coerceAtLeast(1f)
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(if (frameSettings.style == FrameStyle.NONE) 8.dp else 2.dp))
+                                .pointerInput(isSplitActive, selectedRatioOption.ratio, innerW) {
+                                    if (isSplitActive) {
+                                        detectDragGestures { change, _ ->
+                                            change.consume()
+                                            val relX = (change.position.x / innerW).coerceIn(0.02f, 0.98f)
+                                            splitPos = relX
+                                            renderer.setSplitPosition(relX)
+                                            glView?.requestRender()
+                                        }
+                                    } else if (selectedRatioOption.ratio == null) {
+                                        awaitEachGesture {
+                                            awaitFirstDown()
+                                            isHoldingOriginal = true
+                                            renderer.setShowBefore(true)
+                                            glView?.requestRender()
+                                            waitForUpOrCancellation()
+                                            isHoldingOriginal = false
+                                            renderer.setShowBefore(false)
+                                            glView?.requestRender()
+                                        }
+                                    }
+                                }
+                        ) {
+                            AndroidView(
+                                factory = { ctx ->
+                                    LookLiteGLView(ctx, renderer).also { glView = it }
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            )
+
+                            if (isHoldingOriginal) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.TopCenter)
+                                        .padding(top = 10.dp)
+                                        .clip(RoundedCornerShape(9999.dp))
+                                        .background(StudioGlassOverlay)
+                                        .border(0.5.dp, StudioGlassBorder, RoundedCornerShape(9999.dp))
+                                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.badge_original),
+                                        color = StudioTextPrimary,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        letterSpacing = 0.8.sp
+                                    )
+                                }
+                            }
+
+                            if (isSplitActive) {
+                                val splitXdp = with(density) { (innerW * splitPos).toDp() }
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .width(1.5.dp)
+                                        .offset(x = splitXdp - 0.75.dp)
+                                        .background(Color.White)
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterStart)
+                                        .offset(x = splitXdp - 11.dp)
+                                        .size(22.dp)
+                                        .clip(RoundedCornerShape(11.dp))
+                                        .background(StudioGlassOverlay)
+                                        .border(1.dp, Color.White, RoundedCornerShape(11.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "‹›",
+                                        color = Color.White,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(9999.dp))
+                                            .background(StudioGlassOverlay)
+                                            .border(0.5.dp, StudioGlassBorder, RoundedCornerShape(9999.dp))
+                                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.badge_before),
+                                            color = StudioTextPrimary,
+                                            fontSize = 9.5.sp,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(9999.dp))
+                                            .background(StudioAccent)
+                                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.badge_after),
+                                            color = Color.White,
+                                            fontSize = 9.5.sp,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    }
+                                }
+                            }
+
+                            CropOverlay(
+                                containerWidth = innerW,
+                                containerHeight = innerH,
+                                imageAspect = imageAspect,
+                                targetAspect = selectedRatioOption.ratio,
+                                normX = cropNormX,
+                                normY = cropNormY,
+                                onNormOffsetChanged = { nx, ny ->
+                                    cropNormX = nx
+                                    cropNormY = ny
+                                }
+                            )
+                        }
+                    }
+
+                    if (frameSettings.style != FrameStyle.NONE && frameSettings.signatureText.isNotBlank()) {
+                        Box(
+                            modifier = Modifier
+                                .size(width = fitWdp, height = fitHdp)
+                                .padding(bottom = 4.dp, start = padSide, end = padSide),
+                            contentAlignment = Alignment.BottomCenter
+                        ) {
+                            Text(
+                                text = frameSettings.signatureText,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = frameTextColor,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
                 }
-            }
 
-            // Floating Glassmorphic Inspector Pill Bar at Bottom-Center of Photo Canvas
-            FloatingCanvasInspector(
-                selectedRatio = selectedRatioOption,
-                onRatioSelected = { option ->
-                    selectedRatioOption = option
-                    cropNormX = 0.5f
-                    cropNormY = 0.5f
-                    isRatioStripOpen = false
-                },
-                isRatioStripOpen = isRatioStripOpen,
-                onToggleRatioStrip = { isRatioStripOpen = !isRatioStripOpen },
-                isSplitActive = isSplitActive,
-                onToggleSplit = {
-                    isSplitActive = !isSplitActive
-                    renderer.setSplitPosition(if (isSplitActive) splitPos else -1f)
-                    glView?.requestRender()
-                },
-                isHoldingOriginal = isHoldingOriginal,
-                onHoldOriginalChanged = { holding ->
-                    isHoldingOriginal = holding
-                    renderer.setShowBefore(holding)
-                    glView?.requestRender()
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 8.dp)
-            )
+                // Floating Glassmorphic Inspector Pill Bar (only when photo is loaded)
+                FloatingCanvasInspector(
+                    selectedRatio = selectedRatioOption,
+                    onRatioSelected = { option ->
+                        selectedRatioOption = option
+                        cropNormX = 0.5f
+                        cropNormY = 0.5f
+                        isRatioStripOpen = false
+                    },
+                    isRatioStripOpen = isRatioStripOpen,
+                    onToggleRatioStrip = { isRatioStripOpen = !isRatioStripOpen },
+                    isSplitActive = isSplitActive,
+                    onToggleSplit = {
+                        isSplitActive = !isSplitActive
+                        renderer.setSplitPosition(if (isSplitActive) splitPos else -1f)
+                        glView?.requestRender()
+                    },
+                    isHoldingOriginal = isHoldingOriginal,
+                    onHoldOriginalChanged = { holding ->
+                        isHoldingOriginal = holding
+                        renderer.setShowBefore(holding)
+                        glView?.requestRender()
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 8.dp)
+                )
+            }
         }
 
-        // 3. DOCKED BOTTOM WORKBENCH (Flush to bottom edge, #131316)
+        // 3. DOCKED BOTTOM WORKBENCH (Flush to bottom edge, #141416, locked until photo is loaded)
         StudioWorkbench(
+            isEnabled = hasPhoto,
             activeTab = activeWorkbenchTab,
             onTabSelected = { activeWorkbenchTab = it },
             selectedCategory = selectedCategory,
@@ -626,18 +701,18 @@ fun LookLiteApp(
     }
 
     // Export Modal Sheet
-    if (showExportDialog) {
-        val bmp = originalBitmap
+    if (showExportDialog && originalBitmap != null) {
+        val bmp = originalBitmap!!
         ExportDialog(
-            originalWidth = bmp?.width ?: 1200,
-            originalHeight = bmp?.height ?: 900,
+            originalWidth = bmp.width,
+            originalHeight = bmp.height,
             onDismiss = { showExportDialog = false },
             onConfirmExport = { resolution ->
                 showExportDialog = false
                 scope.launch {
                     executeNativeExport(
                         context = context,
-                        sourceBitmap = originalBitmap ?: createDemoBitmap(),
+                        sourceBitmap = bmp,
                         targetRatio = selectedRatioOption.ratio,
                         normX = cropNormX,
                         normY = cropNormY,
@@ -1029,99 +1104,3 @@ private fun loadBitmapWithExif(context: Context, uri: Uri): Bitmap? {
     }
 }
 
-private fun createDemoBitmap(): Bitmap {
-    val w = 1200
-    val h = 900
-    val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(bmp)
-    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-
-    paint.shader = android.graphics.LinearGradient(
-        0f, 0f, 0f, 540f,
-        intArrayOf(
-            android.graphics.Color.parseColor("#4A85C4"),
-            android.graphics.Color.parseColor("#88B4DC"),
-            android.graphics.Color.parseColor("#F5CA94"),
-            android.graphics.Color.parseColor("#FFE5B8")
-        ),
-        floatArrayOf(0f, 0.42f, 0.80f, 1f),
-        android.graphics.Shader.TileMode.CLAMP
-    )
-    canvas.drawRect(0f, 0f, w.toFloat(), 540f, paint)
-
-    paint.shader = android.graphics.RadialGradient(
-        820f, 350f, 340f,
-        intArrayOf(
-            android.graphics.Color.parseColor("#FFFFF4D6"),
-            android.graphics.Color.parseColor("#88FFD78A"),
-            android.graphics.Color.parseColor("#00FFD78A")
-        ),
-        floatArrayOf(0f, 0.35f, 1f),
-        android.graphics.Shader.TileMode.CLAMP
-    )
-    canvas.drawCircle(820f, 350f, 340f, paint)
-
-    paint.shader = android.graphics.LinearGradient(
-        0f, 270f, 0f, 540f,
-        android.graphics.Color.parseColor("#8A96B5"),
-        android.graphics.Color.parseColor("#B8B5C8"),
-        android.graphics.Shader.TileMode.CLAMP
-    )
-    val farMountain = android.graphics.Path().apply {
-        moveTo(0f, 540f)
-        lineTo(0f, 390f)
-        lineTo(220f, 310f)
-        lineTo(470f, 405f)
-        lineTo(740f, 285f)
-        lineTo(1010f, 375f)
-        lineTo(1200f, 325f)
-        lineTo(1200f, 540f)
-        close()
-    }
-    canvas.drawPath(farMountain, paint)
-
-    paint.shader = android.graphics.LinearGradient(
-        0f, 340f, 0f, 540f,
-        android.graphics.Color.parseColor("#556078"),
-        android.graphics.Color.parseColor("#3E4658"),
-        android.graphics.Shader.TileMode.CLAMP
-    )
-    val nearMountain = android.graphics.Path().apply {
-        moveTo(0f, 540f)
-        lineTo(0f, 455f)
-        lineTo(310f, 360f)
-        lineTo(620f, 465f)
-        lineTo(940f, 350f)
-        lineTo(1200f, 450f)
-        lineTo(1200f, 540f)
-        close()
-    }
-    canvas.drawPath(nearMountain, paint)
-
-    paint.shader = android.graphics.LinearGradient(
-        0f, 540f, 0f, h.toFloat(),
-        intArrayOf(
-            android.graphics.Color.parseColor("#E6BA8B"),
-            android.graphics.Color.parseColor("#7E92AE"),
-            android.graphics.Color.parseColor("#475D7A"),
-            android.graphics.Color.parseColor("#2B3B50")
-        ),
-        floatArrayOf(0f, 0.28f, 0.65f, 1f),
-        android.graphics.Shader.TileMode.CLAMP
-    )
-    canvas.drawRect(0f, 540f, w.toFloat(), h.toFloat(), paint)
-
-    paint.shader = android.graphics.RadialGradient(
-        820f, 620f, 260f,
-        intArrayOf(
-            android.graphics.Color.parseColor("#AAFFE6B0"),
-            android.graphics.Color.parseColor("#00FFE6B0")
-        ),
-        null,
-        android.graphics.Shader.TileMode.CLAMP
-    )
-    canvas.drawOval(560f, 545f, 1080f, 760f, paint)
-    paint.shader = null
-
-    return bmp
-}

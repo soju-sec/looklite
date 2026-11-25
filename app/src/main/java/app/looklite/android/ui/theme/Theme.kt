@@ -5,16 +5,17 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// Darkroom Studio Palette
+// Apple Darkroom Studio Palette
 val StudioCanvasBg = Color(0xFF0A0A0C)
-val StudioWorkbenchBg = Color(0xFF131316)
-val StudioElevatedBg = Color(0xFF1C1C21)
-val StudioHairlineBorder = Color(0x14FFFFFF) // rgba(255,255,255,0.08)
-val StudioGlassOverlay = Color(0xCC131316)
-val StudioGlassBorder = Color(0x22FFFFFF)
-val StudioTextPrimary = Color(0xFFF4F4F6)
-val StudioTextSecondary = Color(0xFF8E8E98)
-val StudioAccent = Color(0xFFFF3B5C)
+val StudioWorkbenchBg = Color(0xFF141416)
+val StudioElevatedBg = Color(0xFF1C1C1E)
+val StudioSecondaryFill = Color(0xFF2C2C2E)
+val StudioHairlineBorder = Color(0x18FFFFFF)
+val StudioGlassOverlay = Color(0xCC1C1C1E)
+val StudioGlassBorder = Color(0x26FFFFFF)
+val StudioTextPrimary = Color(0xFFF5F5F7)
+val StudioTextSecondary = Color(0xFF8E8E93)
+val StudioAccent = Color(0xFFFF375F)
 
 private val DarkStudioColorScheme = darkColorScheme(
     primary = StudioAccent,

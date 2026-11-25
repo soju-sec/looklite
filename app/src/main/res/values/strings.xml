@@ -17,6 +17,11 @@
     <string name="inspector_split">Split View</string>
     <string name="inspector_before">Hold for Original</string>
 
+    <!-- Empty Canvas State -->
+    <string name="empty_title">No Photo Selected</string>
+    <string name="empty_subtitle">Choose a photo from your library to start color grading</string>
+    <string name="empty_cta">Open Photo</string>
+
     <!-- Aspect Ratios -->
     <string name="ratio_original">Original</string>
     <string name="ratio_square">1:1</string>

@@ -31,6 +31,7 @@ import app.looklite.android.ui.theme.*
 @Composable
 fun LookLiteHeader(
     activePresetName: String,
+    hasPhoto: Boolean,
     hasEdits: Boolean,
     onOpenPhoto: () -> Unit,
     onReset: () -> Unit,
@@ -45,21 +46,20 @@ fun LookLiteHeader(
             .fillMaxWidth()
             .height(48.dp)
             .background(StudioCanvasBg)
-            .padding(horizontal = 12.dp),
+            .padding(horizontal = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Left: Open & Reset icon buttons
+        // Left: Apple-style circular icon buttons (Open & Reset)
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(34.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .size(32.dp)
+                    .clip(CircleShape)
                     .background(StudioElevatedBg)
-                    .border(1.dp, StudioHairlineBorder, RoundedCornerShape(8.dp))
                     .clickable {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         onOpenPhoto()
@@ -70,18 +70,17 @@ fun LookLiteHeader(
                     imageVector = Icons.Rounded.PhotoLibrary,
                     contentDescription = stringResource(R.string.action_open),
                     tint = StudioTextPrimary,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(16.dp)
                 )
             }
 
             Box(
                 modifier = Modifier
-                    .size(34.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .size(32.dp)
+                    .clip(CircleShape)
                     .background(StudioElevatedBg)
-                    .border(1.dp, StudioHairlineBorder, RoundedCornerShape(8.dp))
-                    .alpha(if (hasEdits) 1f else 0.35f)
-                    .clickable(enabled = hasEdits) {
+                    .alpha(if (hasPhoto && hasEdits) 1f else 0.30f)
+                    .clickable(enabled = hasPhoto && hasEdits) {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         onReset()
                     },
@@ -91,48 +90,54 @@ fun LookLiteHeader(
                     imageVector = Icons.Rounded.Refresh,
                     contentDescription = stringResource(R.string.action_reset),
                     tint = StudioTextPrimary,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(17.dp)
                 )
             }
         }
 
-        // Center: Active preset indicator pill ("● Portra 400")
+        // Center: Clean Apple-style preset pill (shows "LookLite" when no photo loaded)
         Row(
             modifier = Modifier
                 .weight(1f, fill = false)
                 .padding(horizontal = 8.dp)
                 .clip(RoundedCornerShape(9999.dp))
-                .background(StudioElevatedBg)
-                .border(1.dp, StudioHairlineBorder, RoundedCornerShape(9999.dp))
-                .padding(horizontal = 12.dp, vertical = 6.dp),
+                .background(if (hasPhoto) StudioElevatedBg else Color.Transparent)
+                .then(
+                    if (hasPhoto) Modifier.border(0.5.dp, StudioHairlineBorder, RoundedCornerShape(9999.dp))
+                    else Modifier
+                )
+                .padding(horizontal = 12.dp, vertical = 5.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(6.dp)
-                    .clip(CircleShape)
-                    .background(StudioAccent)
-            )
+            if (hasPhoto) {
+                Box(
+                    modifier = Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(StudioAccent)
+                )
+            }
             Text(
-                text = activePresetName,
+                text = if (hasPhoto) activePresetName else stringResource(R.string.app_name),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
+                letterSpacing = (-0.2).sp,
                 color = StudioTextPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
 
-        // Right: 20.dp Settings gear icon + Compact Export pill
+        // Right: 20.dp Settings gear icon + Apple-style Export capsule
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(34.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .size(32.dp)
+                    .clip(CircleShape)
                     .clickable {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         onOpenSettings()
@@ -149,10 +154,11 @@ fun LookLiteHeader(
 
             Box(
                 modifier = Modifier
-                    .height(32.dp)
+                    .height(30.dp)
                     .clip(RoundedCornerShape(9999.dp))
-                    .background(StudioAccent)
-                    .clickable {
+                    .background(if (hasPhoto) StudioAccent else StudioElevatedBg)
+                    .alpha(if (hasPhoto) 1f else 0.40f)
+                    .clickable(enabled = hasPhoto) {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         onExport()
                     }
@@ -163,7 +169,8 @@ fun LookLiteHeader(
                     text = stringResource(R.string.action_export),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.White
+                    letterSpacing = (-0.1).sp,
+                    color = if (hasPhoto) Color.White else StudioTextSecondary
                 )
             }
         }

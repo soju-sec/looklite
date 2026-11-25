@@ -17,6 +17,11 @@
     <string name="inspector_split">Split View</string>
     <string name="inspector_before">Tahan untuk Asli</string>
 
+    <!-- Empty Canvas State -->
+    <string name="empty_title">Belum Ada Foto</string>
+    <string name="empty_subtitle">Pilih foto dari galeri untuk mulai color grading</string>
+    <string name="empty_cta">Pilih Foto</string>
+
     <!-- Aspect Ratios -->
     <string name="ratio_original">Asli</string>
     <string name="ratio_square">1:1</string>
