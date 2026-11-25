@@ -78,6 +78,9 @@
     <string name="settings_dev_gpu_label">GPU Frame Time</string>
     <string name="settings_dev_lut_label">Active 3D LUT</string>
     <string name="settings_dev_res_label">Canvas Resolution</string>
+    <string name="settings_about">About &amp; Links</string>
+    <string name="settings_github">GitHub Repository</string>
+    <string name="settings_instagram">Instagram</string>
     <string name="settings_version_format">LookLite v%1$s (%2$d)</string>
 
     <!-- Export Dialog -->

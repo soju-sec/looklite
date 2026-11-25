@@ -1,5 +1,7 @@
 package app.looklite.android.ui.components
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -10,7 +12,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.BugReport
+import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.Language
+import androidx.compose.material.icons.rounded.OpenInNew
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -159,6 +164,55 @@ fun SettingsBottomSheet(
                 }
             }
 
+            // About & Social Links Section
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = stringResource(R.string.settings_about),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = StudioTextSecondary
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(StudioElevatedBg)
+                        .border(1.dp, StudioHairlineBorder, RoundedCornerShape(12.dp))
+                ) {
+                    LinkRow(
+                        icon = Icons.Rounded.Code,
+                        title = stringResource(R.string.settings_github),
+                        subtitle = "github.com/soju-sec/looklite",
+                        onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            context.startActivity(
+                                Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/soju-sec/looklite"))
+                            )
+                        }
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(StudioHairlineBorder)
+                    )
+
+                    LinkRow(
+                        icon = Icons.Rounded.Person,
+                        title = stringResource(R.string.settings_instagram),
+                        subtitle = "@abcdeco.id",
+                        onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            context.startActivity(
+                                Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/abcdeco.id"))
+                            )
+                        }
+                    )
+                }
+            }
+
             // Developer Diagnostics Section (revealed after 5 taps on version string)
             AnimatedVisibility(visible = isDeveloperUnlocked) {
                 Column(
@@ -252,6 +306,54 @@ fun SettingsBottomSheet(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun LinkRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 14.dp, vertical = 11.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = StudioAccent,
+                modifier = Modifier.size(18.dp)
+            )
+            Column {
+                Text(
+                    text = title,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = StudioTextPrimary
+                )
+                Text(
+                    text = subtitle,
+                    fontSize = 11.sp,
+                    color = StudioTextSecondary
+                )
+            }
+        }
+        Icon(
+            imageVector = Icons.Rounded.OpenInNew,
+            contentDescription = null,
+            tint = StudioTextSecondary,
+            modifier = Modifier.size(15.dp)
+        )
     }
 }
 

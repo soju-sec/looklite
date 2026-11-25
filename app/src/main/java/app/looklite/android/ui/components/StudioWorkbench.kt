@@ -270,7 +270,7 @@ private fun LooksPanel(
                     LookCategory.HASSELBLAD -> "Hasselblad"
                     LookCategory.ILFORD -> "Ilford"
                     LookCategory.RETOUCH -> stringResource(R.string.cat_retouch)
-                    LookCategory.MEITU -> "Meitu"
+                    LookCategory.BEAUTY -> "Beauty"
                 }
 
                 Column(
@@ -399,7 +399,7 @@ private fun LooksPanel(
                     LookCategory.HASSELBLAD -> presets.filter { it.brand == CameraBrand.HASSELBLAD }
                     LookCategory.ILFORD -> presets.filter { it.brand == CameraBrand.VINTAGE }
                     LookCategory.RETOUCH -> presets.filter { it.brand == CameraBrand.POLES }
-                    LookCategory.MEITU -> presets.filter { it.brand == CameraBrand.MEITU }
+                    LookCategory.BEAUTY -> presets.filter { it.brand == CameraBrand.BEAUTY }
                     LookCategory.MY_LOOKS -> emptyList()
                 }
             }

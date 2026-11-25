@@ -84,7 +84,7 @@ object PresetCatalog {
                 val id = obj.getString("preset_id")
                 val brandStr = obj.optString("camera_system", "poles")
                 val brand = when (brandStr.lowercase()) {
-                    "meitu" -> CameraBrand.MEITU
+                    "beauty", "meitu" -> CameraBrand.BEAUTY
                     "fuji", "fujifilm" -> CameraBrand.FUJIFILM
                     "kodak" -> CameraBrand.KODAK
                     "leica" -> CameraBrand.LEICA

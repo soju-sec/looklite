@@ -2,7 +2,7 @@ package app.looklite.android.model
 
 enum class CameraBrand(val id: String, val displayName: String) {
     POLES("poles", "POLES"),
-    MEITU("meitu", "MEITU"),
+    BEAUTY("beauty", "BEAUTY"),
     FUJIFILM("fuji", "FUJI"),
     KODAK("kodak", "KODAK"),
     LEICA("leica", "LEICA"),
@@ -96,7 +96,7 @@ enum class LookCategory {
     HASSELBLAD,
     ILFORD,
     RETOUCH,
-    MEITU
+    BEAUTY
 }
 
 data class CustomLook(

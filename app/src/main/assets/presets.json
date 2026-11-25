@@ -841,13 +841,13 @@
   },
   {
     "preset_id": "meitu.cream_skin",
-    "camera_system": "meitu",
+    "camera_system": "beauty",
     "look_name": "Cream Skin",
     "display_label": "Cream Skin",
     "tag": "CREAM",
     "lut_asset_path": "luts/meitu.cream_skin.cube",
     "lut_stage": "early",
-    "description": "Meitu signature creamy pastel skin polish with lifted shadow floor and luminous soft glow.",
+    "description": "Signature creamy pastel skin polish with lifted shadow floor and luminous soft glow.",
     "slider_ranges": {
       "exposure": {
         "min": -3,
@@ -946,7 +946,7 @@
   },
   {
     "preset_id": "meitu.cool_white",
-    "camera_system": "meitu",
+    "camera_system": "beauty",
     "look_name": "Cool Porcelain",
     "display_label": "Cool Porcelain",
     "tag": "COOL WHITE",
@@ -1051,7 +1051,7 @@
   },
   {
     "preset_id": "meitu.natural_clear",
-    "camera_system": "meitu",
+    "camera_system": "beauty",
     "look_name": "Ziran Natural",
     "display_label": "Ziran Natural",
     "tag": "CLEAR",
@@ -1156,7 +1156,7 @@
   },
   {
     "preset_id": "meitu.pearl_violet",
-    "camera_system": "meitu",
+    "camera_system": "beauty",
     "look_name": "Pearl Violet",
     "display_label": "Pearl Violet",
     "tag": "PEARL",
@@ -1261,7 +1261,7 @@
   },
   {
     "preset_id": "meitu.peach_milk",
-    "camera_system": "meitu",
+    "camera_system": "beauty",
     "look_name": "Peach Milk",
     "display_label": "Peach Milk",
     "tag": "PEACH",
@@ -1366,7 +1366,7 @@
   },
   {
     "preset_id": "meitu.airy_fresh",
-    "camera_system": "meitu",
+    "camera_system": "beauty",
     "look_name": "Airy Fresh",
     "display_label": "Airy Fresh",
     "tag": "AIRY",
@@ -1471,7 +1471,7 @@
   },
   {
     "preset_id": "meitu.glass_sea",
-    "camera_system": "meitu",
+    "camera_system": "beauty",
     "look_name": "Glass Sea",
     "display_label": "Glass Sea",
     "tag": "GLASS SEA",
@@ -1576,7 +1576,7 @@
   },
   {
     "preset_id": "meitu.editorial_dim",
-    "camera_system": "meitu",
+    "camera_system": "beauty",
     "look_name": "Soft Dim",
     "display_label": "Soft Dim",
     "tag": "LOW-KEY",

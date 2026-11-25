@@ -18,7 +18,7 @@
 
 ### 3. Katalog 50 Preset & 7 Kategori
 - **POLES** (8 preset): *Fnatix Moody Flash, Korean Porcelain, Emerald Moody, Night Ocean, Pro-Mist Dream, Studio Flash, Golden Radiance, Dark Aesthetic*
-- **MEITU** (8 preset): *Cream Skin, Cool Porcelain, Ziran Natural, Pearl Violet, Peach Milk, Airy Fresh, Glass Sea, Soft Dim*
+- **BEAUTY** (8 preset): *Cream Skin, Cool Porcelain, Ziran Natural, Pearl Violet, Peach Milk, Airy Fresh, Glass Sea, Soft Dim*
 - **FUJI** (10 preset): *Classic Chrome, Classic Neg, Velvia 50, Provia 100F, Astia, Reala Ace, Eterna, Nostalgic Neg, ACROS, Bleach Bypass*
 - **KODAK** (9 preset): *Portra 400, Portra 160, Portra 800, Gold 200, Ektar 100, Kodachrome 64, CineStill 800T, Vision3 500T, Tri-X 400*
 - **LEICA** (6 preset): *Classic, Natural, Vivid, Teal, Monochrom, Greg Williams*
@@ -119,7 +119,7 @@ DOMAIN_MAX 1.0 1.0 1.0
 
 ### 3. Model State Kotlin (`PresetModels.kt`)
 
-- `CameraBrand` — enum kategori preset (`POLES`, `MEITU`, `FUJIFILM`, `KODAK`, `LEICA`, `HASSELBLAD`, `VINTAGE`)
+- `CameraBrand` — enum kategori preset (`POLES`, `BEAUTY`, `FUJIFILM`, `KODAK`, `LEICA`, `HASSELBLAD`, `VINTAGE`)
 - `PresetProfile` — metadata preset, path LUT, `lutStage`, `defaultSliders`, dan warna *swatch*
 - `SliderValues` — seluruh parameter *tone*, *color*, *skin/FX*, `HslChannels`, dan `ColorBalance`
 - `AspectRatioOption` — konfigurasi rasio *crop* (`id`, `label`, `badge`, `ratio`)
