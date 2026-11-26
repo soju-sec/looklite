@@ -372,15 +372,24 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
     }
 
     /**
-     * High-Resolution Offscreen Render for Export
+     * High-Resolution Offscreen Render for Export (MUST be called on GLThread via glView.queueEvent)
      */
     fun renderOffscreen(sourceBitmap: Bitmap, targetWidth: Int, targetHeight: Int): Bitmap {
+        val uploadBitmap = if (sourceBitmap.config != Bitmap.Config.ARGB_8888) {
+            sourceBitmap.copy(Bitmap.Config.ARGB_8888, false)
+        } else {
+            sourceBitmap
+        }
+
         val fbo = IntArray(1)
         val renderTex = IntArray(1)
+        val exportSrcTex = IntArray(1)
 
         GLES30.glGenFramebuffers(1, fbo, 0)
         GLES30.glGenTextures(1, renderTex, 0)
+        GLES30.glGenTextures(1, exportSrcTex, 0)
 
+        // Target color attachment texture
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, renderTex[0])
         GLES30.glTexImage2D(
             GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGBA,
@@ -389,6 +398,16 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
         )
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR)
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE)
+
+        // Temporary source texture so preview imageTexId remains untouched
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, exportSrcTex[0])
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE)
+        GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, uploadBitmap, 0)
 
         GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, fbo[0])
         GLES30.glFramebufferTexture2D(
@@ -398,36 +417,44 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
 
         val prevW = surfaceWidth
         val prevH = surfaceHeight
+        val prevImageTex = imageTexId
+        val origSplit = splitPos
+        val origShowBefore = showBefore
+
         surfaceWidth = targetWidth
         surfaceHeight = targetHeight
+        imageTexId = exportSrcTex[0]
+        splitPos = -1f
+        showBefore = false
         GLES30.glViewport(0, 0, targetWidth, targetHeight)
 
-        // Upload export source bitmap to image texture
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, imageTexId)
-        GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, sourceBitmap, 0)
-
-        // Temporarily disable split view during export
-        val origSplit = splitPos
-        splitPos = -1f
-
         onDrawFrame(null)
+        GLES30.glFinish()
 
-        // Read pixels
+        // Read pixels from FBO
         val pixelBuffer = ByteBuffer.allocateDirect(targetWidth * targetHeight * 4).apply {
             order(ByteOrder.nativeOrder())
         }
         GLES30.glReadPixels(0, 0, targetWidth, targetHeight, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, pixelBuffer)
+        pixelBuffer.rewind()
 
-        // Cleanup FBO
+        // Cleanup FBO & temporary textures
         GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, 0)
         GLES30.glDeleteFramebuffers(1, fbo, 0)
         GLES30.glDeleteTextures(1, renderTex, 0)
+        GLES30.glDeleteTextures(1, exportSrcTex, 0)
 
-        // Restore viewport and split pos
+        // Restore preview state
+        imageTexId = prevImageTex
         surfaceWidth = prevW
         surfaceHeight = prevH
         splitPos = origSplit
+        showBefore = origShowBefore
         GLES30.glViewport(0, 0, prevW, prevH)
+
+        if (uploadBitmap !== sourceBitmap && !uploadBitmap.isRecycled) {
+            uploadBitmap.recycle()
+        }
 
         // Create Android Bitmap and flip vertically (OpenGL Y is inverted)
         val outBmp = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888)
@@ -436,7 +463,11 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
         val matrix = android.graphics.Matrix().apply {
             postScale(1f, -1f)
         }
-        return Bitmap.createBitmap(outBmp, 0, 0, targetWidth, targetHeight, matrix, true)
+        val flipped = Bitmap.createBitmap(outBmp, 0, 0, targetWidth, targetHeight, matrix, true)
+        if (flipped !== outBmp && !outBmp.isRecycled) {
+            outBmp.recycle()
+        }
+        return flipped
     }
 
     private fun cacheUniformLocations() {

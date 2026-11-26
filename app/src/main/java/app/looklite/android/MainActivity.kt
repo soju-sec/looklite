@@ -72,7 +72,10 @@ import app.looklite.android.ui.components.*
 import app.looklite.android.ui.theme.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import java.util.Locale
 import java.util.UUID
 
@@ -641,6 +644,7 @@ fun LookLiteApp(
                         normX = cropNormX,
                         normY = cropNormY,
                         resolution = resolution,
+                        glView = glView,
                         renderer = renderer,
                         presetName = activeLabel
                     )
@@ -827,6 +831,7 @@ private suspend fun executeNativeExport(
     normX: Float,
     normY: Float,
     resolution: ExportResolution,
+    glView: LookLiteGLView?,
     renderer: LookLiteRenderer,
     presetName: String
 ) = withContext(Dispatchers.IO) {
@@ -877,7 +882,18 @@ private suspend fun executeNativeExport(
             }
         }
 
-        val finalBitmap = renderer.renderOffscreen(croppedBitmap, targetW, targetH)
+        val view = glView ?: throw IllegalStateException("OpenGL surface is not ready")
+        val finalBitmap = suspendCancellableCoroutine<Bitmap> { cont ->
+            view.queueEvent {
+                try {
+                    val bmp = renderer.renderOffscreen(croppedBitmap, targetW, targetH)
+                    if (cont.isActive) cont.resume(bmp)
+                } catch (t: Throwable) {
+                    if (cont.isActive) cont.resumeWithException(t)
+                }
+            }
+        }
+        view.requestRender()
 
         val filename = "LookLite_${presetName.replace("\\s+".toRegex(), "_")}_${System.currentTimeMillis()}.jpg"
         val values = ContentValues().apply {
