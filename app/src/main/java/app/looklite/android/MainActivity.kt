@@ -67,6 +67,7 @@ import app.looklite.android.engine.LookLiteGLView
 import app.looklite.android.engine.LookLiteRenderer
 import app.looklite.android.engine.LutLoader
 import app.looklite.android.engine.PresetThumbnailGenerator
+import app.looklite.android.engine.RawImageDecoder
 import app.looklite.android.model.*
 import app.looklite.android.ui.components.*
 import app.looklite.android.ui.theme.*
@@ -211,6 +212,7 @@ fun LookLiteApp(
     var renamingLook by remember { mutableStateOf<CustomLook?>(null) }
 
     var originalBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var isRawPhoto by remember { mutableStateOf(false) }
     var baseThumbPixels by remember { mutableStateOf<IntArray?>(null) }
     var containerWidth by remember { mutableFloatStateOf(0f) }
     var containerHeight by remember { mutableFloatStateOf(0f) }
@@ -226,33 +228,42 @@ fun LookLiteApp(
         renderer.setIntensity(50)
     }
 
-    // Photo picker launcher
-    val photoPicker = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            scope.launch {
-                val bmp = withContext(Dispatchers.IO) { loadBitmapWithExif(context, uri) }
-                if (bmp != null) {
-                    originalBitmap = bmp
-                    renderer.setImageBitmap(bmp)
-                    cropNormX = 0.5f
-                    cropNormY = 0.5f
-                    glView?.requestRender()
-                    baseThumbPixels = withContext(Dispatchers.Default) {
-                        PresetThumbnailGenerator.createBaseThumbnail(bmp)
-                    }
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.toast_loaded, bmp.width, bmp.height),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Toast.makeText(context, context.getString(R.string.toast_load_failed), Toast.LENGTH_SHORT).show()
+    fun handleSelectedUri(uri: Uri?) {
+        if (uri == null) return
+        scope.launch {
+            val decoded = withContext(Dispatchers.IO) { RawImageDecoder.decode(context, uri) }
+            if (decoded != null) {
+                val bmp = decoded.bitmap
+                originalBitmap = bmp
+                isRawPhoto = decoded.isRaw
+                renderer.setImageBitmap(bmp)
+                cropNormX = 0.5f
+                cropNormY = 0.5f
+                glView?.requestRender()
+                baseThumbPixels = withContext(Dispatchers.Default) {
+                    PresetThumbnailGenerator.createBaseThumbnail(bmp)
                 }
+                val msgRes = if (decoded.isRaw) R.string.toast_loaded_raw else R.string.toast_loaded
+                Toast.makeText(
+                    context,
+                    context.getString(msgRes, bmp.width, bmp.height),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(context, context.getString(R.string.toast_load_failed), Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+    // Standard Gallery Photo Picker
+    val photoPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? -> handleSelectedUri(uri) }
+
+    // System Document Picker for RAW / DNG / All Images
+    val rawPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? -> handleSelectedUri(uri) }
 
     fun applyPreset(preset: PresetProfile) {
         activePreset = preset
@@ -300,9 +311,13 @@ fun LookLiteApp(
         LookLiteHeader(
             activePresetName = activeLabel,
             hasPhoto = hasPhoto,
+            isRawPhoto = isRawPhoto,
             hasEdits = hasEdits,
-            onOpenPhoto = {
+            onOpenGallery = {
                 photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            },
+            onOpenRaw = {
+                rawPicker.launch(arrayOf("*/*"))
             },
             onReset = {
                 intensity = 50
@@ -382,20 +397,50 @@ fun LookLiteApp(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    Box(
-                        modifier = Modifier
-                            .height(36.dp)
-                            .clip(RoundedCornerShape(9999.dp))
-                            .background(StudioAccent)
-                            .padding(horizontal = 20.dp),
-                        contentAlignment = Alignment.Center
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = stringResource(R.string.empty_cta),
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.White
-                        )
+                        Box(
+                            modifier = Modifier
+                                .height(36.dp)
+                                .clip(RoundedCornerShape(9999.dp))
+                                .background(StudioAccent)
+                                .clickable {
+                                    photoPicker.launch(
+                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                    )
+                                }
+                                .padding(horizontal = 18.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.empty_cta),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .height(36.dp)
+                                .clip(RoundedCornerShape(9999.dp))
+                                .background(StudioElevatedBg)
+                                .border(0.5.dp, StudioHairlineBorder, RoundedCornerShape(9999.dp))
+                                .clickable {
+                                    rawPicker.launch(arrayOf("*/*"))
+                                }
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.action_open_raw),
+                                fontSize = 12.5.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = StudioTextPrimary
+                            )
+                        }
                     }
                 }
             } else {
@@ -932,41 +977,6 @@ private suspend fun executeNativeExport(
                 Toast.LENGTH_LONG
             ).show()
         }
-    }
-}
-
-private fun loadBitmapWithExif(context: Context, uri: Uri): Bitmap? {
-    return try {
-        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
-        val original = BitmapFactory.decodeStream(inputStream) ?: return null
-        inputStream.close()
-
-        val exifStream = context.contentResolver.openInputStream(uri) ?: return original
-        val exif = ExifInterface(exifStream)
-        val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-        exifStream.close()
-
-        val matrix = Matrix()
-        when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
-            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
-            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
-            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.postScale(-1f, 1f)
-            ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.postScale(1f, -1f)
-            ExifInterface.ORIENTATION_TRANSPOSE -> {
-                matrix.postRotate(90f)
-                matrix.postScale(-1f, 1f)
-            }
-            ExifInterface.ORIENTATION_TRANSVERSE -> {
-                matrix.postRotate(270f)
-                matrix.postScale(-1f, 1f)
-            }
-            else -> return original
-        }
-        Bitmap.createBitmap(original, 0, 0, original.width, original.height, matrix, true)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
     }
 }
 

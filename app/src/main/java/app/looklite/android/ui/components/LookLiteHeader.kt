@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.InsertDriveFile
 import androidx.compose.material.icons.rounded.PhotoLibrary
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,14 +34,17 @@ import app.looklite.android.ui.theme.*
 fun LookLiteHeader(
     activePresetName: String,
     hasPhoto: Boolean,
+    isRawPhoto: Boolean,
     hasEdits: Boolean,
-    onOpenPhoto: () -> Unit,
+    onOpenGallery: () -> Unit,
+    onOpenRaw: () -> Unit,
     onReset: () -> Unit,
     onOpenSettings: () -> Unit,
     onExport: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val haptic = LocalHapticFeedback.current
+    var showOpenMenu by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier
@@ -54,23 +60,76 @@ fun LookLiteHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(StudioElevatedBg)
-                    .clickable {
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        onOpenPhoto()
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.PhotoLibrary,
-                    contentDescription = stringResource(R.string.action_open),
-                    tint = StudioTextPrimary,
-                    modifier = Modifier.size(16.dp)
-                )
+            Box {
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(StudioElevatedBg)
+                        .clickable {
+                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            showOpenMenu = true
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.PhotoLibrary,
+                        contentDescription = stringResource(R.string.action_open),
+                        tint = StudioTextPrimary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = showOpenMenu,
+                    onDismissRequest = { showOpenMenu = false },
+                    modifier = Modifier.background(StudioElevatedBg)
+                ) {
+                    DropdownMenuItem(
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Rounded.PhotoLibrary,
+                                contentDescription = null,
+                                tint = StudioTextPrimary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        },
+                        text = {
+                            Text(
+                                text = stringResource(R.string.action_open_gallery),
+                                color = StudioTextPrimary,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        },
+                        onClick = {
+                            showOpenMenu = false
+                            onOpenGallery()
+                        }
+                    )
+                    DropdownMenuItem(
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Rounded.InsertDriveFile,
+                                contentDescription = null,
+                                tint = StudioAccent,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        },
+                        text = {
+                            Text(
+                                text = stringResource(R.string.action_open_raw),
+                                color = StudioTextPrimary,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        },
+                        onClick = {
+                            showOpenMenu = false
+                            onOpenRaw()
+                        }
+                    )
+                }
             }
 
             val resetEnabled = hasPhoto && hasEdits
@@ -126,6 +185,21 @@ fun LookLiteHeader(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+            if (hasPhoto && isRawPhoto) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(StudioAccent.copy(alpha = 0.2f))
+                        .padding(horizontal = 4.dp, vertical = 1.dp)
+                ) {
+                    Text(
+                        text = "RAW",
+                        fontSize = 8.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = StudioAccent
+                    )
+                }
+            }
         }
 
         // Right: 20.dp Settings gear icon + Apple-style Export capsule
