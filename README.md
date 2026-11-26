@@ -19,12 +19,15 @@ A native Android **Darkroom Studio** photo color-grading application built with 
   - High-resolution **Offscreen FBO Export** saved directly to Android `MediaStore` (`Pictures/LookLite/`).
 - **Auto Tone (Histogram & Color Cast Correction)**:
   - Fast per-image RGB percentile analysis (**2%–98% Auto Levels**) and **Gray-World White Balance** neutralization executed on GPU before preset grading.
-- **50 Built-In Film & Color Looks (7 Categories)**:
+- **RAW & DNG Import Support**:
+  - Open `.dng` files natively via Android `ImageDecoder` (`SkRawCodec`) and other camera RAW formats (`.cr2`, `.nef`, `.arw`, `.raf`, `.rw2`, `.orf`) via embedded full-resolution preview extraction with EXIF orientation.
+- **54 Built-In Film & Color Looks (8 Categories)**:
   - **Kodak** (9): *Portra 400, Portra 160, Portra 800, Gold 200, Ektar 100, Kodachrome 64, CineStill 800T, Vision3 500T, Tri-X 400*
   - **Fuji** (10): *Classic Chrome, Classic Neg, Velvia 50, Provia 100F, Astia, Reala Ace, Eterna, Nostalgic Neg, ACROS, Bleach Bypass*
   - **Leica** (6): *Classic, Natural, Vivid, Teal, Monochrom, Greg Williams*
   - **Hasselblad** (4): *HNCS Standard, HNCS Portrait, HNCS Landscape, HNCS Monochrome*
   - **Ilford / Vintage** (5): *HP5 Plus, Disposable 400, Polaroid Color, Golden Light, Street Car*
+  - **Rico** (4): *Rico Flash, GR Slide, GR Print, GR Street B&W*
   - **Retouch** (8): *Fnatix Moody Flash, Korean Porcelain, Emerald Moody, Night Ocean, Pro-Mist Dream, Studio Flash, Golden Radiance, Dark Aesthetic*
   - **Beauty** (8): *Cream Skin, Cool Porcelain, Ziran Natural, Pearl Violet, Peach Milk, Airy Fresh, Glass Sea, Soft Dim*
 - **Darkroom Studio Interface**:
