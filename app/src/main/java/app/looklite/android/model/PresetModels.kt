@@ -89,7 +89,6 @@ data class AspectRatioOption(
 
 enum class LookCategory {
     MY_LOOKS,
-    ALL,
     KODAK,
     FUJI,
     LEICA,

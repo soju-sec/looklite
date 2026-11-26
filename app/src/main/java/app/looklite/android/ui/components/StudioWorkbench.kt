@@ -260,7 +260,6 @@ private fun LooksPanel(
                 val isSelected = cat == selectedCategory
                 val label = when (cat) {
                     LookCategory.MY_LOOKS -> stringResource(R.string.cat_my_looks)
-                    LookCategory.ALL -> stringResource(R.string.cat_all)
                     LookCategory.KODAK -> "Kodak"
                     LookCategory.FUJI -> "Fuji"
                     LookCategory.LEICA -> "Leica"
@@ -310,7 +309,7 @@ private fun LooksPanel(
                 value = intensity.toFloat(),
                 min = 0f,
                 max = 100f,
-                defaultValue = 100f,
+                defaultValue = 50f,
                 onValueChange = { onIntensityChanged(it.roundToInt()) },
                 modifier = Modifier.weight(1f)
             )
@@ -356,7 +355,6 @@ private fun LooksPanel(
         } else {
             val filteredPresets = remember(presets, selectedCategory) {
                 when (selectedCategory) {
-                    LookCategory.ALL -> presets
                     LookCategory.KODAK -> presets.filter { it.brand == CameraBrand.KODAK }
                     LookCategory.FUJI -> presets.filter { it.brand == CameraBrand.FUJIFILM }
                     LookCategory.LEICA -> presets.filter { it.brand == CameraBrand.LEICA }

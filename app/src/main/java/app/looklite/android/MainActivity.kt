@@ -175,15 +175,19 @@ fun LookLiteApp(
 
     val presets = remember { PresetCatalog.getAllPresets(context) }
     var activePreset by remember {
-        mutableStateOf(presets.firstOrNull() ?: PresetProfile("default", "Standard", CameraBrand.POLES, "", ""))
+        mutableStateOf(
+            presets.firstOrNull { it.brand == CameraBrand.KODAK }
+                ?: presets.firstOrNull()
+                ?: PresetProfile("default", "Standard", CameraBrand.KODAK, "", "")
+        )
     }
     var activeCustomLookId by remember { mutableStateOf<String?>(null) }
     var activeLabel by remember { mutableStateOf(activePreset.name) }
 
-    var selectedCategory by remember { mutableStateOf(LookCategory.ALL) }
+    var selectedCategory by remember { mutableStateOf(LookCategory.KODAK) }
     var activeWorkbenchTab by remember { mutableStateOf(WorkbenchTab.LOOKS) }
 
-    var intensity by remember { mutableIntStateOf(100) }
+    var intensity by remember { mutableIntStateOf(50) }
     var currentSliders by remember { mutableStateOf(activePreset.defaultSliders) }
     var baseSlidersForReset by remember { mutableStateOf(activePreset.defaultSliders) }
     var isSplitActive by remember { mutableStateOf(false) }
@@ -219,7 +223,7 @@ fun LookLiteApp(
         val lutBuf = LutLoader.loadLut(context, activePreset.lutFile)
         renderer.setLut(lutBuf, 17, activePreset.lutStage)
         renderer.setSliders(activePreset.defaultSliders)
-        renderer.setIntensity(100)
+        renderer.setIntensity(50)
     }
 
     // Photo picker launcher
@@ -254,13 +258,13 @@ fun LookLiteApp(
         activePreset = preset
         activeCustomLookId = null
         activeLabel = preset.name
-        intensity = 100
+        intensity = 50
         currentSliders = preset.defaultSliders
         baseSlidersForReset = preset.defaultSliders
         val buf = LutLoader.loadLut(context, preset.lutFile)
         renderer.setLut(buf, 17, preset.lutStage)
         renderer.setSliders(preset.defaultSliders)
-        renderer.setIntensity(100)
+        renderer.setIntensity(50)
         glView?.requestRender()
     }
 
@@ -280,7 +284,7 @@ fun LookLiteApp(
 
     val hasPhoto = originalBitmap != null
     val hasEdits = hasPhoto && (
-        intensity != 100 ||
+        intensity != 50 ||
             currentSliders != baseSlidersForReset ||
             selectedRatioOption.id != "original" ||
             isSplitActive
@@ -301,10 +305,10 @@ fun LookLiteApp(
                 photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             },
             onReset = {
-                intensity = 100
+                intensity = 50
                 currentSliders = baseSlidersForReset
                 renderer.setSliders(baseSlidersForReset)
-                renderer.setIntensity(100)
+                renderer.setIntensity(50)
                 isSplitActive = false
                 renderer.setSplitPosition(-1f)
                 selectedRatioOption = PresetCatalog.aspectRatios.first()
