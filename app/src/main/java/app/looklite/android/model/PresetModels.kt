@@ -7,7 +7,8 @@ enum class CameraBrand(val id: String, val displayName: String) {
     KODAK("kodak", "KODAK"),
     LEICA("leica", "LEICA"),
     HASSELBLAD("hasselblad", "HASSELBLAD"),
-    VINTAGE("vintage", "ILFORD")
+    VINTAGE("vintage", "ILFORD"),
+    RICO("rico", "RICO")
 }
 
 data class ColorBalance(
@@ -94,6 +95,7 @@ enum class LookCategory {
     LEICA,
     HASSELBLAD,
     ILFORD,
+    RICO,
     RETOUCH,
     BEAUTY
 }

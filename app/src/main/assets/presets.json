@@ -3944,5 +3944,425 @@
       "grain_size": 10,
       "hsl": {}
     }
+  },
+  {
+    "preset_id": "rico.flash",
+    "camera_system": "rico",
+    "look_name": "Rico Flash",
+    "display_label": "Rico Flash",
+    "tag": "FLASH",
+    "lut_asset_path": "luts/rico.flash.cube",
+    "lut_stage": "early",
+    "description": "Direct compact-camera flash aesthetic with clean cool-ivory skin pop and deep night shadows.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.2,
+      "contrast": 18,
+      "highlights": -8,
+      "shadows": 10,
+      "whites": 12,
+      "blacks": -15,
+      "temp": -8,
+      "tint": 4,
+      "vibrance": 6,
+      "saturation": -8,
+      "vignette": 16,
+      "grain_intensity": 8,
+      "grain_size": 12,
+      "skin_smooth": 30,
+      "skin_radiance": 38,
+      "clarity": 16,
+      "glow": 12,
+      "sharpness": 20,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "rico.gr_slide",
+    "camera_system": "rico",
+    "look_name": "GR Slide",
+    "display_label": "GR Slide",
+    "tag": "SLIDE",
+    "lut_asset_path": "luts/rico.gr_slide.cube",
+    "lut_stage": "early",
+    "description": "Punchy reversal film look with deep blues and greens, tight skin saturation, and smooth highlight roll-off.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.05,
+      "contrast": 16,
+      "highlights": -15,
+      "shadows": -10,
+      "whites": 8,
+      "blacks": -12,
+      "temp": 2,
+      "tint": -2,
+      "vibrance": 14,
+      "saturation": 4,
+      "vignette": 14,
+      "grain_intensity": 10,
+      "grain_size": 14,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": 18,
+      "glow": 0,
+      "sharpness": 18,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "rico.gr_print",
+    "camera_system": "rico",
+    "look_name": "GR Print",
+    "display_label": "GR Print",
+    "tag": "PRINT",
+    "lut_asset_path": "luts/rico.gr_print.cube",
+    "lut_stage": "early",
+    "description": "Color print minilab aesthetic with vermilion reds, pastel blues, and forgiving lifted shadows.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.1,
+      "contrast": -4,
+      "highlights": -18,
+      "shadows": 16,
+      "whites": 4,
+      "blacks": 14,
+      "temp": 4,
+      "tint": 2,
+      "vibrance": 8,
+      "saturation": -6,
+      "vignette": 8,
+      "grain_intensity": 14,
+      "grain_size": 15,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": -6,
+      "glow": 8,
+      "sharpness": 10,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "rico.gr_street_bw",
+    "camera_system": "rico",
+    "look_name": "GR Street B&W",
+    "display_label": "GR Street B&W",
+    "tag": "STREET B&W",
+    "lut_asset_path": "luts/rico.gr_street_bw.cube",
+    "lut_stage": "early",
+    "description": "Gritty high-contrast street monochrome with crushed blacks, crisp highlights, and organic film grain.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.0,
+      "contrast": 28,
+      "highlights": 10,
+      "shadows": -22,
+      "whites": 18,
+      "blacks": -24,
+      "temp": 0,
+      "tint": 0,
+      "vibrance": 0,
+      "saturation": -100,
+      "vignette": 22,
+      "grain_intensity": 32,
+      "grain_size": 18,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": 30,
+      "glow": 0,
+      "sharpness": 24,
+      "hsl": {}
+    }
   }
 ]

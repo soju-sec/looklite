@@ -67,7 +67,12 @@ object PresetCatalog {
         "vintage.disposable_400" to Pair(0xFF5D4037, 0xFFFFCC80),
         "vintage.polaroid_color" to Pair(0xFF455A64, 0xFFB0BEC5),
         "vintage.golden_light" to Pair(0xFFE65100, 0xFFFFE082),
-        "vintage.street_car" to Pair(0xFF006064, 0xFFBF360C)
+        "vintage.street_car" to Pair(0xFF006064, 0xFFBF360C),
+
+        "rico.flash" to Pair(0xFF1B2330, 0xFFE8EEF5),
+        "rico.gr_slide" to Pair(0xFF1A3A4A, 0xFF3E7B5E),
+        "rico.gr_print" to Pair(0xFF4A6B7C, 0xFFE27D60),
+        "rico.gr_street_bw" to Pair(0xFF08080A, 0xFFD0D0D4)
     )
 
     fun getAllPresets(context: Context): List<PresetProfile> {
@@ -85,6 +90,7 @@ object PresetCatalog {
                 val brandStr = obj.optString("camera_system", "poles")
                 val brand = when (brandStr.lowercase()) {
                     "beauty", "meitu" -> CameraBrand.BEAUTY
+                    "rico" -> CameraBrand.RICO
                     "fuji", "fujifilm" -> CameraBrand.FUJIFILM
                     "kodak" -> CameraBrand.KODAK
                     "leica" -> CameraBrand.LEICA

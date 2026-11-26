@@ -265,6 +265,7 @@ private fun LooksPanel(
                     LookCategory.LEICA -> "Leica"
                     LookCategory.HASSELBLAD -> "Hasselblad"
                     LookCategory.ILFORD -> "Ilford"
+                    LookCategory.RICO -> "Rico"
                     LookCategory.RETOUCH -> stringResource(R.string.cat_retouch)
                     LookCategory.BEAUTY -> "Beauty"
                 }
@@ -360,6 +361,7 @@ private fun LooksPanel(
                     LookCategory.LEICA -> presets.filter { it.brand == CameraBrand.LEICA }
                     LookCategory.HASSELBLAD -> presets.filter { it.brand == CameraBrand.HASSELBLAD }
                     LookCategory.ILFORD -> presets.filter { it.brand == CameraBrand.VINTAGE }
+                    LookCategory.RICO -> presets.filter { it.brand == CameraBrand.RICO }
                     LookCategory.RETOUCH -> presets.filter { it.brand == CameraBrand.POLES }
                     LookCategory.BEAUTY -> presets.filter { it.brand == CameraBrand.BEAUTY }
                     LookCategory.MY_LOOKS -> emptyList()
