@@ -178,25 +178,30 @@ fun LookLiteHeader(
             }
             Text(
                 text = if (hasPhoto) activePresetName else stringResource(R.string.app_name),
-                fontSize = 14.sp,
+                fontSize = 13.5.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = (-0.2).sp,
                 color = StudioTextPrimary,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false)
             )
             if (hasPhoto && isRawPhoto) {
                 Box(
                     modifier = Modifier
+                        .wrapContentWidth(unbounded = true)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(StudioAccent.copy(alpha = 0.2f))
-                        .padding(horizontal = 4.dp, vertical = 1.dp)
+                        .background(StudioAccent.copy(alpha = 0.22f))
+                        .padding(horizontal = 5.dp, vertical = 1.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "RAW",
-                        fontSize = 8.5.sp,
+                        fontSize = 9.sp,
                         fontWeight = FontWeight.Bold,
-                        color = StudioAccent
+                        color = StudioAccent,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
             }

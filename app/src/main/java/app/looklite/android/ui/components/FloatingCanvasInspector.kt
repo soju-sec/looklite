@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Compare
 import androidx.compose.material.icons.rounded.Crop
+import androidx.compose.material.icons.rounded.RotateRight
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -44,6 +45,7 @@ fun FloatingCanvasInspector(
     onRatioSelected: (AspectRatioOption) -> Unit,
     isRatioStripOpen: Boolean,
     onToggleRatioStrip: () -> Unit,
+    onRotate90: () -> Unit,
     isSplitActive: Boolean,
     onToggleSplit: () -> Unit,
     isHoldingOriginal: Boolean,
@@ -149,7 +151,34 @@ fun FloatingCanvasInspector(
                     .background(StudioHairlineBorder)
             )
 
-            // 2. Split View Toggle
+            // 2. Rotate 90° CW
+            Box(
+                modifier = Modifier
+                    .size(width = 34.dp, height = 26.dp)
+                    .clip(RoundedCornerShape(9999.dp))
+                    .clickable {
+                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        onRotate90()
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.RotateRight,
+                    contentDescription = stringResource(R.string.inspector_rotate),
+                    tint = StudioTextPrimary,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+
+            // Hairline vertical divider
+            Box(
+                modifier = Modifier
+                    .width(1.dp)
+                    .height(16.dp)
+                    .background(StudioHairlineBorder)
+            )
+
+            // 3. Split View Toggle
             Box(
                 modifier = Modifier
                     .size(width = 34.dp, height = 26.dp)

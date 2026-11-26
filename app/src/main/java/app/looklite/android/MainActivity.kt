@@ -605,6 +605,23 @@ fun LookLiteApp(
                     },
                     isRatioStripOpen = isRatioStripOpen,
                     onToggleRatioStrip = { isRatioStripOpen = !isRatioStripOpen },
+                    onRotate90 = {
+                        val bmp = originalBitmap ?: return@FloatingCanvasInspector
+                        scope.launch {
+                            val rotated = withContext(Dispatchers.Default) {
+                                val m = Matrix().apply { postRotate(90f) }
+                                Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, m, true)
+                            }
+                            originalBitmap = rotated
+                            renderer.setImageBitmap(rotated)
+                            cropNormX = 0.5f
+                            cropNormY = 0.5f
+                            glView?.requestRender()
+                            baseThumbPixels = withContext(Dispatchers.Default) {
+                                PresetThumbnailGenerator.createBaseThumbnail(rotated)
+                            }
+                        }
+                    },
                     isSplitActive = isSplitActive,
                     onToggleSplit = {
                         isSplitActive = !isSplitActive

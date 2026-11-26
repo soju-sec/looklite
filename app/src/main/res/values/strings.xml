@@ -16,6 +16,7 @@
     <string name="badge_original">ORIGINAL</string>
     <string name="crop_hint">Drag frame to adjust composition</string>
     <string name="inspector_ratio">Aspect Ratio</string>
+    <string name="inspector_rotate">Rotate 90°</string>
     <string name="inspector_split">Split View</string>
     <string name="inspector_before">Hold for Original</string>
 

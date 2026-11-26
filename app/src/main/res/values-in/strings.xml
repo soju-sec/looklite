@@ -16,6 +16,7 @@
     <string name="badge_original">ASLI</string>
     <string name="crop_hint">Geser bingkai untuk mengatur komposisi</string>
     <string name="inspector_ratio">Rasio Aspek</string>
+    <string name="inspector_rotate">Putar 90°</string>
     <string name="inspector_split">Split View</string>
     <string name="inspector_before">Tahan untuk Asli</string>
 
