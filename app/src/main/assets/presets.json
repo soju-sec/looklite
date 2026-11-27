@@ -3948,8 +3948,8 @@
   {
     "preset_id": "rico.flash",
     "camera_system": "digicam",
-    "look_name": "Rico Flash",
-    "display_label": "Rico Flash",
+    "look_name": "Ricoh Flash",
+    "display_label": "Ricoh Flash",
     "tag": "FLASH",
     "lut_asset_path": "luts/rico.flash.cube",
     "lut_stage": "early",
@@ -4053,8 +4053,8 @@
   {
     "preset_id": "digicam.gr2_vivid",
     "camera_system": "digicam",
-    "look_name": "GR2 Vivid",
-    "display_label": "GR2 Vivid",
+    "look_name": "Ricoh GR2 Vivid",
+    "display_label": "Ricoh GR2 Vivid",
     "tag": "DIGICAM",
     "lut_asset_path": "luts/digicam.gr2_vivid.cube",
     "lut_stage": "early",
@@ -4158,8 +4158,8 @@
   {
     "preset_id": "digicam.gr2_hibw",
     "camera_system": "digicam",
-    "look_name": "GR2 Hi-B&W",
-    "display_label": "GR2 Hi-B&W",
+    "look_name": "Ricoh GR2 Hi-B&W",
+    "display_label": "Ricoh GR2 Hi-B&W",
     "tag": "B&W",
     "lut_asset_path": "luts/digicam.gr2_hibw.cube",
     "lut_stage": "early",
