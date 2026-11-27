@@ -222,8 +222,8 @@ fun LookLiteApp(
 
     // Pre-load initial LUT so it's ready as soon as user opens a photo
     LaunchedEffect(Unit) {
-        val lutBuf = LutLoader.loadLut(context, activePreset.lutFile)
-        renderer.setLut(lutBuf, 17, activePreset.lutStage)
+        val loaded = LutLoader.loadLut(context, activePreset.lutFile)
+        renderer.setLut(loaded.buffer, loaded.size, activePreset.lutStage)
         renderer.setSliders(activePreset.defaultSliders)
         renderer.setIntensity(50)
     }
@@ -272,8 +272,8 @@ fun LookLiteApp(
         intensity = 50
         currentSliders = preset.defaultSliders
         baseSlidersForReset = preset.defaultSliders
-        val buf = LutLoader.loadLut(context, preset.lutFile)
-        renderer.setLut(buf, 17, preset.lutStage)
+        val loaded = LutLoader.loadLut(context, preset.lutFile)
+        renderer.setLut(loaded.buffer, loaded.size, preset.lutStage)
         renderer.setSliders(preset.defaultSliders)
         renderer.setIntensity(50)
         glView?.requestRender()
@@ -286,8 +286,8 @@ fun LookLiteApp(
         intensity = look.intensity
         currentSliders = look.sliders
         baseSlidersForReset = look.sliders
-        val buf = LutLoader.loadLut(context, look.lutFile)
-        renderer.setLut(buf, 17, look.lutStage)
+        val loaded = LutLoader.loadLut(context, look.lutFile)
+        renderer.setLut(loaded.buffer, loaded.size, look.lutStage)
         renderer.setSliders(look.sliders)
         renderer.setIntensity(look.intensity)
         glView?.requestRender()

@@ -173,9 +173,9 @@ float getSkinMask(vec3 rgb) {
     float h = hsv.x;
     float dh = abs(h - 0.075);
     dh = min(dh, 1.0 - dh);
-    float hueMask = smoothstep(0.065, 0.015, dh);
-    float satMask = smoothstep(0.12, 0.28, hsv.y) * (1.0 - smoothstep(0.72, 0.95, hsv.y));
-    float valMask = smoothstep(0.20, 0.45, hsv.z);
+    float hueMask = smoothstep(0.085, 0.02, dh);
+    float satMask = smoothstep(0.08, 0.25, hsv.y) * (1.0 - smoothstep(0.75, 0.95, hsv.y));
+    float valMask = smoothstep(0.08, 0.35, hsv.z);
     return clamp(hueMask * satMask * valMask, 0.0, 1.0);
 }
 
@@ -186,67 +186,69 @@ vec3 applySkinPolish(vec3 c, vec2 uv, float smoothAmt, float radianceAmt) {
 
     vec3 result = c;
     if (smoothAmt > 0.0) {
-        vec2 px = (1.5 + smoothAmt * 0.035) / uResolution;
+        vec2 px = (1.2 + smoothAmt * 0.025) / uResolution;
         vec3 c0 = texture(uImage, uv + vec2(-px.x, 0.0)).rgb;
         vec3 c1 = texture(uImage, uv + vec2( px.x, 0.0)).rgb;
         vec3 c2 = texture(uImage, uv + vec2(0.0, -px.y)).rgb;
         vec3 c3 = texture(uImage, uv + vec2(0.0,  px.y)).rgb;
-        
-        float w0 = exp(-dot(c - c0, c - c0) * 45.0);
-        float w1 = exp(-dot(c - c1, c - c1) * 45.0);
-        float w2 = exp(-dot(c - c2, c - c2) * 45.0);
-        float w3 = exp(-dot(c - c3, c - c3) * 45.0);
+
+        float w0 = exp(-dot(c - c0, c - c0) * 30.0);
+        float w1 = exp(-dot(c - c1, c - c1) * 30.0);
+        float w2 = exp(-dot(c - c2, c - c2) * 30.0);
+        float w3 = exp(-dot(c - c3, c - c3) * 30.0);
         float totalW = 1.0 + w0 + w1 + w2 + w3;
         vec3 blurred = (c + c0 * w0 + c1 * w1 + c2 * w2 + c3 * w3) / totalW;
-        
-        float blendFactor = (smoothAmt / 100.0) * 0.85 * skin;
+
+        float blendFactor = (smoothAmt / 100.0) * 0.65 * skin;
         result = mix(result, blurred, blendFactor);
     }
-    
+
     if (radianceAmt > 0.0) {
-        float rad = (radianceAmt / 100.0) * 0.22 * skin;
-        result += vec3(rad * 1.1, rad * 0.95, rad * 0.85);
+        float rad = (radianceAmt / 100.0) * 0.85 * skin;
+        vec3 lifted = 1.0 - (1.0 - result) * (1.0 - vec3(0.20, 0.17, 0.15));
+        result = mix(result, lifted, rad);
     }
-    
+
     return clamp(result, 0.0, 1.0);
 }
 
 vec3 applyClarityGlowSharp(vec3 c, vec2 uv, float clarity, float glow, float sharpness) {
     if (clarity == 0.0 && glow <= 0.0 && sharpness <= 0.0) return c;
-    
+
+    vec3 centerOrig = texture(uImage, uv).rgb;
     vec2 px = 2.0 / uResolution;
     vec3 c0 = texture(uImage, uv + vec2(-px.x, 0.0)).rgb;
     vec3 c1 = texture(uImage, uv + vec2( px.x, 0.0)).rgb;
     vec3 c2 = texture(uImage, uv + vec2(0.0, -px.y)).rgb;
     vec3 c3 = texture(uImage, uv + vec2(0.0,  px.y)).rgb;
     vec3 localAvg = (c0 + c1 + c2 + c3) * 0.25;
-    
-    // Clarity (midtone micro-contrast)
+
+    // Clarity (pure high-pass midtone micro-contrast from uImage)
     if (clarity != 0.0) {
         float l = lum(c);
         float midWeight = 4.0 * l * (1.0 - l);
-        vec3 detail = c - localAvg;
-        c += detail * (clarity / 100.0) * 0.75 * midWeight;
+        vec3 detail = centerOrig - localAvg;
+        c += detail * (clarity / 100.0) * 0.65 * midWeight;
     }
-    
-    // Soft Glow / Halation
+
+    // Soft Glow / Halation on graded highlights
     if (glow > 0.0) {
-        float hi = smoothstep(0.52, 1.0, lum(localAvg));
-        vec3 glowColor = localAvg * hi * (glow / 100.0) * 0.45;
+        float hi = smoothstep(0.55, 1.0, lum(c));
+        vec3 glowColor = c * hi * (glow / 100.0) * 0.35;
         c = 1.0 - (1.0 - c) * (1.0 - glowColor);
     }
-    
-    // Sharpness
+
+    // Sharpness (pure Laplacian from uImage)
     if (sharpness > 0.0) {
         vec2 pxS = 1.0 / uResolution;
         vec3 s0 = texture(uImage, uv + vec2(-pxS.x, 0.0)).rgb;
         vec3 s1 = texture(uImage, uv + vec2( pxS.x, 0.0)).rgb;
         vec3 s2 = texture(uImage, uv + vec2(0.0, -pxS.y)).rgb;
         vec3 s3 = texture(uImage, uv + vec2(0.0,  pxS.y)).rgb;
-        vec3 lap = c * 4.0 - (s0 + s1 + s2 + s3);
-        c += lap * (sharpness / 100.0) * 0.35;
+        vec3 lap = centerOrig * 4.0 - (s0 + s1 + s2 + s3);
+        c += lap * (sharpness / 100.0) * 0.30;
     }
-    
+
     return clamp(c, 0.0, 1.0);
 }
 

@@ -70,9 +70,14 @@ object PresetCatalog {
         "vintage.street_car" to Pair(0xFF006064, 0xFFBF360C),
 
         "rico.flash" to Pair(0xFF1B2330, 0xFFE8EEF5),
-        "rico.gr_slide" to Pair(0xFF1A3A4A, 0xFF3E7B5E),
-        "rico.gr_print" to Pair(0xFF4A6B7C, 0xFFE27D60),
-        "rico.gr_street_bw" to Pair(0xFF08080A, 0xFFD0D0D4)
+        "digicam.gr2_vivid" to Pair(0xFF1A3A4A, 0xFF3E7B5E),
+        "digicam.gr2_hibw" to Pair(0xFF08080A, 0xFFD0D0D4),
+        "digicam.contax_nd" to Pair(0xFF2B3540, 0xFFD8B898),
+        "digicam.fuji_gfx_provia" to Pair(0xFF2E4756, 0xFF8EA8B8),
+        "digicam.leica_x2_vivid" to Pair(0xFF8E2438, 0xFF00838F),
+        "digicam.leica_sl_std" to Pair(0xFF263238, 0xFFB0BEC5),
+        "digicam.leica_sl_vivid" to Pair(0xFFB71C1C, 0xFF00796B),
+        "digicam.lumix_s1r_vivid" to Pair(0xFF1E3A5F, 0xFFF5A623)
     )
 
     fun getAllPresets(context: Context): List<PresetProfile> {
@@ -90,7 +95,7 @@ object PresetCatalog {
                 val brandStr = obj.optString("camera_system", "poles")
                 val brand = when (brandStr.lowercase()) {
                     "beauty", "meitu" -> CameraBrand.BEAUTY
-                    "rico" -> CameraBrand.RICO
+                    "digicam", "rico" -> CameraBrand.DIGICAM
                     "fuji", "fujifilm" -> CameraBrand.FUJIFILM
                     "kodak" -> CameraBrand.KODAK
                     "leica" -> CameraBrand.LEICA

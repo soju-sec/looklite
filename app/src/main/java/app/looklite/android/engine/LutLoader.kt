@@ -7,13 +7,18 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.concurrent.ConcurrentHashMap
 
-object LutLoader {
-    private val lutCache = ConcurrentHashMap<String, ByteBuffer>()
+data class LoadedLut(
+    val buffer: ByteBuffer,
+    val size: Int
+)
 
-    fun loadLut(context: Context, filename: String): ByteBuffer {
+object LutLoader {
+    private val lutCache = ConcurrentHashMap<String, LoadedLut>()
+
+    fun loadLut(context: Context, filename: String): LoadedLut {
         lutCache[filename]?.let {
-            it.rewind()
-            return it
+            it.buffer.rewind()
+            return LoadedLut(it.buffer, it.size)
         }
 
         try {
@@ -23,7 +28,6 @@ object LutLoader {
                 var size = 17
                 var line: String?
 
-                // Read header
                 while (reader.readLine().also { line = it } != null) {
                     val trimmed = line!!.trim()
                     if (trimmed.startsWith("LUT_3D_SIZE")) {
@@ -40,7 +44,6 @@ object LutLoader {
                     order(ByteOrder.nativeOrder())
                 }
 
-                // Parse RGB entries
                 var count = 0
                 while (reader.readLine().also { line = it } != null) {
                     val trimmed = line!!.trim()
@@ -63,12 +66,13 @@ object LutLoader {
                 }
 
                 buffer.rewind()
-                lutCache[filename] = buffer
-                return buffer
+                val loaded = LoadedLut(buffer, size)
+                lutCache[filename] = loaded
+                return loaded
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            return createIdentityLut(17)
+            return LoadedLut(createIdentityLut(17), 17)
         }
     }
 

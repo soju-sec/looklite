@@ -98,9 +98,9 @@
       "grain_size": 10,
       "skin_smooth": 35,
       "skin_radiance": 30,
-      "clarity": 20,
+      "clarity": 8,
       "glow": 15,
-      "sharpness": 20,
+      "sharpness": 10,
       "hsl": {}
     }
   },
@@ -201,11 +201,11 @@
       "vignette": 0,
       "grain_intensity": 0,
       "grain_size": 10,
-      "skin_smooth": 40,
-      "skin_radiance": 35,
+      "skin_smooth": 30,
+      "skin_radiance": 25,
       "clarity": 10,
       "glow": 25,
-      "sharpness": 15,
+      "sharpness": 10,
       "hsl": {}
     }
   },
@@ -308,9 +308,9 @@
       "grain_size": 10,
       "skin_smooth": 30,
       "skin_radiance": 25,
-      "clarity": 25,
+      "clarity": 8,
       "glow": 10,
-      "sharpness": 25,
+      "sharpness": 10,
       "hsl": {}
     }
   },
@@ -413,9 +413,9 @@
       "grain_size": 10,
       "skin_smooth": 25,
       "skin_radiance": 25,
-      "clarity": 28,
+      "clarity": 8,
       "glow": 12,
-      "sharpness": 28,
+      "sharpness": 10,
       "hsl": {}
     }
   },
@@ -516,7 +516,7 @@
       "vignette": 0,
       "grain_intensity": 0,
       "grain_size": 10,
-      "skin_smooth": 45,
+      "skin_smooth": 30,
       "skin_radiance": 30,
       "clarity": -10,
       "glow": 40,
@@ -623,9 +623,9 @@
       "grain_size": 10,
       "skin_smooth": 30,
       "skin_radiance": 30,
-      "clarity": 30,
+      "clarity": 8,
       "glow": 12,
-      "sharpness": 30,
+      "sharpness": 10,
       "hsl": {}
     }
   },
@@ -727,10 +727,10 @@
       "grain_intensity": 0,
       "grain_size": 10,
       "skin_smooth": 35,
-      "skin_radiance": 35,
-      "clarity": 15,
+      "skin_radiance": 25,
+      "clarity": 8,
       "glow": 28,
-      "sharpness": 18,
+      "sharpness": 10,
       "hsl": {}
     }
   },
@@ -833,9 +833,9 @@
       "grain_size": 10,
       "skin_smooth": 30,
       "skin_radiance": 25,
-      "clarity": 25,
+      "clarity": 8,
       "glow": 10,
-      "sharpness": 25,
+      "sharpness": 10,
       "hsl": {}
     }
   },
@@ -936,8 +936,8 @@
       "vignette": 0,
       "grain_intensity": 0,
       "grain_size": 10,
-      "skin_smooth": 55,
-      "skin_radiance": 45,
+      "skin_smooth": 30,
+      "skin_radiance": 25,
       "clarity": -6,
       "glow": 25,
       "sharpness": 10,
@@ -1041,11 +1041,11 @@
       "vignette": 0,
       "grain_intensity": 0,
       "grain_size": 10,
-      "skin_smooth": 45,
-      "skin_radiance": 55,
+      "skin_smooth": 30,
+      "skin_radiance": 25,
       "clarity": 5,
       "glow": 18,
-      "sharpness": 15,
+      "sharpness": 10,
       "hsl": {}
     }
   },
@@ -1148,9 +1148,9 @@
       "grain_size": 10,
       "skin_smooth": 25,
       "skin_radiance": 25,
-      "clarity": 14,
+      "clarity": 8,
       "glow": 8,
-      "sharpness": 18,
+      "sharpness": 10,
       "hsl": {}
     }
   },
@@ -1251,8 +1251,8 @@
       "vignette": 0,
       "grain_intensity": 0,
       "grain_size": 10,
-      "skin_smooth": 40,
-      "skin_radiance": 35,
+      "skin_smooth": 30,
+      "skin_radiance": 25,
       "clarity": -10,
       "glow": 35,
       "sharpness": 8,
@@ -1356,8 +1356,8 @@
       "vignette": 0,
       "grain_intensity": 0,
       "grain_size": 10,
-      "skin_smooth": 45,
-      "skin_radiance": 40,
+      "skin_smooth": 30,
+      "skin_radiance": 25,
       "clarity": -4,
       "glow": 20,
       "sharpness": 12,
@@ -1568,9 +1568,9 @@
       "grain_size": 10,
       "skin_smooth": 15,
       "skin_radiance": 20,
-      "clarity": 20,
+      "clarity": 8,
       "glow": 10,
-      "sharpness": 20,
+      "sharpness": 10,
       "hsl": {}
     }
   },
@@ -1673,9 +1673,9 @@
       "grain_size": 14,
       "skin_smooth": 30,
       "skin_radiance": 25,
-      "clarity": 12,
+      "clarity": 8,
       "glow": 10,
-      "sharpness": 15,
+      "sharpness": 10,
       "hsl": {}
     }
   },
@@ -3947,13 +3947,13 @@
   },
   {
     "preset_id": "rico.flash",
-    "camera_system": "rico",
+    "camera_system": "digicam",
     "look_name": "Rico Flash",
     "display_label": "Rico Flash",
     "tag": "FLASH",
     "lut_asset_path": "luts/rico.flash.cube",
     "lut_stage": "early",
-    "description": "Direct compact-camera flash aesthetic with clean cool-ivory skin pop and deep night shadows.",
+    "description": "Direct compact-camera flash aesthetic with clean cool-ivory skin pop and balanced night contrast.",
     "slider_ranges": {
       "exposure": {
         "min": -3,
@@ -4029,246 +4029,36 @@
       }
     },
     "default_sliders": {
-      "exposure": 0.2,
-      "contrast": 18,
-      "highlights": -8,
-      "shadows": 10,
-      "whites": 12,
-      "blacks": -15,
-      "temp": -8,
-      "tint": 4,
-      "vibrance": 6,
-      "saturation": -8,
-      "vignette": 16,
-      "grain_intensity": 8,
-      "grain_size": 12,
-      "skin_smooth": 30,
-      "skin_radiance": 38,
-      "clarity": 16,
-      "glow": 12,
-      "sharpness": 20,
-      "hsl": {}
-    }
-  },
-  {
-    "preset_id": "rico.gr_slide",
-    "camera_system": "rico",
-    "look_name": "GR Slide",
-    "display_label": "GR Slide",
-    "tag": "SLIDE",
-    "lut_asset_path": "luts/rico.gr_slide.cube",
-    "lut_stage": "early",
-    "description": "Punchy reversal film look with deep blues and greens, tight skin saturation, and smooth highlight roll-off.",
-    "slider_ranges": {
-      "exposure": {
-        "min": -3,
-        "max": 3
-      },
-      "contrast": {
-        "min": -100,
-        "max": 100
-      },
-      "highlights": {
-        "min": -100,
-        "max": 100
-      },
-      "shadows": {
-        "min": -100,
-        "max": 100
-      },
-      "whites": {
-        "min": -100,
-        "max": 100
-      },
-      "blacks": {
-        "min": -100,
-        "max": 100
-      },
-      "temp": {
-        "min": -100,
-        "max": 100
-      },
-      "tint": {
-        "min": -100,
-        "max": 100
-      },
-      "vibrance": {
-        "min": -100,
-        "max": 100
-      },
-      "saturation": {
-        "min": -100,
-        "max": 100
-      },
-      "vignette": {
-        "min": 0,
-        "max": 100
-      },
-      "grain_intensity": {
-        "min": 0,
-        "max": 100
-      },
-      "grain_size": {
-        "min": 1,
-        "max": 100
-      },
-      "skin_smooth": {
-        "min": 0,
-        "max": 100
-      },
-      "skin_radiance": {
-        "min": 0,
-        "max": 100
-      },
-      "clarity": {
-        "min": -100,
-        "max": 100
-      },
-      "glow": {
-        "min": 0,
-        "max": 100
-      },
-      "sharpness": {
-        "min": 0,
-        "max": 100
-      }
-    },
-    "default_sliders": {
-      "exposure": 0.05,
-      "contrast": 16,
-      "highlights": -15,
-      "shadows": -10,
-      "whites": 8,
-      "blacks": -12,
-      "temp": 2,
-      "tint": -2,
-      "vibrance": 14,
-      "saturation": 4,
-      "vignette": 14,
-      "grain_intensity": 10,
-      "grain_size": 14,
-      "skin_smooth": 0,
-      "skin_radiance": 0,
-      "clarity": 18,
-      "glow": 0,
-      "sharpness": 18,
-      "hsl": {}
-    }
-  },
-  {
-    "preset_id": "rico.gr_print",
-    "camera_system": "rico",
-    "look_name": "GR Print",
-    "display_label": "GR Print",
-    "tag": "PRINT",
-    "lut_asset_path": "luts/rico.gr_print.cube",
-    "lut_stage": "early",
-    "description": "Color print minilab aesthetic with vermilion reds, pastel blues, and forgiving lifted shadows.",
-    "slider_ranges": {
-      "exposure": {
-        "min": -3,
-        "max": 3
-      },
-      "contrast": {
-        "min": -100,
-        "max": 100
-      },
-      "highlights": {
-        "min": -100,
-        "max": 100
-      },
-      "shadows": {
-        "min": -100,
-        "max": 100
-      },
-      "whites": {
-        "min": -100,
-        "max": 100
-      },
-      "blacks": {
-        "min": -100,
-        "max": 100
-      },
-      "temp": {
-        "min": -100,
-        "max": 100
-      },
-      "tint": {
-        "min": -100,
-        "max": 100
-      },
-      "vibrance": {
-        "min": -100,
-        "max": 100
-      },
-      "saturation": {
-        "min": -100,
-        "max": 100
-      },
-      "vignette": {
-        "min": 0,
-        "max": 100
-      },
-      "grain_intensity": {
-        "min": 0,
-        "max": 100
-      },
-      "grain_size": {
-        "min": 1,
-        "max": 100
-      },
-      "skin_smooth": {
-        "min": 0,
-        "max": 100
-      },
-      "skin_radiance": {
-        "min": 0,
-        "max": 100
-      },
-      "clarity": {
-        "min": -100,
-        "max": 100
-      },
-      "glow": {
-        "min": 0,
-        "max": 100
-      },
-      "sharpness": {
-        "min": 0,
-        "max": 100
-      }
-    },
-    "default_sliders": {
-      "exposure": 0.1,
-      "contrast": -4,
-      "highlights": -18,
-      "shadows": 16,
-      "whites": 4,
-      "blacks": 14,
-      "temp": 4,
+      "exposure": 0.12,
+      "contrast": 6,
+      "highlights": -6,
+      "shadows": 8,
+      "whites": 6,
+      "blacks": -4,
+      "temp": -5,
       "tint": 2,
-      "vibrance": 8,
-      "saturation": -6,
+      "vibrance": 4,
+      "saturation": -4,
       "vignette": 8,
-      "grain_intensity": 14,
-      "grain_size": 15,
-      "skin_smooth": 0,
-      "skin_radiance": 0,
-      "clarity": -6,
+      "grain_intensity": 4,
+      "grain_size": 12,
+      "skin_smooth": 20,
+      "skin_radiance": 22,
+      "clarity": 6,
       "glow": 8,
-      "sharpness": 10,
+      "sharpness": 8,
       "hsl": {}
     }
   },
   {
-    "preset_id": "rico.gr_street_bw",
-    "camera_system": "rico",
-    "look_name": "GR Street B&W",
-    "display_label": "GR Street B&W",
-    "tag": "STREET B&W",
-    "lut_asset_path": "luts/rico.gr_street_bw.cube",
+    "preset_id": "digicam.gr2_vivid",
+    "camera_system": "digicam",
+    "look_name": "GR2 Vivid",
+    "display_label": "GR2 Vivid",
+    "tag": "DIGICAM",
+    "lut_asset_path": "luts/digicam.gr2_vivid.cube",
     "lut_stage": "early",
-    "description": "Gritty high-contrast street monochrome with crushed blacks, crisp highlights, and organic film grain.",
+    "description": "Compact digicam vivid 33\u00b3 color profile with crisp contrast and rich blues/greens.",
     "slider_ranges": {
       "exposure": {
         "min": -3,
@@ -4345,23 +4135,758 @@
     },
     "default_sliders": {
       "exposure": 0.0,
-      "contrast": 28,
-      "highlights": 10,
-      "shadows": -22,
-      "whites": 18,
-      "blacks": -24,
+      "contrast": 0,
+      "highlights": 0,
+      "shadows": 0,
+      "whites": 0,
+      "blacks": 0,
       "temp": 0,
       "tint": 0,
       "vibrance": 0,
-      "saturation": -100,
-      "vignette": 22,
-      "grain_intensity": 32,
-      "grain_size": 18,
+      "saturation": 0,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
       "skin_smooth": 0,
       "skin_radiance": 0,
-      "clarity": 30,
+      "clarity": 0,
       "glow": 0,
-      "sharpness": 24,
+      "sharpness": 0,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "digicam.gr2_hibw",
+    "camera_system": "digicam",
+    "look_name": "GR2 Hi-B&W",
+    "display_label": "GR2 Hi-B&W",
+    "tag": "B&W",
+    "lut_asset_path": "luts/digicam.gr2_hibw.cube",
+    "lut_stage": "early",
+    "description": "High-contrast monochrome 33\u00b3 digicam profile for street photography.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.0,
+      "contrast": 0,
+      "highlights": 0,
+      "shadows": 0,
+      "whites": 0,
+      "blacks": 0,
+      "temp": 0,
+      "tint": 0,
+      "vibrance": 0,
+      "saturation": 0,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": 0,
+      "glow": 0,
+      "sharpness": 0,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "digicam.contax_nd",
+    "camera_system": "digicam",
+    "look_name": "Contax ND",
+    "display_label": "Contax ND",
+    "tag": "CCD",
+    "lut_asset_path": "luts/digicam.contax_nd.cube",
+    "lut_stage": "early",
+    "description": "Classic CCD natural-daylight 33\u00b3 color science with subtle analog warmth.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.0,
+      "contrast": 0,
+      "highlights": 0,
+      "shadows": 0,
+      "whites": 0,
+      "blacks": 0,
+      "temp": 0,
+      "tint": 0,
+      "vibrance": 0,
+      "saturation": 0,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": 0,
+      "glow": 0,
+      "sharpness": 0,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "digicam.fuji_gfx_provia",
+    "camera_system": "digicam",
+    "look_name": "GFX Provia",
+    "display_label": "GFX Provia",
+    "tag": "MEDIUM",
+    "lut_asset_path": "luts/digicam.fuji_gfx_provia.cube",
+    "lut_stage": "early",
+    "description": "Medium-format Provia standard 33\u00b3 profile with balanced skin and clean tonal gradation.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.0,
+      "contrast": 0,
+      "highlights": 0,
+      "shadows": 0,
+      "whites": 0,
+      "blacks": 0,
+      "temp": 0,
+      "tint": 0,
+      "vibrance": 0,
+      "saturation": 0,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": 0,
+      "glow": 0,
+      "sharpness": 0,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "digicam.leica_x2_vivid",
+    "camera_system": "digicam",
+    "look_name": "X2 Vivid",
+    "display_label": "X2 Vivid",
+    "tag": "VIVID",
+    "lut_asset_path": "luts/digicam.leica_x2_vivid.cube",
+    "lut_stage": "early",
+    "description": "Compact APS-C vivid 33\u00b3 profile with punchy micro-contrast and rich color depth.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.0,
+      "contrast": 0,
+      "highlights": 0,
+      "shadows": 0,
+      "whites": 0,
+      "blacks": 0,
+      "temp": 0,
+      "tint": 0,
+      "vibrance": 0,
+      "saturation": 0,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": 0,
+      "glow": 0,
+      "sharpness": 0,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "digicam.leica_sl_std",
+    "camera_system": "digicam",
+    "look_name": "SL Standard",
+    "display_label": "SL Standard",
+    "tag": "STANDARD",
+    "lut_asset_path": "luts/digicam.leica_sl_std.cube",
+    "lut_stage": "early",
+    "description": "Full-frame mirrorless standard 33\u00b3 look with accurate, neutral color reproduction.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.0,
+      "contrast": 0,
+      "highlights": 0,
+      "shadows": 0,
+      "whites": 0,
+      "blacks": 0,
+      "temp": 0,
+      "tint": 0,
+      "vibrance": 0,
+      "saturation": 0,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": 0,
+      "glow": 0,
+      "sharpness": 0,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "digicam.leica_sl_vivid",
+    "camera_system": "digicam",
+    "look_name": "SL Vivid",
+    "display_label": "SL Vivid",
+    "tag": "VIVID",
+    "lut_asset_path": "luts/digicam.leica_sl_vivid.cube",
+    "lut_stage": "early",
+    "description": "Full-frame vivid 33\u00b3 profile with saturated primaries and deep shadow separation.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.0,
+      "contrast": 0,
+      "highlights": 0,
+      "shadows": 0,
+      "whites": 0,
+      "blacks": 0,
+      "temp": 0,
+      "tint": 0,
+      "vibrance": 0,
+      "saturation": 0,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": 0,
+      "glow": 0,
+      "sharpness": 0,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "digicam.lumix_s1r_vivid",
+    "camera_system": "digicam",
+    "look_name": "S1R Vivid",
+    "display_label": "S1R Vivid",
+    "tag": "VIVID",
+    "lut_asset_path": "luts/digicam.lumix_s1r_vivid.cube",
+    "lut_stage": "early",
+    "description": "High-resolution vivid 33\u00b3 profile with crisp highlights and cinematic color balance.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.0,
+      "contrast": 0,
+      "highlights": 0,
+      "shadows": 0,
+      "whites": 0,
+      "blacks": 0,
+      "temp": 0,
+      "tint": 0,
+      "vibrance": 0,
+      "saturation": 0,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 0,
+      "skin_radiance": 0,
+      "clarity": 0,
+      "glow": 0,
+      "sharpness": 0,
       "hsl": {}
     }
   }

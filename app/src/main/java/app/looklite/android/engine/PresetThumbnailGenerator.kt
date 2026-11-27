@@ -57,10 +57,10 @@ object PresetThumbnailGenerator {
         sliders: SliderValues,
         intensity: Float = 1f
     ): ImageBitmap = withContext(Dispatchers.Default) {
-        val lutBuf = LutLoader.loadLut(context, lutFile)
-        val lutSize = 17
-        val lutBytes = ByteArray(lutBuf.remaining())
-        lutBuf.duplicate().get(lutBytes)
+        val loaded = LutLoader.loadLut(context, lutFile)
+        val lutSize = loaded.size
+        val lutBytes = ByteArray(loaded.buffer.remaining())
+        loaded.buffer.duplicate().get(lutBytes)
 
         val outPixels = IntArray(basePixels.size)
         val expGain = 2f.pow(sliders.exposure * 0.55f)
