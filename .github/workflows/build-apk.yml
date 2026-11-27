@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build & Verify APK
+    name: Build Release APK
     runs-on: ubuntu-latest
 
     steps:
@@ -27,41 +27,18 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Set up Bun (Web Engine Bundler)
-        uses: oven-sh/setup-bun@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Run Color Science & 3D LUT Verification
-        run: |
-          node scripts/verify-filters.js
-
-      - name: Bundle WebGL2 Engine & 3D LUT Assets
-        run: |
-          bun build web/app.js --outfile web/bundle.js --target browser
-          mkdir -p app/src/main/assets/luts
-          cp web/index.html web/bundle.js web/styles.css app/src/main/assets/
-          cp luts/*.cube app/src/main/assets/luts/
-
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Make Gradle Wrapper Executable
         run: chmod +x gradlew
 
-      - name: Build Release APK with Gradle
+      - name: Build Release APK
         run: ./gradlew assembleRelease --stacktrace
-
-      - name: List Generated APKs
-        run: |
-          ls -lh app/build/outputs/apk/release/
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: LookLite-Release-APK
-          path: app/build/outputs/apk/release/*.apk
+          path: app/build/outputs/apk/release/LookLite-release.apk
           retention-days: 14
