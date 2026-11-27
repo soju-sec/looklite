@@ -266,8 +266,7 @@ private fun LooksPanel(
                     LookCategory.HASSELBLAD -> "Hasselblad"
                     LookCategory.ILFORD -> "Ilford"
                     LookCategory.DIGICAM -> "Digicam"
-                    LookCategory.RETOUCH -> stringResource(R.string.cat_retouch)
-                    LookCategory.BEAUTY -> "Beauty"
+                    LookCategory.INSTANT -> stringResource(R.string.cat_instant)
                 }
 
                 Column(
@@ -362,8 +361,7 @@ private fun LooksPanel(
                     LookCategory.HASSELBLAD -> presets.filter { it.brand == CameraBrand.HASSELBLAD }
                     LookCategory.ILFORD -> presets.filter { it.brand == CameraBrand.VINTAGE }
                     LookCategory.DIGICAM -> presets.filter { it.brand == CameraBrand.DIGICAM }
-                    LookCategory.RETOUCH -> presets.filter { it.brand == CameraBrand.POLES }
-                    LookCategory.BEAUTY -> presets.filter { it.brand == CameraBrand.BEAUTY }
+                    LookCategory.INSTANT -> presets.filter { it.brand == CameraBrand.INSTANT }
                     LookCategory.MY_LOOKS -> emptyList()
                 }
             }
@@ -741,6 +739,7 @@ private fun AdjustPanel(
                 }
 
                 AdjustSubTab.RETOUCH -> {
+                    DetentSliderRow("Natural Skin", sliders.naturalSkin, 0f, 100f, 0f) { onSliderChanged(sliders.copy(naturalSkin = it)) }
                     DetentSliderRow("Skin Smooth", sliders.skinSmooth, 0f, 100f, 0f) { onSliderChanged(sliders.copy(skinSmooth = it)) }
                     DetentSliderRow("Skin Radiance", sliders.skinRadiance, 0f, 100f, 0f) { onSliderChanged(sliders.copy(skinRadiance = it)) }
                     DetentSliderRow("Clarity", sliders.clarity, -100f, 100f, 0f) { onSliderChanged(sliders.copy(clarity = it)) }

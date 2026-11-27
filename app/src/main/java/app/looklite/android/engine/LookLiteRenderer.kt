@@ -212,6 +212,7 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
             setUniform1f("uGrainSize", s.grainSize)
             setUniform1f("uSkinSmooth", s.skinSmooth)
             setUniform1f("uSkinRadiance", s.skinRadiance)
+            setUniform1f("uNaturalSkin", s.naturalSkin)
             setUniform1f("uClarity", s.clarity)
             setUniform1f("uGlow", s.glow)
             setUniform1f("uSharpness", s.sharpness)
@@ -476,7 +477,7 @@ class LookLiteRenderer(private val context: Context) : GLSurfaceView.Renderer {
             "uAutoColor", "uAutoMin", "uAutoMax", "uAutoWb",
             "uExposure", "uContrast", "uHighlights", "uShadows", "uWhites", "uBlacks",
             "uTemp", "uTint", "uVibrance", "uSaturation", "uVignette",
-            "uGrainIntensity", "uGrainSize", "uSkinSmooth", "uSkinRadiance",
+            "uGrainIntensity", "uGrainSize", "uSkinSmooth", "uSkinRadiance", "uNaturalSkin",
             "uClarity", "uGlow", "uSharpness", "uResolution",
             "uHslRed", "uHslOrange", "uHslYellow", "uHslGreen",
             "uHslAqua", "uHslBlue", "uHslPurple", "uHslMagenta",

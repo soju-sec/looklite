@@ -76,6 +76,7 @@ class StudioPreferences(private val context: Context) {
                 put("grainSize", s.grainSize.toDouble())
                 put("skinSmooth", s.skinSmooth.toDouble())
                 put("skinRadiance", s.skinRadiance.toDouble())
+                put("naturalSkin", s.naturalSkin.toDouble())
                 put("clarity", s.clarity.toDouble())
                 put("glow", s.glow.toDouble())
                 put("sharpness", s.sharpness.toDouble())
@@ -119,6 +120,7 @@ class StudioPreferences(private val context: Context) {
                         grainSize = sObj.optDouble("grainSize", 10.0).toFloat(),
                         skinSmooth = sObj.optDouble("skinSmooth", 0.0).toFloat(),
                         skinRadiance = sObj.optDouble("skinRadiance", 0.0).toFloat(),
+                        naturalSkin = sObj.optDouble("naturalSkin", 0.0).toFloat(),
                         clarity = sObj.optDouble("clarity", 0.0).toFloat(),
                         glow = sObj.optDouble("glow", 0.0).toFloat(),
                         sharpness = sObj.optDouble("sharpness", 0.0).toFloat()

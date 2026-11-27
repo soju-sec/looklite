@@ -40,8 +40,7 @@
 
     <!-- Looks Tab -->
     <string name="cat_my_looks">My Looks</string>
-    <string name="cat_all">All</string>
-    <string name="cat_retouch">Retouch</string>
+    <string name="cat_instant">Instant</string>
     <string name="auto_tone">Auto Tone</string>
     <string name="save_look">+ Save Look</string>
     <string name="save_look_title">Save Custom Look</string>

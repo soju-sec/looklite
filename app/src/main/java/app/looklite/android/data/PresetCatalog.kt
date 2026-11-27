@@ -21,6 +21,11 @@ object PresetCatalog {
         "poles.golden_radiance" to Pair(0xFFFF8C00, 0xFFFFD700),
         "poles.dark_aesthetic" to Pair(0xFF141414, 0xFF434343),
 
+        "instant.translucent_skin" to Pair(0xFFEFF3F8, 0xFFFCE4EC),
+        "instant.flash_cool_white" to Pair(0xFFD6E4FA, 0xFFFDE8F3),
+        "instant.flash_canon" to Pair(0xFFFAD2C8, 0xFFFFF0EB),
+        "instant.dark_tone_boost" to Pair(0xFF12141A, 0xFF3A4152),
+
         "meitu.cream_skin" to Pair(0xFFF6D5C8, 0xFFFFF1E6),
         "meitu.cool_white" to Pair(0xFFD8E6F8, 0xFFFDF2F8),
         "meitu.natural_clear" to Pair(0xFFA8D8EA, 0xFFF7E8D8),
@@ -94,14 +99,13 @@ object PresetCatalog {
                 val id = obj.getString("preset_id")
                 val brandStr = obj.optString("camera_system", "poles")
                 val brand = when (brandStr.lowercase()) {
-                    "beauty", "meitu" -> CameraBrand.BEAUTY
                     "digicam", "rico" -> CameraBrand.DIGICAM
                     "fuji", "fujifilm" -> CameraBrand.FUJIFILM
                     "kodak" -> CameraBrand.KODAK
                     "leica" -> CameraBrand.LEICA
                     "hasselblad" -> CameraBrand.HASSELBLAD
                     "ilford", "vintage" -> CameraBrand.VINTAGE
-                    else -> CameraBrand.POLES
+                    else -> CameraBrand.INSTANT
                 }
                 val name = obj.optString("display_label", obj.optString("look_name", id))
                 val tag = obj.optString("tag", "")
@@ -171,6 +175,7 @@ object PresetCatalog {
             grainSize = obj.optDouble("grain_size", 1.0).toFloat(),
             skinSmooth = obj.optDouble("skin_smooth", 0.0).toFloat(),
             skinRadiance = obj.optDouble("skin_radiance", 0.0).toFloat(),
+            naturalSkin = obj.optDouble("natural_skin", 0.0).toFloat(),
             clarity = obj.optDouble("clarity", 0.0).toFloat(),
             glow = obj.optDouble("glow", 0.0).toFloat(),
             sharpness = obj.optDouble("sharpness", 0.0).toFloat(),

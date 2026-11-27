@@ -32,6 +32,7 @@ uniform float uGrainIntensity;
 uniform float uGrainSize;
 uniform float uSkinSmooth;
 uniform float uSkinRadiance;
+uniform float uNaturalSkin;
 uniform float uClarity;
 uniform float uGlow;
 uniform float uSharpness;
@@ -212,6 +213,29 @@ vec3 applySkinPolish(vec3 c, vec2 uv, float smoothAmt, float radianceAmt) {
     return clamp(result, 0.0, 1.0);
 }
 
+vec3 applyNaturalSkin(vec3 c, vec2 uv, float amount) {
+    if (amount <= 0.0) return c;
+    float skin = getSkinMask(c);
+    if (skin <= 0.01) return c;
+
+    float t = clamp(amount / 100.0, 0.0, 1.0) * skin;
+    // 1. Frequency-preserving micro-evenness (evens blotches while keeping pores/detail)
+    vec2 px = 1.8 / uResolution;
+    vec3 c0 = texture(uImage, uv + vec2(-px.x, 0.0)).rgb;
+    vec3 c1 = texture(uImage, uv + vec2( px.x, 0.0)).rgb;
+    vec3 c2 = texture(uImage, uv + vec2(0.0, -px.y)).rgb;
+    vec3 c3 = texture(uImage, uv + vec2(0.0,  px.y)).rgb;
+    vec3 localMean = (c + c0 + c1 + c2 + c3) * 0.2;
+    vec3 detail = c - localMean;
+    vec3 evened = mix(c, localMean + detail * 0.55, t * 0.65);
+
+    // 2. Neutralize dull yellow-green cast + gentle healthy ivory lift
+    evened.b = clamp(evened.b + 0.025 * t, 0.0, 1.0);
+    evened.g = clamp(evened.g - 0.008 * t, 0.0, 1.0);
+    vec3 healthyLift = 1.0 - (1.0 - evened) * (1.0 - vec3(0.14, 0.12, 0.11));
+    return clamp(mix(evened, healthyLift, t * 0.70), 0.0, 1.0);
+}
+
 vec3 applyClarityGlowSharp(vec3 c, vec2 uv, float clarity, float glow, float sharpness) {
     if (clarity == 0.0 && glow <= 0.0 && sharpness <= 0.0) return c;
 
@@ -319,6 +343,7 @@ void main() {
     vec3 c = orig;
     c = applyAutoColor(c);
     c = applySkinPolish(c, vUv, uSkinSmooth, uSkinRadiance);
+    c = applyNaturalSkin(c, vUv, uNaturalSkin);
     c = applyWB(c, uTemp, uTint);
     if (uLutStage == 0) {
         c = applyLut(c);

@@ -1,8 +1,7 @@
 package app.looklite.android.model
 
 enum class CameraBrand(val id: String, val displayName: String) {
-    POLES("poles", "POLES"),
-    BEAUTY("beauty", "BEAUTY"),
+    INSTANT("instant", "INSTANT"),
     FUJIFILM("fuji", "FUJI"),
     KODAK("kodak", "KODAK"),
     LEICA("leica", "LEICA"),
@@ -62,6 +61,7 @@ data class SliderValues(
     val grainSize: Float = 1.0f,
     val skinSmooth: Float = 0f,
     val skinRadiance: Float = 0f,
+    val naturalSkin: Float = 0f,
     val clarity: Float = 0f,
     val glow: Float = 0f,
     val sharpness: Float = 0f,
@@ -96,8 +96,7 @@ enum class LookCategory {
     HASSELBLAD,
     ILFORD,
     DIGICAM,
-    RETOUCH,
-    BEAUTY
+    INSTANT
 }
 
 data class CustomLook(

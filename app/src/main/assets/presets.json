@@ -1,7 +1,431 @@
 [
   {
+    "preset_id": "instant.translucent_skin",
+    "camera_system": "instant",
+    "look_name": "Translucent Skin",
+    "display_label": "Translucent Skin",
+    "tag": "GLASS SKIN",
+    "lut_asset_path": "luts/instant.translucent_skin.cube",
+    "lut_stage": "early",
+    "description": "Crystal-clear glass skin luminosity with lifted midtones and soft porcelain whites.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.15,
+      "contrast": -4,
+      "highlights": -8,
+      "shadows": 16,
+      "whites": 10,
+      "blacks": 6,
+      "temp": -4,
+      "tint": 6,
+      "vibrance": 6,
+      "saturation": -6,
+      "vignette": 0,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 20,
+      "skin_radiance": 15,
+      "natural_skin": 45,
+      "clarity": 0,
+      "glow": 15,
+      "sharpness": 6,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "instant.flash_cool_white",
+    "camera_system": "instant",
+    "look_name": "Flash Cool White",
+    "display_label": "Flash Cool White",
+    "tag": "COOL FLASH",
+    "lut_asset_path": "luts/instant.flash_cool_white.cube",
+    "lut_stage": "early",
+    "description": "Bright cool-ivory flash look that neutralizes yellow cast and pops subjects cleanly.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.18,
+      "contrast": 10,
+      "highlights": -6,
+      "shadows": 12,
+      "whites": 12,
+      "blacks": -8,
+      "temp": -12,
+      "tint": 8,
+      "vibrance": 4,
+      "saturation": -8,
+      "vignette": 10,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 20,
+      "skin_radiance": 20,
+      "natural_skin": 40,
+      "clarity": 6,
+      "glow": 10,
+      "sharpness": 8,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "instant.flash_canon",
+    "camera_system": "instant",
+    "look_name": "Flash Canon",
+    "display_label": "Flash Canon",
+    "tag": "PORTRAIT FLASH",
+    "lut_asset_path": "luts/instant.flash_canon.cube",
+    "lut_stage": "early",
+    "description": "Mirrorless camera flash aesthetic with bright peach-pink skin radiance and crisp contrast.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": 0.15,
+      "contrast": 8,
+      "highlights": -8,
+      "shadows": 10,
+      "whites": 10,
+      "blacks": -4,
+      "temp": 4,
+      "tint": 10,
+      "vibrance": 10,
+      "saturation": -2,
+      "vignette": 6,
+      "grain_intensity": 0,
+      "grain_size": 10,
+      "skin_smooth": 18,
+      "skin_radiance": 18,
+      "natural_skin": 40,
+      "clarity": 6,
+      "glow": 12,
+      "sharpness": 8,
+      "hsl": {}
+    }
+  },
+  {
+    "preset_id": "instant.dark_tone_boost",
+    "camera_system": "instant",
+    "look_name": "Dark Tone Boost",
+    "display_label": "Dark Tone Boost",
+    "tag": "DARK MOOD",
+    "lut_asset_path": "luts/instant.dark_tone_boost.cube",
+    "lut_stage": "early",
+    "description": "Moody low-key editorial boost with deep cool-slate shadows and crisp subject pop.",
+    "slider_ranges": {
+      "exposure": {
+        "min": -3,
+        "max": 3
+      },
+      "contrast": {
+        "min": -100,
+        "max": 100
+      },
+      "highlights": {
+        "min": -100,
+        "max": 100
+      },
+      "shadows": {
+        "min": -100,
+        "max": 100
+      },
+      "whites": {
+        "min": -100,
+        "max": 100
+      },
+      "blacks": {
+        "min": -100,
+        "max": 100
+      },
+      "temp": {
+        "min": -100,
+        "max": 100
+      },
+      "tint": {
+        "min": -100,
+        "max": 100
+      },
+      "vibrance": {
+        "min": -100,
+        "max": 100
+      },
+      "saturation": {
+        "min": -100,
+        "max": 100
+      },
+      "vignette": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_intensity": {
+        "min": 0,
+        "max": 100
+      },
+      "grain_size": {
+        "min": 1,
+        "max": 100
+      },
+      "skin_smooth": {
+        "min": 0,
+        "max": 100
+      },
+      "skin_radiance": {
+        "min": 0,
+        "max": 100
+      },
+      "clarity": {
+        "min": -100,
+        "max": 100
+      },
+      "glow": {
+        "min": 0,
+        "max": 100
+      },
+      "sharpness": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "default_sliders": {
+      "exposure": -0.18,
+      "contrast": 16,
+      "highlights": -20,
+      "shadows": -10,
+      "whites": 4,
+      "blacks": -12,
+      "temp": -6,
+      "tint": 2,
+      "vibrance": 8,
+      "saturation": -10,
+      "vignette": 18,
+      "grain_intensity": 8,
+      "grain_size": 12,
+      "skin_smooth": 15,
+      "skin_radiance": 15,
+      "natural_skin": 30,
+      "clarity": 10,
+      "glow": 6,
+      "sharpness": 10,
+      "hsl": {}
+    }
+  },
+  {
     "preset_id": "poles.fnatix_flash",
-    "camera_system": "poles",
+    "camera_system": "instant",
     "look_name": "Fnatix Moody Flash",
     "display_label": "Fnatix Moody Flash",
     "tag": "MOODY FLASH",
@@ -106,7 +530,7 @@
   },
   {
     "preset_id": "poles.korean_porcelain",
-    "camera_system": "poles",
+    "camera_system": "instant",
     "look_name": "Korean Porcelain",
     "display_label": "Korean Porcelain",
     "tag": "PORCELAIN",
@@ -211,7 +635,7 @@
   },
   {
     "preset_id": "poles.emerald_moody",
-    "camera_system": "poles",
+    "camera_system": "instant",
     "look_name": "Emerald Moody",
     "display_label": "Emerald Moody",
     "tag": "EMERALD",
@@ -316,7 +740,7 @@
   },
   {
     "preset_id": "poles.night_ocean",
-    "camera_system": "poles",
+    "camera_system": "instant",
     "look_name": "Night Ocean",
     "display_label": "Night Ocean",
     "tag": "CYBER MOOD",
@@ -421,7 +845,7 @@
   },
   {
     "preset_id": "poles.soft_glow_dream",
-    "camera_system": "poles",
+    "camera_system": "instant",
     "look_name": "Pro-Mist Dream",
     "display_label": "Pro-Mist Dream",
     "tag": "SOFT GLOW",
@@ -526,7 +950,7 @@
   },
   {
     "preset_id": "poles.studio_flash",
-    "camera_system": "poles",
+    "camera_system": "instant",
     "look_name": "Studio Flash",
     "display_label": "Studio Flash",
     "tag": "COMMERCIAL",
@@ -631,7 +1055,7 @@
   },
   {
     "preset_id": "poles.golden_radiance",
-    "camera_system": "poles",
+    "camera_system": "instant",
     "look_name": "Golden Radiance",
     "display_label": "Golden Radiance",
     "tag": "SUNSET GLOW",
@@ -736,7 +1160,7 @@
   },
   {
     "preset_id": "poles.dark_aesthetic",
-    "camera_system": "poles",
+    "camera_system": "instant",
     "look_name": "Dark Aesthetic",
     "display_label": "Dark Aesthetic",
     "tag": "LOW KEY",
@@ -841,7 +1265,7 @@
   },
   {
     "preset_id": "meitu.cream_skin",
-    "camera_system": "beauty",
+    "camera_system": "instant",
     "look_name": "Cream Skin",
     "display_label": "Cream Skin",
     "tag": "CREAM",
@@ -946,7 +1370,7 @@
   },
   {
     "preset_id": "meitu.cool_white",
-    "camera_system": "beauty",
+    "camera_system": "instant",
     "look_name": "Cool Porcelain",
     "display_label": "Cool Porcelain",
     "tag": "COOL WHITE",
@@ -1051,7 +1475,7 @@
   },
   {
     "preset_id": "meitu.natural_clear",
-    "camera_system": "beauty",
+    "camera_system": "instant",
     "look_name": "Ziran Natural",
     "display_label": "Ziran Natural",
     "tag": "CLEAR",
@@ -1156,7 +1580,7 @@
   },
   {
     "preset_id": "meitu.pearl_violet",
-    "camera_system": "beauty",
+    "camera_system": "instant",
     "look_name": "Pearl Violet",
     "display_label": "Pearl Violet",
     "tag": "PEARL",
@@ -1261,7 +1685,7 @@
   },
   {
     "preset_id": "meitu.peach_milk",
-    "camera_system": "beauty",
+    "camera_system": "instant",
     "look_name": "Peach Milk",
     "display_label": "Peach Milk",
     "tag": "PEACH",
@@ -1366,7 +1790,7 @@
   },
   {
     "preset_id": "meitu.airy_fresh",
-    "camera_system": "beauty",
+    "camera_system": "instant",
     "look_name": "Airy Fresh",
     "display_label": "Airy Fresh",
     "tag": "AIRY",
@@ -1471,7 +1895,7 @@
   },
   {
     "preset_id": "meitu.glass_sea",
-    "camera_system": "beauty",
+    "camera_system": "instant",
     "look_name": "Glass Sea",
     "display_label": "Glass Sea",
     "tag": "GLASS SEA",
@@ -1576,7 +2000,7 @@
   },
   {
     "preset_id": "meitu.editorial_dim",
-    "camera_system": "beauty",
+    "camera_system": "instant",
     "look_name": "Soft Dim",
     "display_label": "Soft Dim",
     "tag": "LOW-KEY",
